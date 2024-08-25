@@ -178,7 +178,7 @@ async def AltStatus(userPresences, channel, todelete:list):
                 description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
                 embed = discord.Embed(color=color if LobbyStatus == "True" else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
-                if (PresenceType == 2 and not bot.MuteAll and (not doc.get("rootPlaceId", False) or doc.get("rootPlaceId") == 6872265039)):
+                if (PresenceType == 2 and not bot.MuteAll and (not doc["rootPlaceId"] == None or doc["rootPlaceId"] == 6872265039)):
                     todelete.append(await channel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embed=embed))
     else:
         await channel.send("Error: 2", delete_after=3)
