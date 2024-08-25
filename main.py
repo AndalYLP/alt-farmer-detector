@@ -12,7 +12,7 @@ import os
 
 # ---------------------------------- Server ---------------------------------- #
 
-MongURI = os.environ.get("MONGO_URI")
+MongURI = "mongodb+srv://andal089az:a9G7uTzL1pXbQwR4nV2CkE8YjH5Mv3B@cluster0.qfwm5.mongodb.net/"#os.environ.get("MONGO_URI")
 Client = MongoClient(MongURI)
 dataBase = Client["AltFarmerDetector"]
 UsersCollection = dataBase["Users"]
@@ -35,8 +35,8 @@ keep_alive()
 
 # ------------------------------------ Bot ----------------------------------- #
 
-Cookie = os.environ.get("COOKIE")
-TOKEN = os.environ.get("TOKEN")
+Cookie = ".ROBLOSECURITY=_|WARNING:-DO-NOT-SHARE-THIS.--Sharing-this-will-allow-someone-to-log-in-as-you-and-to-steal-your-ROBUX-and-items.|_72616F154666189C09C30173DA0BFC18DC3598183DFBD659C0D1185F369940BE24E072393899D890DA12E3B9C5B554D6E7A175ED34E236725AFC13B464A0588638DA058C8328702894229C3DE951FFCE784EF793C18C84230CEE961AE493CEC417B18E83BB5EBFE8BD5EBA61D985DB522F8D251889ED70C190557970B2FE94EFCCE5008E0E3735CB0F816B15D3E59C7A4BFA8A3E7342DD34ED9785C9CEC5007FFA43BD1FAA310A91CD356156F6178A0F1F94E865E7EF714CD40646F1891B3D7A4A90DDD420E546A8D9B8F4E8826A6F0FF458E862D31C374BE13C67E2B7E840C372F51C897CA2349A2323AEA7E6E7CAFC4B91255FD4D30A9A259F64B62D8D6285AABE4D5A95F4A8D2448E21E8ACF1B333473F34DDE44AD29386FA86BED637E2CAECF450E6E221FD6FD307241287C7323AB747F2A73E0D16C998E7BD85B6C1C43BA3280FDA7A46224374C675B1785A135D344553FD453FB2CCBF772880A606D8B1A38FEBD3379BB3C7A7448E7D915EDEAF34B726CA67D421E639CC2448DBD88214127719F1E57B6F2772788653E837FFA40F6ED7E776F061742ED324E4FDE79C0B2D800881DDF3C5D8DB621E1B9F1D31F3D1C2348474B22FE586A8FA3B7E28FF30810B1617"#os.environ.get("COOKIE")
+TOKEN = "MTI3NzAzODU1NDAxMDIyMjcxNA.GhUzOP.Y_iol1jx4parlKCiB5BgxrbBAVFcQa3O0Oo4JY"#os.environ.get("TOKEN")
 bot = commands.Bot(command_prefix="!", intents = discord.Intents.all())
 
 # ------------------------------- Groups setup ------------------------------- #
@@ -177,7 +177,7 @@ async def AltStatus(userPresences, channel, todelete:list):
                 description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
                 embed = discord.Embed(color=color if LobbyStatus == "True" else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
-                if (PresenceType == 2 and not bot.MuteAll and doc["rootPlaceId"] == 6872265039):
+                if (PresenceType == 2 and not bot.MuteAll and (not doc.get("rootPlaceId") or doc["rootPlaceId"] == 6872265039)):
                     todelete.append(await channel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embed=embed))
     else:
         await channel.send("Error: 2", delete_after=3)
@@ -193,19 +193,19 @@ async def SameGameid(userPresences, channel, channel2):
             else:
                 GameIds[doc["gameId"]] = [[doc["userId"]],{"gameName": doc["lastLocation"], "isLobby": "True" if doc["placeId"] == 6872265039 else "False"}]
 
-    for gameId, list in GameIds.items():
-        list2 = list[1]
-        list = list[0]
+    for gameId, Ids in GameIds.items():
+        list2 = Ids[1]
+        Ids = Ids[0]
         Title = "GameId: " + gameId
-        Description = f"## GameId description\nGame: **{list2["gameName"]}**\nLobby: **{list2["isLobby"]}**\n## In-game player\n"
+        Description = f"## GameId description\nGame: **{list2["gameName"]}**\nLobby: **{list2["isLobby"]}**\n## In-game player"
         Everyone = False
-        for i, Userid in enumerate(list):
+        for Userid in Ids:
             doc = UsersCollection.find_one({"UserID": Userid})
             Username = doc["Username"]
-            Description += f"Username: **{Username}**\n- isAlt: **{doc["isAlt"]}**" + "" if i + 1 == len(list) else "\n"
+            Description += f"\nUsername: **{Username}**\n- isAlt: **{doc["isAlt"]}**"
+
             if doc["isAlt"] == True:
                 Everyone = True
-
         Embed = discord.Embed(color=2686720 if list2["isLobby"] == "True" else 1881856, title=Title, description=Description)
         await channel.send(content=f"<t:{int(int(time.time()))}:R>", embed=Embed)
         if Everyone:
