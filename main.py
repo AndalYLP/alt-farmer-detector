@@ -103,7 +103,7 @@ async def Start():
                         SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
                     )
                 else:
-                    raise ValueError("Docs not found")
+                    print("Docs not found")
             else:
                 print("Channel doesn't exist or not added")
                 await asyncio.sleep(10)
