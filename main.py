@@ -77,6 +77,8 @@ async def Start():
 
     while True:
         try:
+            todelete = []
+            todelete2 = []
             if channel:
                 Docs = UsersCollection.find({})
                 if Docs:
@@ -94,9 +96,6 @@ async def Start():
                             userPresences.extend(response.json().get("userPresences", []))
                         else:
                             await channel.send("Request status code isn't 200.", delete_after=3)
-
-                    todelete = []
-                    todelete2 = []
 
                     await asyncio.gather(
                         UserStatus(userPresences, channel, todelete),
