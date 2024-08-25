@@ -187,8 +187,8 @@ async def AltStatus(userPresences, channel, todelete:list):
 async def SameGameid(userPresences, channel, channel2):
     GameIds = {}
     for doc in userPresences:
-        if doc.get("gameId"):
-            if GameIds.get(doc["gameId"]) and GameIds.get("rootPlaceId") and GameIds["rootPlaceId"] == 6872265039:
+        if doc.get("gameId") and doc.get("rootPlaceId") and doc["rootPlaceId"] == 6872265039:
+            if GameIds.get(doc["gameId"]):
                 GameIds[doc["gameId"]][0].append(doc["userId"])
             else:
                 GameIds[doc["gameId"]] = [[doc["userId"]],{"gameName": doc["lastLocation"], "isLobby": "True" if doc["placeId"] == 6872265039 else "False"}]
