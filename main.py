@@ -12,7 +12,7 @@ import os
 
 # ---------------------------------- Server ---------------------------------- #
 
-MongURI = "mongodb+srv://andal089az:a9G7uTzL1pXbQwR4nV2CkE8YjH5Mv3B@cluster0.qfwm5.mongodb.net/"#os.environ.get("MONGO_URI")
+MongURI = os.environ.get("MONGO_URI")
 Client = MongoClient(MongURI)
 dataBase = Client["AltFarmerDetector"]
 UsersCollection = dataBase["Users"]
@@ -36,7 +36,7 @@ keep_alive()
 # ------------------------------------ Bot ----------------------------------- #
 
 Cookie = os.environ.get("COOKIE")
-TOKEN = "MTI3NzAzODU1NDAxMDIyMjcxNA.GhUzOP.Y_iol1jx4parlKCiB5BgxrbBAVFcQa3O0Oo4JY"#os.environ.get("TOKEN")
+TOKEN = os.environ.get("TOKEN")
 bot = commands.Bot(command_prefix="!", intents = discord.Intents.all())
 
 # ------------------------------- Groups setup ------------------------------- #
@@ -109,11 +109,11 @@ async def Start():
                 await asyncio.sleep(10)
                 continue
 
-        except Exception as e:
-            print(f"Error en el bucle principal: {e}.")
+            await asyncio.sleep(10)
+            await channel.delete_messages(todelete)
 
-        await asyncio.sleep(10)
-        await channel.delete_messages(todelete)
+        except Exception as e:
+            raise Exception(f"Error en el bucle principal: {e}.")
 
 # --------------------------- User status function --------------------------- #
 
