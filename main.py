@@ -96,10 +96,11 @@ async def Start():
                             await channel.send("Request status code isn't 200.", delete_after=3)
 
                     todelete = []
+                    todelete2 = []
 
                     await asyncio.gather(
                         UserStatus(userPresences, channel, todelete),
-                        AltStatus(userPresences, Altchannel, todelete),
+                        AltStatus(userPresences, Altchannel, todelete2),
                         SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
                     )
                 else:
@@ -111,6 +112,7 @@ async def Start():
 
             await asyncio.sleep(10)
             await channel.delete_messages(todelete)
+            await channel.delete_messages(todelete2)
 
         except Exception as e:
             print(f"Error en el bucle principal: {e}.")
