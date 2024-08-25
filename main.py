@@ -114,7 +114,7 @@ async def Start():
 
         except Exception as e:
             print(f"Error en el bucle principal: {e}.")
-
+#
 # --------------------------- User status function --------------------------- #
 
 async def UserStatus(userPresences, channel, todelete:list):
