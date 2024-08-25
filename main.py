@@ -113,7 +113,7 @@ async def Start():
             await channel.delete_messages(todelete)
 
         except Exception as e:
-            raise Exception(f"Error en el bucle principal: {e}.")
+            print(f"Error en el bucle principal: {e}.")
 
 # --------------------------- User status function --------------------------- #
 
