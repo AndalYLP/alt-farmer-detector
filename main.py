@@ -12,7 +12,7 @@ import os
 
 # ---------------------------------- Server ---------------------------------- #
 
-MongURI = os.environ.get("MONGO_URI")
+MongURI = "mongodb+srv://andal089az:a9G7uTzL1pXbQwR4nV2CkE8YjH5Mv3B@cluster0.qfwm5.mongodb.net/"#os.environ.get("MONGO_URI")
 Client = MongoClient(MongURI)
 dataBase = Client["AltFarmerDetector"]
 UsersCollection = dataBase["Users"]
@@ -36,7 +36,7 @@ keep_alive()
 # ------------------------------------ Bot ----------------------------------- #
 
 Cookie = os.environ.get("COOKIE")
-TOKEN = os.environ.get("TOKEN")
+TOKEN = "MTI3NzAzODU1NDAxMDIyMjcxNA.GhUzOP.Y_iol1jx4parlKCiB5BgxrbBAVFcQa3O0Oo4JY"#os.environ.get("TOKEN")
 bot = commands.Bot(command_prefix="!", intents = discord.Intents.all())
 
 # ------------------------------- Groups setup ------------------------------- #
@@ -79,28 +79,31 @@ async def Start():
         try:
             if channel:
                 Docs = UsersCollection.find({})
-                UserIDs = []
+                if Docs:
+                    UserIDs = []
 
-                for doc in Docs:
-                    UserIDs.append(doc["UserID"])
+                    for doc in Docs:
+                        UserIDs.append(doc["UserID"])
 
-                IDLists = [UserIDs[i:i + 30] for i in range(0,len(UserIDs), 30)]
-                
-                userPresences = []
-                for SubList in IDLists:
-                    response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": Cookie})
-                    if response.status_code == 200:
-                        userPresences.extend(response.json().get("userPresences", []))
-                    else:
-                        await channel.send("Request status code isn't 200.", delete_after=3)
+                    IDLists = [UserIDs[i:i + 30] for i in range(0,len(UserIDs), 30)]
+                    
+                    userPresences = []
+                    for SubList in IDLists:
+                        response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": Cookie})
+                        if response.status_code == 200:
+                            userPresences.extend(response.json().get("userPresences", []))
+                        else:
+                            await channel.send("Request status code isn't 200.", delete_after=3)
 
-                todelete = []
+                    todelete = []
 
-                await asyncio.gather(
-                    UserStatus(userPresences, channel, todelete),
-                    AltStatus(userPresences, Altchannel, todelete),
-                    SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
-                )
+                    await asyncio.gather(
+                        UserStatus(userPresences, channel, todelete),
+                        AltStatus(userPresences, Altchannel, todelete),
+                        SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
+                    )
+                else:
+                    raise ValueError("Docs not found")
             else:
                 print("Channel doesn't exist or not added")
                 await asyncio.sleep(10)
