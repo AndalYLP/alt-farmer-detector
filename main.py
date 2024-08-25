@@ -198,7 +198,7 @@ async def SameGameid(userPresences, channel, channel2):
         list2 = Ids[1]
         Ids = Ids[0]
         Title = "GameId: " + gameId
-        Description = f"## GameId description\nGame: **{list2["gameName"]}**\nLobby: **{list2["isLobby"]}**\n## In-game player"
+        Description = f"## GameId description\nGame: **{list2["gameName"]}**\nLobby: **{list2["isLobby"]}**\n## In-game player ({len(Ids)})"
         Everyone = False
         for Userid in Ids:
             doc = UsersCollection.find_one({"UserID": Userid})
@@ -331,29 +331,29 @@ async def snipe(interaction: discord.Interaction, username:str):
         data = responseJSON.get("data", [])
         if data[0] and "requestedUsername" in data[0]:
             id = data[0].get("id")
+            Username = data[0].get("name")
 
             response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": [id]},headers={"Cookie": Cookie})
-
+            
             if response.status_code == 200:
                 responseJSON = response.json()
                 userPresences = responseJSON.get("userPresences", [])
 
                 if userPresences:
-                    for doc in userPresences:
-                        PresenceType = doc["userPresenceType"]
+                    doc = userPresences[0]
+                    PresenceType = doc["userPresenceType"]
 
-                        Username = UsersCollection.find_one({"UserID": doc["userId"]})["Username"]
-                        GameName = doc["lastLocation"]
-                        LobbyStatus = "True" if doc["placeId"] == 6872265039 else "False"
-                        GameId = doc["gameId"]
+                    GameName = doc["lastLocation"]
+                    LobbyStatus = "True" if doc["placeId"] == 6872265039 else "False"
+                    GameId = doc["gameId"]
 
-                        color = 2686720 if PresenceType == 2 else 46847 if PresenceType == 1 else 7763574
-                        title = f"{Username} is in a game" if PresenceType == 2 else f"{Username} is online" if PresenceType == 1 else f"{Username} is offline"
-                        description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
-                        embed = discord.Embed(color=color,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
+                    color = 2686720 if PresenceType == 2 else 46847 if PresenceType == 1 else 7763574
+                    title = f"{Username} is in a game" if PresenceType == 2 else f"{Username} is online" if PresenceType == 1 else f"{Username} is offline"
+                    description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
+                    embed = discord.Embed(color=color if LobbyStatus == "True" else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
-                        if (PresenceType == 2 and not (bot.MuteAll or ((not doc["rootPlaceId"] == 6872265039 and not doc["rootPlaceId"] == None) and bot.OtherGame))) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
-                            await interaction.response.send_message(content=f"<t:{int(int(time.time()))}:R>", embed=embed)
+                    if (PresenceType == 2 and not (bot.MuteAll or ((not doc["rootPlaceId"] == 6872265039 and not doc["rootPlaceId"] == None) and bot.OtherGame))) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
+                        await interaction.response.send_message(content=f"<t:{int(int(time.time()))}:R>", embed=embed)
                 else:
                     await interaction.response.send_message("Error: 2", delete_after=3, ephemeral=True)
             else:
