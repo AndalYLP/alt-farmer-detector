@@ -144,7 +144,7 @@ async def UserStatus(userPresences, channel, todelete:list):
             description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
             embed = discord.Embed(color=color if LobbyStatus == "True" else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
-            if (PresenceType == 2 and not (bot.MuteAll or ((not doc["rootPlaceId"] == 6872265039 or not doc["rootPlaceId"] == None) and bot.OtherGame))) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
+            if (PresenceType == 2 and not (bot.MuteAll or ((not doc["rootPlaceId"] == 6872265039 or doc["rootPlaceId"] == None) and bot.OtherGame))) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
                 todelete.append(await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("@everyone" if PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039)) else ""),embed=embed))
     else:
         await channel.send("Error: 2", delete_after=3)
