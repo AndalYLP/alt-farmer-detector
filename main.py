@@ -71,7 +71,7 @@ GameIdList = {}
 
 async def Start():
     channel = bot.get_channel(1277039650401423471)
-    Altchannel = bot.get_channel(1277060101655629876)
+    Altchannel = bot.get_channel(1277302313949593742)
     GameIdChannel = bot.get_channel(1277046568033194115)
     GameIdWithAltsChannel = bot.get_channel(1277089252676472894)
 
