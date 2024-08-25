@@ -112,7 +112,7 @@ async def Start():
 
             await asyncio.sleep(10)
             await channel.delete_messages(todelete)
-            await channel.delete_messages(todelete2)
+            await Altchannel.delete_messages(todelete2)
 
         except Exception as e:
             print(f"Error en el bucle principal: {e}.")
