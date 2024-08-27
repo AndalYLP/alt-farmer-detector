@@ -77,45 +77,45 @@ async def Start():
     GameIdWithAltsChannel = bot.get_channel(1277089252676472894)
 
     while True:
-        #try:
-        todelete = []
-        todelete2 = []
-        if channel:
-            Docs = UsersCollection.find({})
-            if Docs:
-                UserIDs = []
+        try:
+            todelete = []
+            todelete2 = []
+            if channel:
+                Docs = UsersCollection.find({})
+                if Docs:
+                    UserIDs = []
 
-                for doc in Docs:
-                    UserIDs.append(doc["UserID"])
+                    for doc in Docs:
+                        UserIDs.append(doc["UserID"])
 
-                IDLists = [UserIDs[i:i + 30] for i in range(0,len(UserIDs), 30)]
-                
-                userPresences = []
-                for SubList in IDLists:
-                    response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": Cookie})
-                    if response.status_code == 200:
-                        userPresences.extend(response.json().get("userPresences", []))
-                    else:
-                        await channel.send("Request status code isn't 200.", delete_after=3)
+                    IDLists = [UserIDs[i:i + 30] for i in range(0,len(UserIDs), 30)]
+                    
+                    userPresences = []
+                    for SubList in IDLists:
+                        response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": Cookie})
+                        if response.status_code == 200:
+                            userPresences.extend(response.json().get("userPresences", []))
+                        else:
+                            await channel.send("Request status code isn't 200.", delete_after=3)
 
-                await asyncio.gather(
-                    UserStatus(userPresences, channel, todelete),
-                    AltStatus(userPresences, Altchannel, todelete2),
-                    SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
-                )
+                    await asyncio.gather(
+                        UserStatus(userPresences, channel, todelete),
+                        AltStatus(userPresences, Altchannel, todelete2),
+                        SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
+                    )
+                else:
+                    print("Docs not found")
             else:
-                print("Docs not found")
-        else:
-            print("Channel doesn't exist or not added")
+                print("Channel doesn't exist or not added")
+                await asyncio.sleep(10)
+                continue
+
             await asyncio.sleep(10)
-            continue
+            await channel.delete_messages(todelete)
+            await Altchannel.delete_messages(todelete2)
 
-        await asyncio.sleep(10)
-        await channel.delete_messages(todelete)
-        await Altchannel.delete_messages(todelete2)
-
-        #except Exception as e:
-        #    print(f"Error en el bucle principal: {e}.")
+        except Exception as e:
+            print(f"Error en el bucle principal: {e}.")
 
 # --------------------------- User status function --------------------------- #
 
@@ -161,6 +161,15 @@ async def AltStatus(userPresences, channel, todelete:list):
         for doc in userPresences:
             if UsersCollection.find_one({"UserID": doc["userId"], "isAlt": True}):
                 PresenceType = doc["userPresenceType"]
+
+            if doc["userId"] not in GameIdList:
+                GameIdList[doc["userId"]] = [["nil", "nil" if doc["gameId"] is None else doc["gameId"]], ["nil", f"<t:{int(time.time())}:R>"]]
+
+            if doc["gameId"] and not GameIdList.get(doc["userId"])[0][1] == doc["gameId"]:
+                GameIdList.get(doc["userId"])[1][0] = GameIdList.get(doc["userId"])[1][1]
+                GameIdList.get(doc["userId"])[0][0] = GameIdList.get(doc["userId"])[0][1]
+                GameIdList.get(doc["userId"])[1][1] = f"<t:{int(time.time())}:R>"
+                GameIdList.get(doc["userId"])[0][1] = doc["gameId"]
 
                 Username = UsersCollection.find_one({"UserID": doc["userId"]})["Username"]
                 GameName = doc["lastLocation"]
