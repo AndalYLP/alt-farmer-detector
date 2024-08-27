@@ -4,6 +4,7 @@ from discord.ext import commands
 from pymongo import MongoClient
 from threading import Thread
 from flask import Flask
+import traceback
 import requests
 import discord
 import asyncio
@@ -77,7 +78,7 @@ async def Start():
     GameIdWithAltsChannel = bot.get_channel(1277089252676472894)
 
     while True:
-        #try:
+        try:
             todelete = []
             todelete2 = []
             if channel:
@@ -113,8 +114,9 @@ async def Start():
             await channel.delete_messages(todelete)
             await Altchannel.delete_messages(todelete2)
 
-        #except Exception as e:
-        #    print(f"Error en el bucle principal: {e}.")
+        except Exception as e:
+            print(f"Error en el bucle principal: {e}.")
+            traceback.print_exc()
 
 # --------------------------- User status function --------------------------- #
 
