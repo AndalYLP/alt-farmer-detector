@@ -63,6 +63,7 @@ async def on_ready():
 
 # ------------------------------- Main function ------------------------------ #
 
+Tracking = {}
 bot.MuteAll = False
 bot.OnlineMuted = True
 bot.OfflineMuted = True
@@ -122,17 +123,21 @@ async def UserStatus(userPresences, channel, todelete:list):
     if userPresences:
         for doc in userPresences:
             PresenceType = doc["userPresenceType"]
+            Username = UsersCollection.find_one({"UserID": doc["userId"]})["Username"]
 
             if doc["userId"] not in GameIdList:
                 GameIdList[doc["userId"]] = [["nil", "nil" if doc["gameId"] is None else doc["gameId"]], ["nil", f"<t:{int(time.time())}:R>"]]
 
             if doc["gameId"] and not GameIdList.get(doc["userId"])[0][1] == doc["gameId"]:
+                if Tracking.get(Username):
+                    Result = int(time.time()) - GameIdList.get(doc["userId"])[1][0][3:-3]
+                    embed = discord.Embed(color=46847,title=f"Match ended total time: {Result if Result < 60 else Result / 60}", description=f"Game: **{doc["lastLocation"]}**\nGameId: **{doc["gameId"]}**")
+                    Tracking[Username].send(embed=embed)
                 GameIdList.get(doc["userId"])[1][0] = GameIdList.get(doc["userId"])[1][1]
                 GameIdList.get(doc["userId"])[0][0] = GameIdList.get(doc["userId"])[0][1]
                 GameIdList.get(doc["userId"])[1][1] = f"<t:{int(time.time())}:R>"
                 GameIdList.get(doc["userId"])[0][1] = doc["gameId"]
 
-            Username = UsersCollection.find_one({"UserID": doc["userId"]})["Username"]
             GameName = doc["lastLocation"]
             LobbyStatus = "True" if doc["placeId"] == 6872265039 else "False"
             GameId = doc["gameId"]
@@ -156,15 +161,6 @@ async def AltStatus(userPresences, channel, todelete:list):
         for doc in userPresences:
             if UsersCollection.find_one({"UserID": doc["userId"], "isAlt": True}):
                 PresenceType = doc["userPresenceType"]
-
-                if doc["userId"] not in GameIdList:
-                    GameIdList[doc["userId"]] = [["nil", "nil" if doc["gameId"] is None else doc["gameId"]], ["nil", f"<t:{int(time.time())}:R>"]]
-
-                if doc["gameId"] and not GameIdList.get(doc["userId"])[0][1] == doc["gameId"]:
-                    GameIdList.get(doc["userId"])[1][0] = GameIdList.get(doc["userId"])[1][1]
-                    GameIdList.get(doc["userId"])[0][0] = GameIdList.get(doc["userId"])[0][1]
-                    GameIdList.get(doc["userId"])[1][1] = f"<t:{int(time.time())}:R>"
-                    GameIdList.get(doc["userId"])[0][1] = doc["gameId"]
 
                 Username = UsersCollection.find_one({"UserID": doc["userId"]})["Username"]
                 GameName = doc["lastLocation"]
@@ -322,7 +318,7 @@ async def addPlayer(interaction: discord.Interaction, username:str, altaccount:b
 
 @snipe.command(name="player",description="Send player status.")
 @app_commands.describe(username="Player username to snipe.")
-async def snipe(interaction: discord.Interaction, username:str):
+async def Snipe(interaction: discord.Interaction, username:str):
     print(interaction.user.name + " Used snipe player command")
     response = requests.post("https://users.roblox.com/v1/usernames/users",json={"usernames": [username],"excludeBannedUsers": True})
     if response.status_code == 200:
@@ -362,6 +358,33 @@ async def snipe(interaction: discord.Interaction, username:str):
             await interaction.response.send_message("Username doesn't exist.", delete_after=3, ephemeral=True)
     else:
         await interaction.response.send_message("Request status code isn't 200 (Users API).", delete_after=3, ephemeral=True)
+
+# -------------------------------- Track times ------------------------------- #
+
+@snipe.command(name="tracktimes",description="creates a channel and track the queue times from a username.")
+@app_commands.describe(username="Player username to track.")
+async def TrackQueueTimes(interaction: discord.Interaction, username:str):
+    print(interaction.user.name + " Used track times command")
+    response = requests.post("https://users.roblox.com/v1/usernames/users",json={"usernames": [username],"excludeBannedUsers": True})
+    if response.status_code == 200:
+        responseJSON = response.json()
+
+        data = responseJSON.get("data", [])
+        if data[0] and "requestedUsername" in data[0]:
+            if not Tracking.get(data["name"], False):
+                guild = interaction.guild
+                existingChannel = discord.utils.get(guild.channels, name=data["name"])
+                if not existingChannel:
+                    Channel = await guild.create_text_channel(data["name"])
+                    Channel.send("")
+                    Tracking[data["name"]] = Channel
+                    interaction.response.send_message("Starting...",delete_after=5)
+                else:
+                    interaction.response.send_message("Channel with same name as username already exist.",delete_after=5)
+        else:
+            await interaction.response.send_message("Username doesn't exist.", delete_after=3, ephemeral=True)
+    else:
+        await interaction.response.send_message("Error trying to verify username.", delete_after=3, ephemeral=True)
 
 # --------------------------------- Bot start -------------------------------- #
 
