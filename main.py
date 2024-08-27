@@ -77,45 +77,45 @@ async def Start():
     GameIdWithAltsChannel = bot.get_channel(1277089252676472894)
 
     while True:
-        try:
-            todelete = []
-            todelete2 = []
-            if channel:
-                Docs = UsersCollection.find({})
-                if Docs:
-                    UserIDs = []
+        #try:
+        todelete = []
+        todelete2 = []
+        if channel:
+            Docs = UsersCollection.find({})
+            if Docs:
+                UserIDs = []
 
-                    for doc in Docs:
-                        UserIDs.append(doc["UserID"])
+                for doc in Docs:
+                    UserIDs.append(doc["UserID"])
 
-                    IDLists = [UserIDs[i:i + 30] for i in range(0,len(UserIDs), 30)]
-                    
-                    userPresences = []
-                    for SubList in IDLists:
-                        response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": Cookie})
-                        if response.status_code == 200:
-                            userPresences.extend(response.json().get("userPresences", []))
-                        else:
-                            await channel.send("Request status code isn't 200.", delete_after=3)
+                IDLists = [UserIDs[i:i + 30] for i in range(0,len(UserIDs), 30)]
+                
+                userPresences = []
+                for SubList in IDLists:
+                    response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": Cookie})
+                    if response.status_code == 200:
+                        userPresences.extend(response.json().get("userPresences", []))
+                    else:
+                        await channel.send("Request status code isn't 200.", delete_after=3)
 
-                    await asyncio.gather(
-                        UserStatus(userPresences, channel, todelete),
-                        AltStatus(userPresences, Altchannel, todelete2),
-                        SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
-                    )
-                else:
-                    print("Docs not found")
+                await asyncio.gather(
+                    UserStatus(userPresences, channel, todelete),
+                    AltStatus(userPresences, Altchannel, todelete2),
+                    SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
+                )
             else:
-                print("Channel doesn't exist or not added")
-                await asyncio.sleep(10)
-                continue
-
+                print("Docs not found")
+        else:
+            print("Channel doesn't exist or not added")
             await asyncio.sleep(10)
-            await channel.delete_messages(todelete)
-            await Altchannel.delete_messages(todelete2)
+            continue
 
-        except Exception as e:
-            print(f"Error en el bucle principal: {e}.")
+        await asyncio.sleep(10)
+        await channel.delete_messages(todelete)
+        await Altchannel.delete_messages(todelete2)
+
+        #except Exception as e:
+        #    print(f"Error en el bucle principal: {e}.")
 
 # --------------------------- User status function --------------------------- #
 
@@ -376,7 +376,6 @@ async def TrackQueueTimes(interaction: discord.Interaction, username:str):
                 existingChannel = discord.utils.get(guild.channels, name=data["name"])
                 if not existingChannel:
                     Channel = await guild.create_text_channel(data["name"])
-                    Channel.send("")
                     Tracking[data["name"]] = Channel
                     interaction.response.send_message("Starting...",delete_after=5)
                 else:
