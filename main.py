@@ -331,8 +331,7 @@ async def Snipe(interaction: discord.Interaction, username:str):
                     description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
                     embed = discord.Embed(color=color if LobbyStatus == "True" else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
-                    if (PresenceType == 2 and not (bot.MuteAll or ((not doc["rootPlaceId"] == 6872265039 and not doc["rootPlaceId"] == None) and bot.OtherGame))) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
-                        await interaction.response.send_message(content=f"<t:{int(int(time.time()))}:R>", embed=embed)
+                    await interaction.response.send_message(content=f"<t:{int(int(time.time()))}:R>", embed=embed)
                 else:
                     await interaction.response.send_message("Error: 2", delete_after=3, ephemeral=True)
             else:
