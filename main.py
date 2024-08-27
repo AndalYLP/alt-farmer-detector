@@ -99,8 +99,7 @@ async def Start():
                             await channel.send("Request status code isn't 200.", delete_after=3)
 
                     await asyncio.gather(
-                        UserStatus(userPresences, channel, todelete),
-                        AltStatus(userPresences, Altchannel, todelete2),
+                        UserStatus(userPresences, channel, Altchannel, todelete, todelete2),
                         SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
                     )
                 else:
@@ -119,20 +118,23 @@ async def Start():
 
 # --------------------------- User status function --------------------------- #
 
-async def UserStatus(userPresences, channel, todelete:list):
+async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
     if userPresences:
         for doc in userPresences:
             PresenceType = doc["userPresenceType"]
-            Username = UsersCollection.find_one({"UserID": doc["userId"]})["Username"]
+            ResultFound = UsersCollection.find_one({"UserID": doc["userId"]})
+            isAlt = ResultFound["isAlt"]
+            Username = ResultFound["Username"]
 
             if doc["userId"] not in GameIdList:
-                GameIdList[doc["userId"]] = [["nil", "nil" if doc["gameId"] is None else doc["gameId"]], ["nil", f"<t:{int(time.time())}:R>"]]
+                GameIdList[doc["userId"]] = [["nil", "nil" if doc["gameId"] is None else doc["gameId"]], ["nil", f"<t:{int(time.time())}:R>"], "True" if doc["placeId"] == 6872265039 else "False"]
 
             if doc["gameId"] and not GameIdList.get(doc["userId"])[0][1] == doc["gameId"]:
                 if Tracking.get(Username):
                     Result = int(time.time()) - GameIdList.get(doc["userId"])[1][0][3:-3]
                     embed = discord.Embed(color=46847,title=f"Match ended total time: {Result if Result < 60 else Result / 60}", description=f"Game: **{doc["lastLocation"]}**\nGameId: **{doc["gameId"]}**")
                     Tracking[Username].send(embed=embed)
+                GameIdList.get(doc["userId"])[2] = "True" if doc["placeId"] == 6872265039 else "False"
                 GameIdList.get(doc["userId"])[1][0] = GameIdList.get(doc["userId"])[1][1]
                 GameIdList.get(doc["userId"])[0][0] = GameIdList.get(doc["userId"])[0][1]
                 GameIdList.get(doc["userId"])[1][1] = f"<t:{int(time.time())}:R>"
@@ -149,42 +151,12 @@ async def UserStatus(userPresences, channel, todelete:list):
             description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
             embed = discord.Embed(color=color if LobbyStatus == "True" else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
-            if (PresenceType == 2 and not (bot.MuteAll or ((not doc["rootPlaceId"] == 6872265039 or doc["rootPlaceId"] == None) and bot.OtherGame))) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
+            if isAlt and (PresenceType == 2 and not bot.MuteAll and (doc["rootPlaceId"] == None or doc["rootPlaceId"] == 6872265039)):
+                todelete2.append(await AltChannel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embed=embed))
+
+            if (PresenceType == 2 and not (bot.MuteAll or ((doc["rootPlaceId"] == 6872265039 or doc["rootPlaceId"] == None) and bot.OtherGame))) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
                 todelete.append(await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("@everyone" if PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039)) else ""),embed=embed))
-    else:
-        await channel.send("Error: 2", delete_after=3)
 
-# ---------------------------- Alt status function --------------------------- #
-
-async def AltStatus(userPresences, channel, todelete:list):
-    if userPresences:
-        for doc in userPresences:
-            if UsersCollection.find_one({"UserID": doc["userId"], "isAlt": True}):
-                PresenceType = doc["userPresenceType"]
-
-            if doc["userId"] not in GameIdList:
-                GameIdList[doc["userId"]] = [["nil", "nil" if doc["gameId"] is None else doc["gameId"]], ["nil", f"<t:{int(time.time())}:R>"]]
-
-            if doc["gameId"] and not GameIdList.get(doc["userId"])[0][1] == doc["gameId"]:
-                GameIdList.get(doc["userId"])[1][0] = GameIdList.get(doc["userId"])[1][1]
-                GameIdList.get(doc["userId"])[0][0] = GameIdList.get(doc["userId"])[0][1]
-                GameIdList.get(doc["userId"])[1][1] = f"<t:{int(time.time())}:R>"
-                GameIdList.get(doc["userId"])[0][1] = doc["gameId"]
-
-                Username = UsersCollection.find_one({"UserID": doc["userId"]})["Username"]
-                GameName = doc["lastLocation"]
-                LobbyStatus = "True" if doc["placeId"] == 6872265039 else "False"
-                GameId = doc["gameId"]
-                LastGameId = GameIdList.get(doc["userId"])[0][0]
-                TimeInGameId = GameIdList.get(doc["userId"])[1][1]
-
-                color = 2686720 if PresenceType == 2 else 46847 if PresenceType == 1 else 7763574
-                title = f"{Username} is in a game" if PresenceType == 2 else f"{Username} is online" if PresenceType == 1 else f"{Username} is offline"
-                description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
-                embed = discord.Embed(color=color if LobbyStatus == "True" else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
-
-                if (PresenceType == 2 and not bot.MuteAll and (not doc["rootPlaceId"] == None or doc["rootPlaceId"] == 6872265039)):
-                    todelete.append(await channel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embed=embed))
     else:
         await channel.send("Error: 2", delete_after=3)
 
