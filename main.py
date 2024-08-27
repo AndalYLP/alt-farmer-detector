@@ -133,7 +133,7 @@ async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
                 if Tracking.get(Username):
                     Result = int(time.time()) - GameIdList.get(doc["userId"])[1][0][3:-3]
                     embed = discord.Embed(color=46847,title=f"Match ended total time: {Result if Result < 60 else Result / 60}", description=f"Game: **{doc["lastLocation"]}**\nGameId: **{doc["gameId"]}**")
-                    Tracking[Username].send(embed=embed)
+                    await Tracking[Username].send(embed=embed)
                 GameIdList.get(doc["userId"])[2] = "True" if doc["placeId"] == 6872265039 else "False"
                 GameIdList.get(doc["userId"])[1][0] = GameIdList.get(doc["userId"])[1][1]
                 GameIdList.get(doc["userId"])[0][0] = GameIdList.get(doc["userId"])[0][1]
