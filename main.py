@@ -150,7 +150,7 @@ async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
             color = 2686720 if PresenceType == 2 else 46847 if PresenceType == 1 else 7763574
             title = f"{Username} is in a game" if PresenceType == 2 else f"{Username} is online" if PresenceType == 1 else f"{Username} is offline"
             description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
-            embed = discord.Embed(color=color if (PresenceType == 2 and LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
+            embed = discord.Embed(color=color if (not PresenceType == 2 or LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
             if isAlt and (PresenceType == 2 and not bot.MuteAll and (doc["rootPlaceId"] == None or doc["rootPlaceId"] == 6872265039)):
                 todelete2.append(await AltChannel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embed=embed))
@@ -328,7 +328,7 @@ async def Snipe(interaction: discord.Interaction, username:str):
                     color = 2686720 if PresenceType == 2 else 46847 if PresenceType == 1 else 7763574
                     title = f"{Username} is in a game" if PresenceType == 2 else f"{Username} is online" if PresenceType == 1 else f"{Username} is offline"
                     description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
-                    embed = discord.Embed(color=color if (PresenceType == 2 and LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
+                    embed = discord.Embed(color=color if (not PresenceType == 2 or LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
                     await interaction.response.send_message(content=f"<t:{int(int(time.time()))}:R>", embed=embed)
                 else:
