@@ -384,8 +384,8 @@ async def TrackQueueTimes(interaction: discord.Interaction, username:str):
                 guild = interaction.guild
                 existingChannel = discord.utils.get(guild.channels, name=data[0]["name"])
                 if not existingChannel:
-                    Channel = await guild.create_text_channel(data[0]["name"])
                     Tracking[data[0]["name"]] = Channel
+                    Channel = await guild.create_text_channel(data[0]["name"])
                     interaction.response.send_message("Starting...",delete_after=5)
                 else:
                     interaction.response.send_message("Channel with same name as username already exist.",delete_after=5)
