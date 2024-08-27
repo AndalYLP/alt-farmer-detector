@@ -52,8 +52,21 @@ snipe = Group(name="snipe",description="Snipe commands")
 @bot.event
 async def on_ready():
     print("Bot is ready")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Bedwars Ranked"))
-
+    #await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Bedwars Ranked"))
+    await bot._get_websocket().send_as_json({
+        "op": 3,
+        "d": {
+            "since": 0,
+            "activities": [{
+                "name": "BedwarsRanked",
+                "details": "Test",
+                "url": "https://www.twitch.tv/discord",
+                "type": 0
+            }],
+            "status": "online",
+            "afk": False
+        }
+    })
     bot.tree.add_command(snipe)
     bot.loop.create_task(Start())
     try:
