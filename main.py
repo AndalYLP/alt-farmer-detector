@@ -342,25 +342,30 @@ async def Snipe(interaction: discord.Interaction, username:str):
 
 # -------------------------------- Track times ------------------------------- #
 
-@snipe.command(name="tracktimes",description="creates a channel and track the queue times from a username.")
+@snipe.command(name="tracktimes", description="Creates a channel and tracks the queue times from a username.")
 @app_commands.describe(username="Player username to track.")
-async def TrackQueueTimes(interaction: discord.Interaction, username:str):
-    print(interaction.user.name + " Used track times command")
-    response = requests.post("https://users.roblox.com/v1/usernames/users",json={"usernames": [username],"excludeBannedUsers": True})
+async def TrackQueueTimes(interaction: discord.Interaction, username: str):
+    print(interaction.user.name + " used track times command")
+    
+    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": [username], "excludeBannedUsers": True})
+    
     if response.status_code == 200:
         responseJSON = response.json()
-
         data = responseJSON.get("data", [])
-        if data[0] and "requestedUsername" in data[0]:
+
+        if data and "requestedUsername" in data[0]:
             if not Tracking.get(data[0]["name"], False):
                 guild = interaction.guild
                 existingChannel = discord.utils.get(guild.channels, name=data[0]["name"])
+                
                 if not existingChannel:
-                    Channel = await guild.create_text_channel(data[0]["name"])
-                    Tracking[data[0]["name"]] = Channel
-                    interaction.response.send_message("Starting...",delete_after=5)
+                    channel = await guild.create_text_channel(data[0]["name"])
+                    Tracking[data[0]["name"]] = channel
+                    await interaction.response.send_message("Starting...", delete_after=5)
                 else:
-                    interaction.response.send_message("Channel with same name as username already exist.",delete_after=5)
+                    await interaction.response.send_message("Channel with the same name as username already exists.", delete_after=5)
+            else:
+                await interaction.response.send_message("This username is already being tracked.", delete_after=5)
         else:
             await interaction.response.send_message("Username doesn't exist.", delete_after=3, ephemeral=True)
     else:
