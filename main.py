@@ -16,7 +16,7 @@ import os
 MongURI = os.environ.get("MONGO_URI")
 Client = MongoClient(MongURI)
 dataBase = Client["AltFarmerDetector"]
-UsersCollection = dataBase["Users2"]
+UsersCollection = dataBase["Users"]
 
 app = Flask(__name__)
 
