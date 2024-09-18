@@ -233,7 +233,7 @@ async def List(interaction: discord.Interaction):
     print(interaction.user.name + " Used list command")
     Docs = list(UsersCollection.find({}))   
     page = 0
-    pages = [Docs[i:i + 15] for i in range(0,len(Docs), 15)]
+    pages = [Docs[i:i + 30] for i in range(0,len(Docs), 30)]
     print(len(pages))
     PreviousPage = Button(label="Previous Page", style=discord.ButtonStyle.blurple,disabled=True)
     NextPage = Button(label="Next Page", style=discord.ButtonStyle.blurple)
