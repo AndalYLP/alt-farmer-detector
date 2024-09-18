@@ -88,7 +88,7 @@ async def Start():
                     for doc in Docs:
                         UserIDs.append(doc["UserID"])
 
-                    IDLists = [UserIDs[i:i + 30] for i in range(0,len(UserIDs), 30)]
+                    IDLists = [UserIDs[i:i + 25] for i in range(0,len(UserIDs), 25)]
                     
                     userPresences = []
                     for i, SubList in enumerate(IDLists):
