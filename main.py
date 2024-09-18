@@ -91,12 +91,12 @@ async def Start():
                     IDLists = [UserIDs[i:i + 30] for i in range(0,len(UserIDs), 30)]
                     
                     userPresences = []
-                    for SubList in IDLists:
+                    for i, SubList in enumerate(IDLists):
                         response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": Cookie})
                         if response.status_code == 200:
                             userPresences.extend(response.json().get("userPresences", []))
                         else:
-                            await channel.send(f"Request status code isn't 200.\n{response.json()}", delete_after=3)
+                            await channel.send(f"Request status code isn't 200.\n{response.json(), i}", delete_after=3)
 
                     await asyncio.gather(
                         UserStatus(userPresences, channel, Altchannel, todelete, todelete2),
