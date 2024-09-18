@@ -88,7 +88,7 @@ async def Start():
                     for doc in Docs:
                         UserIDs.append(doc["UserID"])
 
-                    IDLists = [UserIDs[i:i + 25] for i in range(0,len(UserIDs), 25)]
+                    IDLists = [UserIDs[i:i + 30] for i in range(0,len(UserIDs), 30)]
                     
                     userPresences = []
                     for i, SubList in enumerate(IDLists):
@@ -233,7 +233,7 @@ async def List(interaction: discord.Interaction):
     print(interaction.user.name + " Used list command")
     Docs = list(UsersCollection.find({}))   
     page = 0
-    pages = [Docs[i:i + 30] for i in range(0,len(Docs), 30)]
+    pages = [Docs[i:i + 15] for i in range(0,len(Docs), 15)]
     print(len(pages))
     PreviousPage = Button(label="Previous Page", style=discord.ButtonStyle.blurple,disabled=True)
     NextPage = Button(label="Next Page", style=discord.ButtonStyle.blurple)
