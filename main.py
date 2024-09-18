@@ -286,9 +286,13 @@ async def addPlayer(interaction: discord.Interaction, username:str, altaccount:b
     
             data = responseJSON.get("data", [])
             if data[0] and "requestedUsername" in data[0]:
-                result = UsersCollection.insert_one({"UserID": data[0].get("id"), "Username": data[0].get("name"), "isAlt": True if altaccount else False })
-                if result.inserted_id:
-                    await interaction.response.send_message("Username added to the loop.", delete_after=3)
+                if not UsersCollection.find_one({"UserID": data[0].get("id")}):
+                    result = UsersCollection.insert_one({"UserID": data[0].get("id"), "Username": data[0].get("name"), "isAlt": True if altaccount else False })
+                    if result.inserted_id:
+                        await interaction.response.send_message("Username added to the loop.", delete_after=3)
+                else:
+                    UsersCollection.update_one({"UserID": data[0].get("id")}, {"Username": data[0].get("name")})
+                    await interaction.response.send_message("That username is already in the list, updated his name.", delete_after=3, ephemeral=True)
             else:
                 await interaction.response.send_message("Username doesn't exist.", delete_after=3, ephemeral=True)
         else:
