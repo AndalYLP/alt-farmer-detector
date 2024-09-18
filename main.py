@@ -96,7 +96,7 @@ async def Start():
                         if response.status_code == 200:
                             userPresences.extend(response.json().get("userPresences", []))
                         else:
-                            await channel.send("Request status code isn't 200.", delete_after=3)
+                            await channel.send(f"Request status code isn't 200.\n{response.json()}", delete_after=3)
 
                     await asyncio.gather(
                         UserStatus(userPresences, channel, Altchannel, todelete, todelete2),
