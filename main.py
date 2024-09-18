@@ -97,6 +97,8 @@ async def Start():
                             userPresences.extend(response.json().get("userPresences", []))
                         else:
                             await channel.send(f"Request status code isn't 200.\n{response.json(), i}", delete_after=3)
+                            if response.json().message == "Too many requests. Please wait a bit.":
+                                await asyncio.sleep(15)
 
                     await asyncio.gather(
                         UserStatus(userPresences, channel, Altchannel, todelete, todelete2),
