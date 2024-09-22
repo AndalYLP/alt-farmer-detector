@@ -415,7 +415,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                 if not len(result) == len(UsernamesArray):
                     for username in UsernamesArray:
                         if not username in result:
-                            await interaction.response.send_message(f"Username **{username}** not found", delete_after=3, ephemeral=True)
+                            await interaction.followup.send(f"Username **{username}** not found", delete_after=3, ephemeral=True)
                 else:
                     FriendsID = []
 
@@ -436,13 +436,13 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                     commonFriends = set.intersection(*map(set, FriendsID))
                     print(commonFriends)
                     commonFriendsstr = ", ".join(map(str, commonFriends))
-                    await interaction.response.send_message("result: " + commonFriendsstr)
+                    await interaction.followup.send("result: " + commonFriendsstr)
 
             else:
-                await interaction.response.send_message("Error getting usernames.", delete_after=3, ephemeral=True)
+                await interaction.followup.send("Error getting usernames.", delete_after=3, ephemeral=True)
        
         else:
-            await interaction.response.send_message("Request status code isn't 200 (Users API).", delete_after=3, ephemeral=True)
+            await interaction.followup.send("Request status code isn't 200 (Users API).", delete_after=3, ephemeral=True)
 
 
 # --------------------------------- Bot start -------------------------------- #
