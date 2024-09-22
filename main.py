@@ -2,7 +2,9 @@ from discord.ui import Button, View
 from discord import app_commands
 from discord.ext import commands
 from pymongo import MongoClient
+from collections import Counter
 from threading import Thread
+
 from flask import Flask
 import traceback
 import requests
@@ -393,7 +395,8 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
 
 @snipe.command(name="mutuals", description="check mutuals between players.")
 @app_commands.describe(usernames="list of usernames, e.g: OrionYeets, chasemaser, ...")
-async def mutuals(interaction: discord.Interaction, usernames: str):
+@app_commands.describe(strict="True = Everyone should have the same player added")
+async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool):
     print(interaction.user.name + " Used mutuals command")
     await interaction.response.defer(thinking=True)
 
@@ -429,26 +432,47 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
 
                     currentUser = [Pdata["id"] for Pdata in data]
                     FriendsID.append(currentUser if data else [])
-                    
-                commonFriends = list(set.intersection(*map(set, FriendsID)))
+
+                if strict:    
+                    commonFriends = list(set.intersection(*map(set, FriendsID)))
+                else:
+                    JointLists = [item for sublista in FriendsID for item in sublista]
+                    Counter = Counter(JointLists)
+
+                    commonFriends = {item: count for item, count in Counter.items() if count > 1}
 
                 if len(commonFriends) > 0:
-                    response = requests.post("https://users.roblox.com/v1/users", json={"userIds": commonFriends, "excludeBannedUsers": True})
-                    requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE",json={"content": response.text})
-                    if response.status_code == 200:
-                        responseJSON = response.json()
+                    if not strict:
+                        response = requests.post("https://users.roblox.com/v1/users", json={"userIds": commonFriends, "excludeBannedUsers": True})
+                        if response.status_code == 200:
+                            responseJSON = response.json()
 
-                        data = responseJSON.get("data", [])
-                        if len(data) > 0 and "name" in data[0]:
-                            embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])}\n" for i,v in enumerate(data)))
+                            data = responseJSON.get("data", [])
+                            if len(data) > 0 and "name" in data[0]:
+                                embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])}\n" for i,v in enumerate(data)))
 
-                            await interaction.followup.send(embed=embed)
+                                await interaction.followup.send(embed=embed)
+                            else:
+                                await interaction.followup.send("Error getting usernames.", ephemeral=True)
                         else:
-                            await interaction.followup.send("Error getting usernames.", ephemeral=True)
+                            await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                     else:
-                        await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
+                        response = requests.post("https://users.roblox.com/v1/users", json={"userIds": commonFriends.values(), "excludeBannedUsers": True})
+                        if response.status_code == 200:
+                            responseJSON = response.json()
+
+                            data = responseJSON.get("data", [])
+                            if len(data) > 0 and "name" in data[0]:
+                                embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])} **({str(commonFriends[v["id"]])})** \n" for i,v in enumerate(data)))
+
+                                await interaction.followup.send(embed=embed)
+                            else:
+                                await interaction.followup.send("Error getting usernames.", ephemeral=True)
+                        else:
+                            await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                 else:
                     await interaction.followup.send("No mutuals found.")
+
         else:
             await interaction.followup.send("Error getting usernames.", ephemeral=True)
     
