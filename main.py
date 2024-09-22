@@ -395,6 +395,7 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
 @app_commands.describe(usernames="list of usernames, e.g: OrionYeets, chasemaser, ...")
 async def mutuals(interaction: discord.Interaction, usernames: str):
     print(interaction.user.name + " Used mutuals command")
+    await interaction.response.defer()
     UsernamesArray = usernames.split(",")
 
     if not len(UsernamesArray) == 0 and len(UsernamesArray) == 1:
