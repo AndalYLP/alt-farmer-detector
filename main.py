@@ -97,8 +97,8 @@ async def Start():
                             await channel.send(f"Request status code isn't 200.\n{response.json(), i}", delete_after=3)
                             if response.json().get("errors", [])[0].get("message", []) == "Too many requests. Please wait a bit.":
                                 await asyncio.sleep(15)
-                    asyncio.create_task(await channel.purge(limit=100))
-                    asyncio.create_task(await Altchannel.purge(limit=100))
+                    asyncio.create_task(channel.purge(limit=100))
+                    asyncio.create_task(Altchannel.purge(limit=100))
                     await asyncio.gather(
                         UserStatus(userPresences, channel, Altchannel, todelete, todelete2),
                         SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
@@ -119,6 +119,7 @@ async def Start():
 # --------------------------- User status function --------------------------- #
 
 async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
+    embeds = []
     if userPresences:
         for doc in userPresences:
             PresenceType = doc["userPresenceType"]
@@ -128,6 +129,7 @@ async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
             LobbyStatus = "True" if doc["placeId"] == 6872265039 else "False"
             GameName = doc["lastLocation"]
             GameId = doc["gameId"]
+            Group = ResultFound.get("GroupName", "None")
 
             if doc["userId"] not in GameIdList:
                 GameIdList[doc["userId"]] = [["nil", "nil" if GameId is None else GameId], ["nil", f"<t:{int(time.time())}:R>"], "True" if doc["placeId"] == 6872265039 else "False"]
@@ -152,11 +154,21 @@ async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
             embed = discord.Embed(color=color if (not PresenceType == 2 or LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
             if isAlt and (PresenceType == 2 and not bot.MuteAll and (doc["rootPlaceId"] == None or doc["rootPlaceId"] == 6872265039)):
-                todelete2.append(await AltChannel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embed=embed))
-
-            if (PresenceType == 2 and ((doc["rootPlaceId"] == 6872265039 or doc["rootPlaceId"] == None) or not bot.OtherGame) and not bot.MuteAll) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
-                todelete.append(await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("@everyone" if PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039)) else ""),embed=embed))
-
+                await AltChannel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embed=embed)
+            if not Group == "None":
+                embed.set_footer(text= "Group: " + Group)
+            if not Group in embeds:
+                embeds[Group] = [embed]
+            else:
+                embeds[Group].insert(embed)
+        
+        for groupName, Embeds in embeds:
+            if not groupName == "None":
+                await channel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embeds=Embeds)
+            elif groupName == "None":
+                for embed in Embeds:
+                    if (PresenceType == 2 and ((doc["rootPlaceId"] == 6872265039 or doc["rootPlaceId"] == None) or not bot.OtherGame) and not bot.MuteAll) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
+                        await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("@everyone" if PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039)) else ""),embed=embed)
     else:
         await channel.send("Error: 2", delete_after=3)
 
@@ -275,8 +287,9 @@ async def List(interaction: discord.Interaction):
 
 @snipe.command(name="addplayer",description="Add a player to the loop.")
 @app_commands.describe(username="the username to add.")
+@app_commands.describe(groupname="Group name NN, None = no group.")
 @app_commands.describe(altaccount="True if its an alt account.")
-async def addPlayer(interaction: discord.Interaction, username:str, altaccount:bool):
+async def addPlayer(interaction: discord.Interaction, username:str, altaccount:bool, groupname:str):
     print(interaction.user.name + " Used addplayer command")
     if not UsersCollection.find_one({"Username": username}):
         response = requests.post("https://users.roblox.com/v1/usernames/users",json={"usernames": [username],"excludeBannedUsers": True})
@@ -286,7 +299,7 @@ async def addPlayer(interaction: discord.Interaction, username:str, altaccount:b
             data = responseJSON.get("data", [])
             if data[0] and "requestedUsername" in data[0]:
                 if not UsersCollection.find_one({"UserID": data[0].get("id")}):
-                    result = UsersCollection.insert_one({"UserID": data[0].get("id"), "Username": data[0].get("name"), "isAlt": True if altaccount else False })
+                    result = UsersCollection.insert_one({"UserID": data[0].get("id"), "Username": data[0].get("name"), "isAlt": True if altaccount else False, "GroupName": groupname })
                     if result.inserted_id:
                         await interaction.response.send_message("Username added to the loop.", delete_after=3)
                 else:
