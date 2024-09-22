@@ -95,8 +95,8 @@ async def Start():
                             await channel.send(f"Request status code isn't 200.\n{response.json(), i}", delete_after=3)
                             if response.json().get("errors", [])[0].get("message", []) == "Too many requests. Please wait a bit.":
                                 await asyncio.sleep(15)
-                    asyncio.create_task(channel.purge(limit=100))
-                    asyncio.create_task(Altchannel.purge(limit=100))
+                    await channel.purge(limit=100)
+                    await Altchannel.purge(limit=100)
                     await asyncio.gather(
                         UserStatus(userPresences, channel, Altchannel),
                         SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
@@ -153,7 +153,7 @@ async def UserStatus(userPresences, channel, AltChannel):
 
             if not Group == "None":
                 embed.set_footer(text= "Group: " + Group)
-                
+
             if isAlt and (PresenceType == 2 and not bot.MuteAll and (doc["rootPlaceId"] == None or doc["rootPlaceId"] == 6872265039)):
                 await AltChannel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embed=embed)
 
@@ -299,7 +299,7 @@ async def addPlayer(interaction: discord.Interaction, username:str, altaccount:b
             responseJSON = response.json()
     
             data = responseJSON.get("data", [])
-            if data[0] and "requestedUsername" in data[0]:
+            if len(data) > 0 and "requestedUsername" in data[0]:
                 if not UsersCollection.find_one({"UserID": data[0].get("id")}):
                     result = UsersCollection.insert_one({"UserID": data[0].get("id"), "Username": data[0].get("name"), "isAlt": True if altaccount else False, "GroupName": groupname })
                     if result.inserted_id:
@@ -325,7 +325,7 @@ async def Snipe(interaction: discord.Interaction, username:str):
         responseJSON = response.json()
 
         data = responseJSON.get("data", [])
-        if data[0] and "requestedUsername" in data[0]:
+        if len(data) > 0 and "requestedUsername" in data[0]:
             id = data[0].get("id")
             Username = data[0].get("name")
 
@@ -388,6 +388,58 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
             await interaction.response.send_message("Username doesn't exist.", delete_after=3, ephemeral=True)
     else:
         await interaction.response.send_message("Error trying to verify username.", delete_after=3, ephemeral=True)
+
+# ---------------------------------- Mutuals --------------------------------- #
+
+@snipe.command(name="mutuals", description="check mutuals between players.")
+@app_commands.describe(usernames="list of usernames, e.g: OrionYeets, chasemaser, ...")
+async def mutuals(interaction: discord.Interaction, usernames: str):
+    print(interaction.user.name + " Used mutuals command")
+    UsernamesArray = usernames.split(",")
+
+    if not len(UsernamesArray) == 0 and len(UsernamesArray) == 1:
+        interaction.response.send_message("you need to give 2+ players, e.g: OrionYeets, chasemaser, ...", delete_after=3, ephemeral=True)
+    else:
+        response = requests.post("https://users.roblox.com/v1/usernames/users",json={"usernames": UsernamesArray,"excludeBannedUsers": True})
+        if response.status_code == 200:
+            responseJSON = response.json()
+
+            data = responseJSON.get("data", [])
+
+            result = {}
+            if len(data) > 0 and "requestedUsername" in data[0]:
+                for Pdata in data:
+                    result[Pdata["requestedUsername"]] = Pdata["id"]
+
+                if not len(result) == len(UsernamesArray):
+                    for username in UsernamesArray:
+                        if not username in result:
+                            await interaction.response.send_message(f"Username **{username}** not found", delete_after=3, ephemeral=True)
+                else:
+                    FriendsID = []
+
+                    for id in result:
+                        response = requests.post(f"https://friends.roblox.com/v1/users/{id}/friends/find?userSort=2&limit=200",headers={"Cookie": Cookie})
+                        responseJSON = response.json()
+
+                        data = responseJSON.get("PageItems", [])
+                        if len(data) > 0:
+                            currentUser = []
+                            for Pdata in data:
+                                currentUser.append(Pdata["id"])
+                            FriendsID.append(currentUser)
+                        else:
+                            FriendsID.append([])
+                    commonFriends = set.intersection(*map(set, FriendsID))
+                    commonFriendsstr = ", ".join(map(str, commonFriends))
+                    await interaction.response.send_message(commonFriendsstr)
+
+            else:
+                await interaction.response.send_message("Error getting usernames.", delete_after=3, ephemeral=True)
+       
+        else:
+            await interaction.response.send_message("Request status code isn't 200 (Users API).", delete_after=3, ephemeral=True)
+
 
 # --------------------------------- Bot start -------------------------------- #
 
