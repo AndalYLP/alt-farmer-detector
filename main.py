@@ -100,8 +100,8 @@ async def Start():
                             if response.json().get("errors", [])[0].get("message", []) == "Too many requests. Please wait a bit.":
                                 await asyncio.sleep(15)
 
-                    asyncio.create_task(channel.delete_messages(todelete))
-                    asyncio.create_task(Altchannel.delete_messages(todelete2))
+                    await channel.delete_messages(todelete)
+                    await Altchannel.delete_messages(todelete2)
                     await asyncio.gather(
                         UserStatus(userPresences, channel, Altchannel, todelete, todelete2),
                         SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
