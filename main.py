@@ -472,7 +472,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
                             data = responseJSON.get("data", [])
                             if len(data) > 0 and "name" in data[0]:
                                 requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE",json={"content": str(commonFriends)})
-                                embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])} **({str(commonFriends[v["id"]])})** \n" for i,v in enumerate(data)))
+                                embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])} **({str(commonFriends[int(v["id"])])})** \n" for i,v in enumerate(data)))
 
                                 await interaction.followup.send(embed=embed)
                             else:
