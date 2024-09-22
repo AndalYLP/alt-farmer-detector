@@ -157,8 +157,6 @@ async def UserStatus(userPresences, channel, AltChannel):
             if (PresenceType == 2 and ((doc["rootPlaceId"] == 6872265039 or doc["rootPlaceId"] == None) or not bot.OtherGame) and not bot.MuteAll) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
                 if not Group == "None":
                     embed.set_footer(text= "Group: " + Group)
-                else:
-                    await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("@everyone" if PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039)) else ""),embed=embed)
 
                 if not Group in embeds:
                     embeds[Group] = [embed]
