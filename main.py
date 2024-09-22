@@ -437,7 +437,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                         responseJSON = response.json()
 
                         data = responseJSON.get("data", [])
-                        if len(data) > 0 and "requestedUsername" in data[0]:
+                        if len(data) > 0 and "name" in data[0]:
                             embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])}\n" for i,v in enumerate(data)))
 
                             await interaction.followup.send(embed=embed)
