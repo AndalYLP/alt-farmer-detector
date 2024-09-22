@@ -440,7 +440,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                         if len(data) > 0 and "requestedUsername" in data[0]:
                             embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])}\n" for i,v in enumerate(data)))
 
-                            await interaction.followup.send(embed)
+                            await interaction.followup.send(embed=embed)
                         else:
                             await interaction.followup.send("Error getting usernames.", delete_after=3, ephemeral=True)
                     else:
