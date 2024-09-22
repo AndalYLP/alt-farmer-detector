@@ -84,12 +84,10 @@ async def Start():
                 Docs = UsersCollection.find({})
                 if Docs:
                     UserIDs = []
-
                     for doc in Docs:
                         UserIDs.append(doc["UserID"])
 
                     IDLists = [UserIDs[i:i + 30] for i in range(0,len(UserIDs), 30)]
-                    
                     userPresences = []
                     for i, SubList in enumerate(IDLists):
                         response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": Cookie})
@@ -109,8 +107,6 @@ async def Start():
             else:
                 print("Channel doesn't exist or not added")
                 await asyncio.sleep(10)
-                asyncio.create_task(channel.purge(limit=100))
-                asyncio.create_task(Altchannel.purge(limit=100))
                 continue
 
             await asyncio.sleep(10)
