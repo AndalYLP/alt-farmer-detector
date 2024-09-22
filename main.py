@@ -404,7 +404,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
         await interaction.followup.send("You need to give 2+ players, e.g: OrionYeets, chasemaser, ...", delete_after=3, ephemeral=True)
         return
 
-    response = requests.get("https://users.roblox.com/v1/usernames/users", json={"usernames": UsernamesArray, "excludeBannedUsers": True})
+    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": UsernamesArray, "excludeBannedUsers": True})
     
     if response.status_code == 200:
         responseJSON = response.json()
@@ -423,8 +423,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                 FriendsID = []
 
                 for id in result.values():
-                    response = requests.post(f"https://friends.roblox.com/v1/users/{id}/friends/find?userSort=2&limit=200", headers={"Cookie": Cookie})
-                    requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE",json={"content": response.text})
+                    response = requests.get(f"https://friends.roblox.com/v1/users/{id}/friends/find?userSort=2&limit=200", headers={"Cookie": Cookie})
                     responseJSON = response.json()
                     data = responseJSON.get("PageItems", [])
 
