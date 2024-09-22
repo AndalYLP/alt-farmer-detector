@@ -119,7 +119,7 @@ async def Start():
 # --------------------------- User status function --------------------------- #
 
 async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
-    embeds = []
+    embeds = {}
     if userPresences:
         for doc in userPresences:
             PresenceType = doc["userPresenceType"]
@@ -164,7 +164,9 @@ async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
         
         for groupName, Embeds in embeds:
             if not groupName == "None":
-                await channel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embeds=Embeds)
+                SubGroups = [Embeds[i:i + 10] for i in range(0,len(Embeds), 10)]
+                for group in SubGroups:
+                    await channel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embeds=group)
             elif groupName == "None":
                 for embed in Embeds:
                     if (PresenceType == 2 and ((doc["rootPlaceId"] == 6872265039 or doc["rootPlaceId"] == None) or not bot.OtherGame) and not bot.MuteAll) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
