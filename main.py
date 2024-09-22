@@ -161,18 +161,25 @@ async def UserStatus(userPresences, channel, AltChannel):
 
             if (PresenceType == 2 and ((doc["rootPlaceId"] == 6872265039 or doc["rootPlaceId"] == None) or not bot.OtherGame) and not bot.MuteAll) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
                 if not Group in embeds:
-                    embeds[Group] = [embed]
+                    embeds[Group] = [PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039))]
+                    embeds[Group].append(embed)
                 else:
+                    if not Group == "None":
+                        if embed[Group][1] == False:
+                            embed[Group][1] = PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039))
+                    else:
+                        embed.append(PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039)))
                     embeds[Group].append(embed)
         
         for groupName, Embeds in embeds.items():
             if not groupName == "None":
                 SubGroups = [Embeds[i:i + 10] for i in range(0,len(Embeds), 10)]
                 for group in SubGroups:
-                    await channel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embeds=group)
+                    await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("@everyone" if group[0] else ""),embeds=group[1:])
 
-        for embed in embeds["None"]:
-            await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("@everyone" if PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039)) else ""),embed=embed)
+        for i, embed in enumerate(embeds["None"]):
+            if not (i % 2) == 0:
+                await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("@everyone" if embeds["None"][i-1] else ""),embed=embed)
     else:
         await channel.send("Error: 2", delete_after=3)
 
@@ -457,9 +464,8 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
                         else:
                             await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                     else:
-                        response = requests.post("https://users.roblox.com/v1/users", json={"userIds": commonFriends.values(), "excludeBannedUsers": True})
-                        requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE", json={"content": response.text})
-                        requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE", json={"content": str(commonFriends.values())})
+                        response = requests.post("https://users.roblox.com/v1/users", json={"userIds": list(commonFriends.values()), "excludeBannedUsers": True})
+
                         if response.status_code == 200:
                             responseJSON = response.json()
 
