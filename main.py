@@ -433,7 +433,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                 commonFriends = list(set.intersection(*map(set, FriendsID)))
 
                 if len(commonFriends) > 0:
-                    response = requests.post("https://users.roblox.com/v1/users", json={"usernames": commonFriends, "excludeBannedUsers": True})
+                    response = requests.post("https://users.roblox.com/v1/users", json={"userIds": commonFriends, "excludeBannedUsers": True})
                     requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE",json={"content": response.text})
                     requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE",json={"content": ", ".join(commonFriends)})
                     if response.status_code == 200:
