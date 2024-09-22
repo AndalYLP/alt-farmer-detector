@@ -432,7 +432,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                     
                 commonFriends = list(set.intersection(*map(set, FriendsID)))
                 if len(commonFriends) > 0:
-                    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": commonFriends, "excludeBannedUsers": True})
+                    response = requests.post("https://users.roblox.com/v1/users", json={"usernames": commonFriends, "excludeBannedUsers": True})
                     if response.status_code == 200:
                         responseJSON = response.json()
 
@@ -447,7 +447,6 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                         await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                 else:
                     await interaction.followup.send("No mutuals found.")
-
         else:
             await interaction.followup.send("Error getting usernames.", ephemeral=True)
     
