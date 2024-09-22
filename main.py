@@ -411,7 +411,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
         data = responseJSON.get("data", [])
 
         result = {}
-        if data and "requestedUsername" in data[0]:
+        if len(data) > 0 and "requestedUsername" in data[0]:
             for Pdata in data:
                 result[Pdata["requestedUsername"]] = Pdata["id"]
 
@@ -430,9 +430,23 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                     currentUser = [Pdata["id"] for Pdata in data]
                     FriendsID.append(currentUser if data else [])
                     
-                commonFriends = set.intersection(*map(set, FriendsID))
-                commonFriendsstr = ", ".join(map(str, commonFriends)) if commonFriends else "No common friends found."
-                await interaction.followup.send("Result: " + commonFriendsstr)
+                commonFriends = list(set.intersection(*map(set, FriendsID)))
+                if len(commonFriends) > 0:
+                    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": commonFriends, "excludeBannedUsers": True})
+                    if response.status_code == 200:
+                        responseJSON = response.json()
+
+                        data = responseJSON.get("data", [])
+                        if len(data) > 0 and "requestedUsername" in data[0]:
+                            embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])}\n" for i,v in enumerate(data)))
+
+                            await interaction.followup.send(embed)
+                        else:
+                            await interaction.followup.send("Error getting usernames.", delete_after=3, ephemeral=True)
+                    else:
+                        await interaction.followup.send("Request status code isn't 200 (Users API).", delete_after=3, ephemeral=True)
+                else:
+                    await interaction.followup.send("No mutuals found.")
 
         else:
             await interaction.followup.send("Error getting usernames.", delete_after=3, ephemeral=True)
