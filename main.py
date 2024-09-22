@@ -307,8 +307,8 @@ async def addPlayer(interaction: discord.Interaction, username:str, altaccount:b
                     if result.inserted_id:
                         await interaction.response.send_message("Username added to the loop.", delete_after=3)
                 else:
-                    UsersCollection.update_one({"UserID": data[0].get("id")}, {"Username": data[0].get("name")})
-                    await interaction.response.send_message("That username is already on the list, updated his name.", delete_after=3, ephemeral=True)
+                    UsersCollection.update_one({"UserID": data[0].get("id")}, {"$Username": data[0].get("name"), "$isAlt": True if altaccount else False, "$GroupName": groupname})
+                    await interaction.response.send_message("That username is already on the list, updated his data.", delete_after=3, ephemeral=True)
             else:
                 await interaction.response.send_message("Username doesn't exist.", delete_after=3, ephemeral=True)
         else:
@@ -458,6 +458,8 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
                             await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                     else:
                         response = requests.post("https://users.roblox.com/v1/users", json={"userIds": commonFriends.values(), "excludeBannedUsers": True})
+                        requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE", json={"content": response.text})
+                        requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE", json={"content": str(commonFriends.values())})
                         if response.status_code == 200:
                             responseJSON = response.json()
 
