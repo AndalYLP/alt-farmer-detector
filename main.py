@@ -432,7 +432,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                             FriendsID.append([])
                     commonFriends = set.intersection(*map(set, FriendsID))
                     commonFriendsstr = ", ".join(map(str, commonFriends))
-                    await interaction.response.send_message(commonFriendsstr)
+                    await interaction.response.send_message("result: " + commonFriendsstr)
 
             else:
                 await interaction.response.send_message("Error getting usernames.", delete_after=3, ephemeral=True)
