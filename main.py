@@ -78,8 +78,6 @@ async def Start():
 
     while True:
         try:
-            todelete = []
-            todelete2 = []
             if channel:
                 Docs = UsersCollection.find({})
                 if Docs:
@@ -100,7 +98,7 @@ async def Start():
                     asyncio.create_task(channel.purge(limit=100))
                     asyncio.create_task(Altchannel.purge(limit=100))
                     await asyncio.gather(
-                        UserStatus(userPresences, channel, Altchannel, todelete, todelete2),
+                        UserStatus(userPresences, channel, Altchannel),
                         SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
                     )
                 else:
@@ -118,7 +116,7 @@ async def Start():
 
 # --------------------------- User status function --------------------------- #
 
-async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
+async def UserStatus(userPresences, channel, AltChannel):
     embeds = {}
     if userPresences:
         for doc in userPresences:
@@ -161,7 +159,7 @@ async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
                     embed.set_footer(text= "Group: " + Group)
                 else:
                     await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("@everyone" if PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039)) else ""),embed=embed)
-                    
+
                 if not Group in embeds:
                     embeds[Group] = [embed]
                 else:
@@ -172,10 +170,9 @@ async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
                 SubGroups = [Embeds[i:i + 10] for i in range(0,len(Embeds), 10)]
                 for group in SubGroups:
                     await channel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embeds=group)
-            elif groupName == "None":
-                for embed in Embeds:
-                    if (PresenceType == 2 and ((doc["rootPlaceId"] == 6872265039 or doc["rootPlaceId"] == None) or not bot.OtherGame) and not bot.MuteAll) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
-                        await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("@everyone" if PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039)) else ""),embed=embed)
+
+        for embed in embeds["None"]:
+            await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("@everyone" if PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039)) else ""),embed=embed)
     else:
         await channel.send("Error: 2", delete_after=3)
 
