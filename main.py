@@ -97,7 +97,8 @@ async def Start():
                             await channel.send(f"Request status code isn't 200.\n{response.json(), i}", delete_after=3)
                             if response.json().get("errors", [])[0].get("message", []) == "Too many requests. Please wait a bit.":
                                 await asyncio.sleep(15)
-
+                    asyncio.create_task(channel.purge(limit=100))
+                    asyncio.create_task(Altchannel.purge(limit=100))
                     await asyncio.gather(
                         UserStatus(userPresences, channel, Altchannel, todelete, todelete2),
                         SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
