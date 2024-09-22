@@ -429,9 +429,12 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                             for Pdata in data:
                                 currentUser.append(Pdata["id"])
                             FriendsID.append(currentUser)
+                            print(FriendsID)
                         else:
                             FriendsID.append([])
+                            print("nodata")
                     commonFriends = set.intersection(*map(set, FriendsID))
+                    print(commonFriends)
                     commonFriendsstr = ", ".join(map(str, commonFriends))
                     await interaction.response.send_message("result: " + commonFriendsstr)
 
