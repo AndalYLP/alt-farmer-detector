@@ -442,7 +442,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
                     commonFriends = {item: count for item, count in counter.items() if count > 1}
 
                 if len(commonFriends) > 0:
-                    if not strict:
+                    if strict:
                         response = requests.post("https://users.roblox.com/v1/users", json={"userIds": commonFriends, "excludeBannedUsers": True})
                         if response.status_code == 200:
                             responseJSON = response.json()
