@@ -100,8 +100,8 @@ async def Start():
                             if response.json().get("errors", [])[0].get("message", []) == "Too many requests. Please wait a bit.":
                                 await asyncio.sleep(15)
 
-                    await channel.purge(100)
-                    await Altchannel.purge(100)
+                    await channel.purge(limit=100)
+                    await Altchannel.purge(limit=100)
 
                     await asyncio.gather(
                         UserStatus(userPresences, channel, Altchannel, todelete, todelete2),
