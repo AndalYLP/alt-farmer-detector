@@ -383,14 +383,10 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
         if data and "requestedUsername" in data[0]:
             if not Tracking.get(data[0]["name"], False):
                 guild = interaction.guild
-                existingChannel = discord.utils.get(guild.channels, name=data[0]["name"])
-                
-                if not existingChannel:
-                    channel = await guild.create_text_channel(data[0]["name"])
-                    Tracking[data[0]["name"]] = channel
-                    await interaction.response.send_message("Starting...", delete_after=5)
-                else:
-                    await interaction.response.send_message("Channel with the same name as username already exists.", delete_after=5)
+
+                channel = await guild.create_text_channel(data[0]["name"])
+                Tracking[data[0]["name"]] = channel
+                await interaction.response.send_message("Starting...", delete_after=5)
             else:
                 await interaction.response.send_message("This username is already being tracked.", delete_after=5)
         else:
@@ -464,7 +460,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
                         else:
                             await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                     else:
-                        response = requests.post("https://users.roblox.com/v1/users", json={"userIds": list(commonFriends.values()), "excludeBannedUsers": True})
+                        response = requests.post("https://users.roblox.com/v1/users", json={"userIds": list(commonFriends.keys()), "excludeBannedUsers": True})
 
                         if response.status_code == 200:
                             responseJSON = response.json()
