@@ -165,8 +165,8 @@ async def UserStatus(userPresences, channel, AltChannel):
                     embeds[Group].append(embed)
                 else:
                     if not Group == "None":
-                        if embed[Group][1] == False:
-                            embed[Group][1] = PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039))
+                        if embeds[Group][1] == False:
+                            embeds[Group][1] = PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039))
                     else:
                         embeds[Group].append(PresenceType == 2 and (doc["rootPlaceId"] == None or (doc["rootPlaceId"] == 6872265039 and not doc["placeId"] == 6872265039)))
                     embeds[Group].append(embed)
