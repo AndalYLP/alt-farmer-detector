@@ -160,7 +160,7 @@ async def UserStatus(userPresences, channel, AltChannel, todelete, todelete2):
             if not Group in embeds:
                 embeds[Group] = [embed]
             else:
-                embeds[Group].insert(embed)
+                embeds[Group].append(embed)
         
         for groupName, Embeds in embeds:
             if not groupName == "None":
