@@ -404,7 +404,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
         await interaction.followup.send("You need to give 2+ players, e.g: OrionYeets, chasemaser, ...", delete_after=3, ephemeral=True)
         return
 
-    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": UsernamesArray, "excludeBannedUsers": True})
+    response = requests.get("https://users.roblox.com/v1/usernames/users", json={"usernames": UsernamesArray, "excludeBannedUsers": True})
     
     if response.status_code == 200:
         responseJSON = response.json()
