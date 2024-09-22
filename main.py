@@ -437,9 +437,9 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
                     commonFriends = list(set.intersection(*map(set, FriendsID)))
                 else:
                     JointLists = [item for sublista in FriendsID for item in sublista]
-                    Counter = Counter(JointLists)
+                    counter = Counter(JointLists)
 
-                    commonFriends = {item: count for item, count in Counter.items() if count > 1}
+                    commonFriends = {item: count for item, count in counter.items() if count > 1}
 
                 if len(commonFriends) > 0:
                     if not strict:
