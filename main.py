@@ -151,13 +151,13 @@ async def UserStatus(userPresences, channel, AltChannel):
             description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
             embed = discord.Embed(color=color if (not PresenceType == 2 or LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
+            if not Group == "None":
+                embed.set_footer(text= "Group: " + Group)
+                
             if isAlt and (PresenceType == 2 and not bot.MuteAll and (doc["rootPlaceId"] == None or doc["rootPlaceId"] == 6872265039)):
                 await AltChannel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embed=embed)
 
             if (PresenceType == 2 and ((doc["rootPlaceId"] == 6872265039 or doc["rootPlaceId"] == None) or not bot.OtherGame) and not bot.MuteAll) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
-                if not Group == "None":
-                    embed.set_footer(text= "Group: " + Group)
-
                 if not Group in embeds:
                     embeds[Group] = [embed]
                 else:
@@ -306,13 +306,13 @@ async def addPlayer(interaction: discord.Interaction, username:str, altaccount:b
                         await interaction.response.send_message("Username added to the loop.", delete_after=3)
                 else:
                     UsersCollection.update_one({"UserID": data[0].get("id")}, {"Username": data[0].get("name")})
-                    await interaction.response.send_message("That username is already in the list, updated his name.", delete_after=3, ephemeral=True)
+                    await interaction.response.send_message("That username is already on the list, updated his name.", delete_after=3, ephemeral=True)
             else:
                 await interaction.response.send_message("Username doesn't exist.", delete_after=3, ephemeral=True)
         else:
             await interaction.response.send_message("Error trying to verify username.", delete_after=3, ephemeral=True)
     else:
-        await interaction.response.send_message("That username is already in the list.", delete_after=3, ephemeral=True)
+        await interaction.response.send_message("That username is already on the list.", delete_after=3, ephemeral=True)
 
 # --------------------------- Snipe player command --------------------------- #
 
