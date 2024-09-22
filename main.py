@@ -395,55 +395,50 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
 @app_commands.describe(usernames="list of usernames, e.g: OrionYeets, chasemaser, ...")
 async def mutuals(interaction: discord.Interaction, usernames: str):
     print(interaction.user.name + " Used mutuals command")
-    await interaction.response.defer()
+    await interaction.response.defer(thinking=True)
+
     UsernamesArray = usernames.split(",")
+    UsernamesArray = [username.strip() for username in UsernamesArray if username.strip()] 
 
-    if not len(UsernamesArray) == 0 and len(UsernamesArray) == 1:
-        interaction.response.send_message("you need to give 2+ players, e.g: OrionYeets, chasemaser, ...", delete_after=3, ephemeral=True)
-    else:
-        response = requests.post("https://users.roblox.com/v1/usernames/users",json={"usernames": UsernamesArray,"excludeBannedUsers": True})
-        if response.status_code == 200:
-            responseJSON = response.json()
+    if len(UsernamesArray) < 2:
+        await interaction.followup.send("You need to give 2+ players, e.g: OrionYeets, chasemaser, ...", delete_after=3, ephemeral=True)
+        return
 
-            data = responseJSON.get("data", [])
+    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": UsernamesArray, "excludeBannedUsers": True})
+    
+    if response.status_code == 200:
+        responseJSON = response.json()
+        data = responseJSON.get("data", [])
 
-            result = {}
-            if len(data) > 0 and "requestedUsername" in data[0]:
-                for Pdata in data:
-                    result[Pdata["requestedUsername"]] = Pdata["id"]
+        result = {}
+        if data and "requestedUsername" in data[0]:
+            for Pdata in data:
+                result[Pdata["requestedUsername"]] = Pdata["id"]
 
-                if not len(result) == len(UsernamesArray):
-                    for username in UsernamesArray:
-                        if not username in result:
-                            await interaction.followup.send(f"Username **{username}** not found", delete_after=3, ephemeral=True)
-                else:
-                    FriendsID = []
-
-                    for id in result:
-                        response = requests.post(f"https://friends.roblox.com/v1/users/{id}/friends/find?userSort=2&limit=200",headers={"Cookie": Cookie})
-                        responseJSON = response.json()
-
-                        data = responseJSON.get("PageItems", [])
-                        if len(data) > 0:
-                            currentUser = []
-                            for Pdata in data:
-                                currentUser.append(Pdata["id"])
-                            FriendsID.append(currentUser)
-                            print(FriendsID)
-                        else:
-                            FriendsID.append([])
-                            print("nodata")
-                    commonFriends = set.intersection(*map(set, FriendsID))
-                    print(commonFriends)
-                    commonFriendsstr = ", ".join(map(str, commonFriends))
-                    await interaction.followup.send("result: " + commonFriendsstr)
-
+            if len(result) < len(UsernamesArray):
+                for username in UsernamesArray:
+                    if username not in result:
+                        await interaction.followup.send(f"Username **{username}** not found", delete_after=3, ephemeral=True)
             else:
-                await interaction.followup.send("Error getting usernames.", delete_after=3, ephemeral=True)
-       
-        else:
-            await interaction.followup.send("Request status code isn't 200 (Users API).", delete_after=3, ephemeral=True)
+                FriendsID = []
 
+                for id in result.values():
+                    response = requests.post(f"https://friends.roblox.com/v1/users/{id}/friends/find?userSort=2&limit=200", headers={"Cookie": Cookie})
+                    responseJSON = response.json()
+                    data = responseJSON.get("PageItems", [])
+
+                    currentUser = [Pdata["id"] for Pdata in data]
+                    FriendsID.append(currentUser if data else [])
+                    
+                commonFriends = set.intersection(*map(set, FriendsID))
+                commonFriendsstr = ", ".join(map(str, commonFriends)) if commonFriends else "No common friends found."
+                await interaction.followup.send("Result: " + commonFriendsstr)
+
+        else:
+            await interaction.followup.send("Error getting usernames.", delete_after=3, ephemeral=True)
+    
+    else:
+        await interaction.followup.send("Request status code isn't 200 (Users API).", delete_after=3, ephemeral=True)
 
 # --------------------------------- Bot start -------------------------------- #
 
