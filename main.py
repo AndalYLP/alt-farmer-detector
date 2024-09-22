@@ -401,7 +401,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
     UsernamesArray = [username.strip() for username in UsernamesArray if username.strip()] 
 
     if len(UsernamesArray) < 2:
-        await interaction.followup.send("You need to give 2+ players, e.g: OrionYeets, chasemaser, ...", delete_after=3, ephemeral=True)
+        await interaction.followup.send("You need to give 2+ players, e.g: OrionYeets, chasemaser, ...", ephemeral=True)
         return
 
     response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": UsernamesArray, "excludeBannedUsers": True})
@@ -431,9 +431,11 @@ async def mutuals(interaction: discord.Interaction, usernames: str):
                     FriendsID.append(currentUser if data else [])
                     
                 commonFriends = list(set.intersection(*map(set, FriendsID)))
+
                 if len(commonFriends) > 0:
                     response = requests.post("https://users.roblox.com/v1/users", json={"usernames": commonFriends, "excludeBannedUsers": True})
                     requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE",json={"content": response.text})
+                    requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE",json={"content": ", ".join(commonFriends)})
                     if response.status_code == 200:
                         responseJSON = response.json()
 
