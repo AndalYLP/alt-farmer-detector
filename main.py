@@ -100,9 +100,6 @@ async def Start():
                             if response.json().get("errors", [])[0].get("message", []) == "Too many requests. Please wait a bit.":
                                 await asyncio.sleep(15)
 
-                    await channel.purge(limit=100)
-                    await Altchannel.purge(limit=100)
-
                     await asyncio.gather(
                         UserStatus(userPresences, channel, Altchannel, todelete, todelete2),
                         SameGameid(userPresences, GameIdChannel, GameIdWithAltsChannel)
@@ -112,6 +109,8 @@ async def Start():
             else:
                 print("Channel doesn't exist or not added")
                 await asyncio.sleep(10)
+                asyncio.create_task(channel.purge(limit=100))
+                asyncio.create_task(Altchannel.purge(limit=100))
                 continue
 
             await asyncio.sleep(10)
