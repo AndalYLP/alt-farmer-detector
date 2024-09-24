@@ -485,18 +485,19 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
 
 @friends.command(name="ingame", description="check in-game friends.")
 @app_commands.describe(sameserver="True will only show in same server friends.")
+@app_commands.describe(username="Player username to check.")
 async def ingame(interaction: discord.Interaction, username: str, sameserver:bool):
     print(interaction.user.name + " Used ingame command")
     await interaction.response.defer(thinking=True)
 
-    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": username, "excludeBannedUsers": True})
+    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": [username], "excludeBannedUsers": True})
     
     if response.status_code == 200:
         responseJSON = response.json()
         data = responseJSON.get("data", [])
 
         if data and "requestedUsername" in data[0]:
-            response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": [data["id"]]},headers={"Cookie": Cookie})
+            response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": [data[0]["id"]]},headers={"Cookie": Cookie})
             GameId = None
             if response.status_code == 200:
                 responseJSON = response.json()
@@ -548,7 +549,7 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
             else:
                 await interaction.followup.send("No friends found.", ephemeral=True)
         else:
-            await interaction.followup.send("Error getting usernames.", ephemeral=True)
+            await interaction.followup.send("Error getting username.", ephemeral=True)
     else:
         await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
 
