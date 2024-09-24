@@ -512,7 +512,7 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                 await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                 return
             
-            response = requests.get(f"https://friends.roblox.com/v1/users/{data["id"]}/friends/find?userSort=2&limit=200", headers={"Cookie": Cookie})
+            response = requests.get(f"https://friends.roblox.com/v1/users/{data[0]["id"]}/friends/find?userSort=2&limit=200", headers={"Cookie": Cookie})
             responseJSON = response.json()
 
             data = responseJSON.get("PageItems", [])
