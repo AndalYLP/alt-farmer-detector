@@ -505,7 +505,8 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                 
                 if data2 and "userPresences" in data2:
                     GameId = data2["userPresences"][0]["gameId"]
-                    if not data2["userPresences"][0]["gameId"] and sameserver:
+                    print(GameId)
+                    if not GameId and sameserver:
                         await interaction.followup.send("Same server enabled but requested user is not in a game.", ephemeral=True)
                         return
             else:
