@@ -537,7 +537,6 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                     data = responseJSON.get("data", [])
                     
                     UsernamesFromId = {UserData["id"]: UserData["name"] for UserData in data}
-                    requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE", json={"content": str(UsernamesFromId)})
                 else:
                     await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                     return
