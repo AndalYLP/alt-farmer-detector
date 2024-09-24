@@ -505,7 +505,6 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                 
                 if data2:
                     GameId = data2[0]["gameId"]
-                    requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE",json={"content": str(not GameId and sameserver)})
                     if not GameId and sameserver:
                         await interaction.followup.send("Same server enabled but requested user is not in a game.", ephemeral=True)
                         return
