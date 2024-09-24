@@ -527,6 +527,7 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                         userPresences.extend([presence for presence in response.json().get("userPresences", []) if presence["userPresenceType"] == 2 and (presence["rootPlaceId"] == 6872265039 or presence["rootPlaceId"] == None) and (not sameserver or presence["gameId"] == GameId)])
                     else:
                         await interaction.followup.send(f"Request status code isn't 200.\n{response.json(), i}", ephemeral=True)
+                        return
 
                 response = requests.post("https://users.roblox.com/v1/users", json={"userIds": IDLists, "excludeBannedUsers": True})
                 if response.status_code == 200:
@@ -534,8 +535,10 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                     data = responseJSON.get("data", [])
                     
                     UsernamesFromId = {UserData["id"]: UserData["name"] for UserData in data}
+                    requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE", json={"content": str(UsernamesFromId)})
                 else:
                     await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
+                    return
                 
                 embeds = []
                 for doc in userPresences:
