@@ -57,6 +57,7 @@ async def on_ready():
     print("Bot is ready")
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Bedwars Ranked"))
     bot.tree.add_command(snipe)
+    bot.tree.add_command(friends)
     bot.loop.create_task(Start())
     try:
         synced = await bot.tree.sync()
