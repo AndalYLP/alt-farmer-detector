@@ -506,7 +506,7 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                 if data2:
                     GameId = data2[0]["gameId"]
                     if not GameId and sameserver:
-                        await interaction.followup.send("Same server enabled but requested user is not in a game.", ephemeral=True)
+                        await interaction.followup.send("Same server is true, but requested user is not in a game.", ephemeral=True)
                         return
             else:
                 await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
