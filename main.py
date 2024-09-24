@@ -523,7 +523,7 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                 for i, SubList in enumerate(IDLists):
                     response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": Cookie})
                     if response.status_code == 200:
-                        userPresences.extend([presence for presence in response.json().get("userPresences", []) if presence["userPresenceType"] == 2 and presence["rootPlaceId"] == 6872265039 or presence["rootPlaceId"] == None and (not sameserver or presence["gameId"] == GameId)])
+                        userPresences.extend([presence for presence in response.json().get("userPresences", []) if presence["userPresenceType"] == 2 and (presence["rootPlaceId"] == 6872265039 or presence["rootPlaceId"] == None) and (not sameserver or presence["gameId"] == GameId)])
                     else:
                         await interaction.followup.send(f"Request status code isn't 200.\n{response.json(), i}", ephemeral=True)
                 
