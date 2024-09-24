@@ -501,11 +501,10 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
             GameId = None
             if response.status_code == 200:
                 responseJSON = response.json()
-                data2 = responseJSON.get("data", [])
+                data2 = responseJSON.get("userPresences", [])
                 
-                if data2 and "userPresences" in data2:
-                    GameId = data2["userPresences"][0]["gameId"]
-                    print(GameId)
+                if data2:
+                    GameId = data2[0]["gameId"]
                     if not GameId and sameserver:
                         await interaction.followup.send("Same server enabled but requested user is not in a game.", ephemeral=True)
                         return
