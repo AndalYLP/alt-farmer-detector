@@ -48,6 +48,7 @@ class Group(app_commands.Group):
     ...
 
 snipe = Group(name="snipe",description="Snipe commands")
+friends = Group(name="friends",description="friends commands")
 
 # ------------------------------ On ready event ------------------------------ #
 
@@ -308,7 +309,7 @@ async def addPlayer(interaction: discord.Interaction, username:str, altaccount:b
             responseJSON = response.json()
     
             data = responseJSON.get("data", [])
-            if len(data) > 0 and "requestedUsername" in data[0]:
+            if data and "requestedUsername" in data[0]:
                 if not UsersCollection.find_one({"UserID": data[0].get("id")}):
                     result = UsersCollection.insert_one({"UserID": data[0].get("id"), "Username": data[0].get("name"), "isAlt": True if altaccount else False, "GroupName": groupname })
                     if result.inserted_id:
@@ -327,14 +328,14 @@ async def addPlayer(interaction: discord.Interaction, username:str, altaccount:b
 
 @snipe.command(name="player",description="Send player status.")
 @app_commands.describe(username="Player username to snipe.")
-async def Snipe(interaction: discord.Interaction, username:str):
+async def player(interaction: discord.Interaction, username:str):
     print(interaction.user.name + " Used snipe player command")
     response = requests.post("https://users.roblox.com/v1/usernames/users",json={"usernames": [username],"excludeBannedUsers": True})
     if response.status_code == 200:
         responseJSON = response.json()
 
         data = responseJSON.get("data", [])
-        if len(data) > 0 and "requestedUsername" in data[0]:
+        if data and "requestedUsername" in data[0]:
             id = data[0].get("id")
             Username = data[0].get("name")
 
@@ -396,7 +397,7 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
 
 # ---------------------------------- Mutuals --------------------------------- #
 
-@snipe.command(name="mutuals", description="check mutuals between players.")
+@friends.command(name="mutuals", description="check mutuals between players.")
 @app_commands.describe(usernames="list of usernames, e.g: OrionYeets, chasemaser, ...")
 @app_commands.describe(strict="True = Everyone should have the same player added")
 async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool):
@@ -417,7 +418,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
         data = responseJSON.get("data", [])
 
         result = {}
-        if len(data) > 0 and "requestedUsername" in data[0]:
+        if data and "requestedUsername" in data[0]:
             for Pdata in data:
                 result[Pdata["requestedUsername"]] = Pdata["id"]
 
@@ -451,7 +452,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
                             responseJSON = response.json()
 
                             data = responseJSON.get("data", [])
-                            if len(data) > 0 and "name" in data[0]:
+                            if data and "id" in data[0]:
                                 embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])}\n" for i,v in enumerate(data)))
 
                                 await interaction.followup.send(embed=embed)
@@ -466,8 +467,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
                             responseJSON = response.json()
 
                             data = responseJSON.get("data", [])
-                            if len(data) > 0 and "name" in data[0]:
-                                requests.post("https://discord.com/api/webhooks/1285791804997767260/xKha8yHeYKhyiGEdDPD9we0QOzLlW4928xxs76SWOsAX3w8oRd272xJfa3C0V5oCdjsE",json={"content": str(commonFriends)})
+                            if data and "name" in data[0]:
                                 embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])} **({str(commonFriends[int(v["id"])])})** \n" for i,v in enumerate(data)))
 
                                 await interaction.followup.send(embed=embed)
@@ -477,10 +477,77 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
                             await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                 else:
                     await interaction.followup.send("No mutuals found.")
-
         else:
             await interaction.followup.send("Error getting usernames.", ephemeral=True)
+    else:
+        await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
+
+@friends.command(name="ingame", description="check in-game friends.")
+@app_commands.describe(sameserver="True will only show in same server friends.")
+async def ingame(interaction: discord.Interaction, username: str, sameserver:bool):
+    print(interaction.user.name + " Used ingame command")
+    await interaction.response.defer(thinking=True)
+
+    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": username, "excludeBannedUsers": True})
     
+    if response.status_code == 200:
+        responseJSON = response.json()
+        data = responseJSON.get("data", [])
+
+        if data and "requestedUsername" in data[0]:
+            response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": [data["id"]]},headers={"Cookie": Cookie})
+            GameId = None
+            if response.status_code == 200:
+                responseJSON = response.json()
+                data = responseJSON.get("data", [])
+                
+                if data and "userPresences" in data:
+                    GameId = data["userPresences"][0]["gameId"]
+                    if not data["userPresences"][0]["gameId"] and sameserver:
+                        await interaction.followup.send("Same server enabled but requested user is not in a game.", ephemeral=True)
+                        return
+            else:
+                await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
+                return
+            
+            response = requests.get(f"https://friends.roblox.com/v1/users/{data["id"]}/friends/find?userSort=2&limit=200", headers={"Cookie": Cookie})
+            responseJSON = response.json()
+
+            data = responseJSON.get("PageItems", [])
+            Friends = [Pdata["id"] for Pdata in data]
+            if Friends:
+                IDLists = [Friends[i:i + 30] for i in range(0,len(Friends), 30)]
+                userPresences = []
+                for i, SubList in enumerate(IDLists):
+                    response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": Cookie})
+                    if response.status_code == 200:
+                        userPresences.extend([presence for presence in response.json().get("userPresences", []) if presence["userPresenceType"] == 2 and presence["rootPlaceId"] == 6872265039 or presence["rootPlaceId"] == None and (not sameserver or presence["gameId"] == GameId)])
+                    else:
+                        await interaction.followup.send(f"Request status code isn't 200.\n{response.json(), i}", ephemeral=True)
+                
+                embeds = []
+                for doc in userPresences:
+                    PresenceType = doc["userPresenceType"]
+
+                    GameName = doc["lastLocation"]
+                    LobbyStatus = "True" if doc["placeId"] == 6872265039 else "False"
+                    GameId = doc["gameId"]
+
+                    color = 2686720
+                    title = f"{doc["userId"]} is in a game"
+                    description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
+                    embeds.append(discord.Embed(color=color if (not PresenceType == 2 or LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None))
+                
+                subEmbeds = [Friends[i:i + 10] for i in range(0,len(Friends), 10)]
+                for i, embeds in enumerate(subEmbeds):
+                    if i == 0:
+                        await interaction.followup.send(content=f"<t:{int(int(time.time()))}:R>", embeds=embeds)
+                    else:
+                        await interaction.channel.send(content=f"<t:{int(int(time.time()))}:R>", embeds=embeds)
+            else:
+                await interaction.followup.send("No friends found.", ephemeral=True)
+        else:
+            await interaction.followup.send("Error getting usernames.", ephemeral=True)
     else:
         await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
 
