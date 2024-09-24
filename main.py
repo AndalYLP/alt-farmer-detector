@@ -540,12 +540,13 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                     description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
                     embeds.append(discord.Embed(color=color if (not PresenceType == 2 or LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None))
                 
-                subEmbeds = [Friends[i:i + 10] for i in range(0,len(Friends), 10)]
-                for i, embeds in enumerate(subEmbeds):
-                    if i == 0:
-                        await interaction.followup.send(content=f"<t:{int(int(time.time()))}:R>", embeds=embeds)
-                    else:
-                        await interaction.channel.send(content=f"<t:{int(int(time.time()))}:R>", embeds=embeds)
+                if embeds:
+                    subEmbeds = [embeds[i:i + 10] for i in range(0,len(embeds), 10)]
+                    for i, embeds in enumerate(subEmbeds):
+                        if i == 0:
+                            await interaction.followup.send(content=f"<t:{int(int(time.time()))}:R>", embeds=embeds)
+                        else:
+                            await interaction.channel.send(content=f"<t:{int(int(time.time()))}:R>", embeds=embeds)
             else:
                 await interaction.followup.send("No friends found.", ephemeral=True)
         else:
