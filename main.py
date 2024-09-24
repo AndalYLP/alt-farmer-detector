@@ -520,12 +520,22 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
             if Friends:
                 IDLists = [Friends[i:i + 30] for i in range(0,len(Friends), 30)]
                 userPresences = []
+                UsernamesFromId = {}
                 for i, SubList in enumerate(IDLists):
                     response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": Cookie})
                     if response.status_code == 200:
                         userPresences.extend([presence for presence in response.json().get("userPresences", []) if presence["userPresenceType"] == 2 and (presence["rootPlaceId"] == 6872265039 or presence["rootPlaceId"] == None) and (not sameserver or presence["gameId"] == GameId)])
                     else:
                         await interaction.followup.send(f"Request status code isn't 200.\n{response.json(), i}", ephemeral=True)
+
+                response = requests.post("https://users.roblox.com/v1/users", json={"userIds": IDLists, "excludeBannedUsers": True})
+                if response.status_code == 200:
+                    responseJSON = response.json()
+                    data = responseJSON.get("data", [])
+                    
+                    UsernamesFromId = {UserData["id"]: UserData["name"] for UserData in data}
+                else:
+                    await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                 
                 embeds = []
                 for doc in userPresences:
@@ -536,7 +546,7 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                     GameId = doc["gameId"]
 
                     color = 2686720
-                    title = f"{doc["userId"]} is in a game"
+                    title = f"{UsernamesFromId[doc["userId"]]} is in a game"
                     description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
                     embeds.append(discord.Embed(color=color if (not PresenceType == 2 or LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None))
                 
