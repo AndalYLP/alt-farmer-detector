@@ -48,7 +48,8 @@ class Group(app_commands.Group):
     ...
 
 snipe = Group(name="snipe",description="Snipe commands")
-friends = Group(name="friends",description="friends commands")
+friends = Group(name="friends",description="Friends commands")
+track = Group(name="track",description="Tracking commands")
 
 # ------------------------------ On ready event ------------------------------ #
 
@@ -58,6 +59,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Bedwars Ranked"))
     bot.tree.add_command(snipe)
     bot.tree.add_command(friends)
+    bot.tree.add_command(track)
     bot.loop.create_task(Start())
     try:
         synced = await bot.tree.sync()
@@ -68,6 +70,7 @@ async def on_ready():
 # ------------------------------- Main function ------------------------------ #
 
 Tracking = {}
+TrackingStatus = {}
 bot.MuteAll = False
 bot.OnlineMuted = True
 bot.OfflineMuted = True
@@ -134,7 +137,7 @@ async def UserStatus(userPresences, channel, AltChannel):
             Group = ResultFound.get("GroupName", "None")
 
             if doc["userId"] not in GameIdList:
-                GameIdList[doc["userId"]] = [["nil", "nil" if GameId is None else GameId], ["nil", f"<t:{int(time.time())}:R>"], "True" if doc["placeId"] == 6872265039 else "False", GameName]
+                GameIdList[doc["userId"]] = [["nil", "nil" if GameId is None else GameId], ["nil", f"<t:{int(time.time())}:R>"], "True" if doc["placeId"] == 6872265039 else "False", GameName, PresenceType]
 
             if (GameId and not GameIdList.get(doc["userId"])[0][1] == GameId) or (PresenceType == 0 and GameIdList.get(doc["userId"])[0][1]):
                 if Tracking.get(Username):
@@ -157,6 +160,11 @@ async def UserStatus(userPresences, channel, AltChannel):
             title = f"{Username} is in a game" if PresenceType == 2 else f"{Username} is online" if PresenceType == 1 else f"{Username} is offline"
             description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
             embed = discord.Embed(color=color if (not PresenceType == 2 or LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
+
+            if TrackingStatus.get(Username) and not GameIdList.get(doc["userId"])[4] == PresenceType:
+                await Tracking[Username].send(embed=embed)
+
+            GameIdList.get(doc["userId"])[4] = PresenceType
 
             if not Group == "None":
                 embed.set_footer(text= "Group: " + Group)
@@ -374,11 +382,10 @@ async def player(interaction: discord.Interaction, username:str):
 
 # -------------------------------- Track times ------------------------------- #
 
-@snipe.command(name="tracktimes", description="Creates a channel and tracks the queue times from a username.")
+@track.command(name="times", description="Creates a channel and tracks the queue times from a user.")
 @app_commands.describe(username="Player username to track.")
 async def TrackQueueTimes(interaction: discord.Interaction, username: str):
     print(interaction.user.name + " used track times command")
-    
     response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": [username], "excludeBannedUsers": True})
     
     if response.status_code == 200:
@@ -388,10 +395,11 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
         if data and "requestedUsername" in data[0]:
             if not Tracking.get(data[0]["name"], False):
                 guild = interaction.guild
+                category = guild.get_channel(1288638401947504725)
 
-                channel = await guild.create_text_channel(data[0]["name"])
+                channel = discord.utils.get(category.channels, name=data[0]["name"].lower()) or await guild.create_text_channel(data[0]["name"], category=category)
                 Tracking[data[0]["name"]] = channel
-                await interaction.response.send_message("Starting...", delete_after=5)
+                await interaction.response.send_message(f"Tracking in {channel.mention}", delete_after=5)
             else:
                 await interaction.response.send_message("This username is already being tracked.", delete_after=5)
         else:
@@ -401,7 +409,7 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
 
 # ---------------------------------- Mutuals --------------------------------- #
 
-@friends.command(name="mutuals", description="check mutuals between players.")
+@friends.command(name="mutuals", description="check mutuals between users.")
 @app_commands.describe(usernames="list of usernames, e.g: OrionYeets, chasemaser, ...")
 @app_commands.describe(strict="True = Everyone should have the same player added")
 async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool):
@@ -485,6 +493,8 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
             await interaction.followup.send("Error getting usernames.", ephemeral=True)
     else:
         await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
+
+# ------------------------------ in-game command ----------------------------- #
 
 @friends.command(name="ingame", description="check in-game friends.")
 @app_commands.describe(sameserver="True will only show in same server friends.")
@@ -573,6 +583,33 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
             await interaction.followup.send("Error getting username.", ephemeral=True)
     else:
         await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
+
+# ------------------------------- track status ------------------------------- #
+
+@track.command(name="status", description="Creates a channel and tracks the status from a user.")
+@app_commands.describe(username="Player username to track.")
+async def TrackStatus(interaction: discord.Interaction, username: str):
+    print(interaction.user.name + " used track status command")
+    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": [username], "excludeBannedUsers": True})
+    
+    if response.status_code == 200:
+        responseJSON = response.json()
+        data = responseJSON.get("data", [])
+
+        if data and "requestedUsername" in data[0]:
+            if not TrackingStatus.get(data[0]["name"], False):
+                guild = interaction.guild
+                category = guild.get_channel(1288642965882933301)
+
+                channel = discord.utils.get(category.channels, name=data[0]["name"].lower()) or await guild.create_text_channel(data[0]["name"], category=category)
+                TrackingStatus[data[0]["name"]] = channel
+                await interaction.response.send_message(f"Tracking in {channel.mention}", delete_after=5)
+            else:
+                await interaction.response.send_message("This username is already being tracked.", delete_after=5)
+        else:
+            await interaction.response.send_message("Username doesn't exist.", delete_after=3, ephemeral=True)
+    else:
+        await interaction.response.send_message("Error trying to verify username.", delete_after=3, ephemeral=True)
 
 # --------------------------------- Bot start -------------------------------- #
 
