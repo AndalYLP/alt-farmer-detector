@@ -136,7 +136,7 @@ async def UserStatus(userPresences, channel, AltChannel):
             if doc["userId"] not in GameIdList:
                 GameIdList[doc["userId"]] = [["nil", "nil" if GameId is None else GameId], ["nil", f"<t:{int(time.time())}:R>"], "True" if doc["placeId"] == 6872265039 else "False", GameName]
 
-            if (GameId and not GameIdList.get(doc["userId"])[0][1] == GameId) or (not PresenceType == 2 and GameIdList.get(doc["userId"])[0][1]):
+            if (GameId and not GameIdList.get(doc["userId"])[0][1] == GameId) or (PresenceType == 0 and GameIdList.get(doc["userId"])[0][1]):
                 if Tracking.get(Username):
                     Result = int(time.time()) - int(GameIdList.get(doc["userId"])[1][1][3:-3])
                     embed = discord.Embed(color=46847,title=f"Time in game: {(str(Result) + " Seconds") if Result < 60 else (str(int(Result / 60)) + ":" + str((Result % 60)).zfill(2) + " Minutes" ) }")
