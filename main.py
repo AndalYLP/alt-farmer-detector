@@ -129,19 +129,22 @@ async def UserStatus(userPresences, channel, AltChannel):
             isAlt = ResultFound["isAlt"]
             Username = ResultFound["Username"]
             LobbyStatus = "True" if doc["placeId"] == 6872265039 else "False"
-            GameName = doc["lastLocation"]
+            GameName = doc["lastLocation"] or "None"
             GameId = doc["gameId"]
             Group = ResultFound.get("GroupName", "None")
 
             if doc["userId"] not in GameIdList:
-                GameIdList[doc["userId"]] = [["nil", "nil" if GameId is None else GameId], ["nil", f"<t:{int(time.time())}:R>"], "True" if doc["placeId"] == 6872265039 else "False"]
+                GameIdList[doc["userId"]] = [["nil", "nil" if GameId is None else GameId], ["nil", f"<t:{int(time.time())}:R>"], "True" if doc["placeId"] == 6872265039 else "False", GameName]
 
             if (GameId and not GameIdList.get(doc["userId"])[0][1] == GameId) or (not PresenceType == 2 and GameIdList.get(doc["userId"])[0][1]):
                 if Tracking.get(Username):
                     Result = int(time.time()) - int(GameIdList.get(doc["userId"])[1][1][3:-3])
-                    embed = discord.Embed(color=46847,title=f"Time in game: {(str(Result) + " Seconds") if Result < 60 else (str(int(Result / 60)) + ":" + str((Result % 60)).zfill(2) + " Minutes" ) }", description=f"Game: **{GameName}**\nGameId: **{GameIdList.get(doc["userId"])[0][1]}**\nLobby: **{GameIdList.get(doc["userId"])[2]}**")
+                    embed = discord.Embed(color=46847,title=f"Time in game: {(str(Result) + " Seconds") if Result < 60 else (str(int(Result / 60)) + ":" + str((Result % 60)).zfill(2) + " Minutes" ) }")
+                    embed.add_field(name="From:",value=f"Game: **{GameIdList.get(doc["userId"])[3] }**\nGameId: **{GameIdList.get(doc["userId"])[0][1]}**\nLobby: **{GameIdList.get(doc["userId"])[2]}**",inline=True)
+                    embed.add_field(name="To:",value=f"Game: **{GameName}**\nGameId: **{GameId}**\nLobby: **{LobbyStatus}**",inline=True)
                     await Tracking[Username].send(embed=embed)
                 GameIdList.get(doc["userId"])[2] = "True" if doc["placeId"] == 6872265039 else "False"
+                GameIdList.get(doc["userId"])[3] = GameName
                 GameIdList.get(doc["userId"])[1][0] = GameIdList.get(doc["userId"])[1][1]
                 GameIdList.get(doc["userId"])[0][0] = GameIdList.get(doc["userId"])[0][1]
                 GameIdList.get(doc["userId"])[1][1] = f"<t:{int(time.time())}:R>"
