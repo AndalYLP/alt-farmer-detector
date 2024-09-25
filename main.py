@@ -530,6 +530,9 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                     else:
                         await interaction.followup.send(f"Request status code isn't 200.\n{response.json(), i}", ephemeral=True)
                         return
+                
+                if not len(userPresences):
+                    await interaction.followup.send("No friends in-game found.", ephemeral=True)
 
                 response = requests.post("https://users.roblox.com/v1/users", json={"userIds": userIds, "excludeBannedUsers": True})
                 if response.status_code == 200:
