@@ -393,9 +393,9 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
         data = responseJSON.get("data", [])
 
         if data and "requestedUsername" in data[0]:
-            if not Tracking.get(data[0]["name"], False):
-                guild = interaction.guild
-                category = guild.get_channel(1288638401947504725)
+            guild = interaction.guild
+            category = guild.get_channel(1288638401947504725)
+            if not Tracking.get(data[0]["name"], False) or not discord.utils.get(category.channels, name=data[0]["name"].lower()):
 
                 channel = discord.utils.get(category.channels, name=data[0]["name"].lower()) or await guild.create_text_channel(data[0]["name"], category=category)
                 Tracking[data[0]["name"]] = channel
@@ -597,7 +597,7 @@ async def TrackStatus(interaction: discord.Interaction, username: str):
         data = responseJSON.get("data", [])
 
         if data and "requestedUsername" in data[0]:
-            if not TrackingStatus.get(data[0]["name"], False):
+            if not TrackingStatus.get(data[0]["name"], False) or not discord.utils.get(category.channels, name=data[0]["name"].lower()):
                 guild = interaction.guild
                 category = guild.get_channel(1288642965882933301)
 
