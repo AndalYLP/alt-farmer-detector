@@ -173,7 +173,7 @@ async def UserStatus(userPresences, channel, AltChannel):
 
             if TrackingStatus.get(Username) and not GameIdList.get(doc["userId"])[4] == PresenceType:
                 try:
-                    await TrackingStatus[Username][0].send(description=f"<t:{int(int(time.time()))}:R>{TrackingStatus[Username][1]}",embed=embed)
+                    await TrackingStatus[Username][0].send(content=f"<t:{int(int(time.time()))}:R>{TrackingStatus[Username][1]}",embed=embed)
                 except Exception as e:
                     print(f"Error enviando trackingstatus: {e}.")
                     traceback.print_exc()
@@ -407,7 +407,7 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
 
                 channel = discord.utils.get(category.channels, name=data[0]["name"].lower()) or await guild.create_text_channel(data[0]["name"], category=category)
                 Tracking[data[0]["name"]] = channel
-                await interaction.response.send_message(f"Tracking in {channel.mention}", delete_after=5)
+                await interaction.response.send_message(f"Tracking in {channel.mention}")
             else:
                 await interaction.response.send_message("This username is already being tracked.", delete_after=5)
         else:
@@ -611,7 +611,7 @@ async def TrackStatus(interaction: discord.Interaction, username: str):
 
                 channel = discord.utils.get(category.channels, name=data[0]["name"].lower()) or await guild.create_text_channel(data[0]["name"], category=category)
                 TrackingStatus[data[0]["name"]] = [channel, interaction.user.mention]
-                await interaction.response.send_message(f"Tracking in {channel.mention}", delete_after=5)
+                await interaction.response.send_message(f"Tracking in {channel.mention}")
             else:
                 await interaction.response.send_message("This username is already being tracked.", delete_after=5)
         else:
