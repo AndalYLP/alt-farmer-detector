@@ -161,16 +161,16 @@ async def UserStatus(userPresences, channel, AltChannel):
             description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
             embed = discord.Embed(color=color if (not PresenceType == 2 or LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
-            if TrackingStatus.get(Username) and not GameIdList.get(doc["userId"])[4] == PresenceType:
-                await Tracking[Username].send(embed=embed)
-
-            GameIdList.get(doc["userId"])[4] = PresenceType
-
             if not Group == "None":
                 embed.set_footer(text= "Group: " + Group)
 
             if isAlt and (PresenceType == 2 and not bot.MuteAll and (doc["rootPlaceId"] == None or doc["rootPlaceId"] == 6872265039)):
                 await AltChannel.send(content=f"<t:{int(int(time.time()))}:R>@everyone",embed=embed)
+
+            if TrackingStatus.get(Username) and not GameIdList.get(doc["userId"])[4] == PresenceType:
+                await TrackingStatus[Username].send(embed=embed)
+
+            GameIdList.get(doc["userId"])[4] = PresenceType
 
             if (PresenceType == 2 and ((doc["rootPlaceId"] == 6872265039 or doc["rootPlaceId"] == None) or not bot.OtherGame) and not bot.MuteAll) or (PresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (PresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
                 if not Group in embeds:
@@ -597,9 +597,9 @@ async def TrackStatus(interaction: discord.Interaction, username: str):
         data = responseJSON.get("data", [])
 
         if data and "requestedUsername" in data[0]:
+            guild = interaction.guild
+            category = guild.get_channel(1288642965882933301)
             if not TrackingStatus.get(data[0]["name"], False) or not discord.utils.get(category.channels, name=data[0]["name"].lower()):
-                guild = interaction.guild
-                category = guild.get_channel(1288642965882933301)
 
                 channel = discord.utils.get(category.channels, name=data[0]["name"].lower()) or await guild.create_text_channel(data[0]["name"], category=category)
                 TrackingStatus[data[0]["name"]] = channel
