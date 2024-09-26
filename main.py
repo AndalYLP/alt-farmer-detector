@@ -175,7 +175,7 @@ async def UserStatus(userPresences, channel, AltChannel):
 
             if TrackingStatus.get(Username) and not GameIdList.get(doc["userId"])[4] == PresenceType:
                 try:
-                    await TrackingStatus[Username][0].send(content=f"<t:{int(int(time.time()))}:R>{TrackStatus[Username][1].join("")}",embed=embed)
+                    await TrackingStatus[Username][0].send(content=f"<t:{int(int(time.time()))}:R>{TrackingStatus[Username][1].join("")}",embed=embed)
                 except Exception as e:
                     print(f"Error enviando trackingstatus: {e}.")
                     traceback.print_exc()
@@ -398,10 +398,10 @@ async def notifications(interaction: discord.Interaction):
     role = discord.utils.get(interaction.guild.roles, name="ping")
     MemberRole = discord.utils.get(member.roles, name="ping")
     if MemberRole:
-        member.remove_roles(role)
+        await member.remove_roles(role)
         await interaction.response.send_message("Notification role removed.", delete_after=5)
     else:
-        member.add_roles(role)
+        await member.add_roles(role)
         await interaction.response.send_message("Notification role added.", delete_after=5)
 
 # ---------------------------------- Mutuals --------------------------------- #
