@@ -610,8 +610,8 @@ async def TrackStatus(interaction: discord.Interaction, username: str):
     else:
         await interaction.response.send_message("Error trying to verify username.", delete_after=3, ephemeral=True)
 
-statusSubGroup = track.create_subgroup(name="status", description="Status subcommand.")
-statusSubGroup.command(name="stop",description="stop notifications/tracking for a user.")
+#statusSubGroup = track.create_subgroup(name="status", description="Status subcommand.")
+@track.command(name="stopstatus",description="stop notifications/tracking for a user.")
 @app_commands.describe(username="Player username to stop tracking.")
 async def StopStatusTrack(interaction: discord.Interaction, username: str):
     print(interaction.user.name + " used track status command")
@@ -669,8 +669,8 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
     else:
         await interaction.response.send_message("Error trying to verify username.", delete_after=3, ephemeral=True)
 
-timesSubGroup = track.create_subgroup(name="times", description="Times subcommand.")
-statusSubGroup.command(name="stop",description="stop notifications/tracking for a user.")
+#timesSubGroup = track.create_subgroup(name="times", description="Times subcommand.")
+@track.command(name="stoptimes",description="stop notifications/tracking for a user.")
 @app_commands.describe(username="Player username to stop tracking.")
 async def StopStatusTrack(interaction: discord.Interaction, username: str):
     print(interaction.user.name + " used track status command")
