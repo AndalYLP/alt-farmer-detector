@@ -148,7 +148,7 @@ async def UserStatus(userPresences, channel, AltChannel):
                         embed = discord.Embed(color=46847,title=f"Time in game: {(str(Result) + " Seconds") if Result < 60 else (str(int(Result / 60)) + ":" + str((Result % 60)).zfill(2) + " Minutes" ) }")
                         embed.add_field(name="From:",value=f"Game: **{GameIdList.get(doc["userId"])[3] }**\nGameId: **{GameIdList.get(doc["userId"])[0][1]}**\nLobby: **{GameIdList.get(doc["userId"])[2]}**",inline=True)
                         embed.add_field(name="To:",value=f"Game: **{GameName}**\nGameId: **{GameId}**\nLobby: **{LobbyStatus}**",inline=True)
-                        await Tracking[Username][0].send(content=f"<t:{int(int(time.time()))}:R>{Tracking[Username][1].join("")}",embed=embed)
+                        await Tracking[Username][0].send(content=f"<t:{int(int(time.time()))}:R>{"".join(Tracking[Username][1])}",embed=embed)
                     except Exception as e:
                         print(f"Error enviando trackingtimes: {e}.")
                         traceback.print_exc()
@@ -175,7 +175,7 @@ async def UserStatus(userPresences, channel, AltChannel):
 
             if TrackingStatus.get(Username) and not GameIdList.get(doc["userId"])[4] == PresenceType:
                 try:
-                    await TrackingStatus[Username][0].send(content=f"<t:{int(int(time.time()))}:R>{TrackingStatus[Username][1].join("")}",embed=embed)
+                    await TrackingStatus[Username][0].send(content=f"<t:{int(int(time.time()))}:R>{"".join(Tracking[Username][1])}",embed=embed)
                 except Exception as e:
                     print(f"Error enviando trackingstatus: {e}.")
                     traceback.print_exc()
