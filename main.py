@@ -175,7 +175,7 @@ async def UserStatus(userPresences, channel, AltChannel):
 
             if TrackingStatus.get(Username) and not GameIdList.get(doc["userId"])[4] == PresenceType:
                 try:
-                    await TrackingStatus[Username][0].send(content=f"<t:{int(int(time.time()))}:R>{"".join(Tracking[Username][1])}",embed=embed)
+                    await TrackingStatus[Username][0].send(content=f"<t:{int(int(time.time()))}:R>{"".join(TrackingStatus[Username][1])}",embed=embed)
                 except Exception as e:
                     print(f"Error enviando trackingstatus: {e}.")
                     traceback.print_exc()
@@ -598,7 +598,7 @@ async def TrackStatus(interaction: discord.Interaction, username: str):
             category = guild.get_channel(1288642965882933301)
             if not TrackingStatus.get(data[0]["name"]) or not discord.utils.get(category.channels, name=data[0]["name"].lower()):
                 channel = discord.utils.get(category.channels, name=data[0]["name"].lower()) or await guild.create_text_channel(data[0]["name"], category=category)
-                TrackingStatus[data[0]["name"]] = [channel, interaction.user.mention]
+                TrackingStatus[data[0]["name"]] = [channel, [interaction.user.mention]]
                 await interaction.response.send_message(f"Tracking in {channel.mention}")
             elif TrackingStatus.get(data[0]["name"]):
                 TrackingStatus[data[0]["name"]][1].append(interaction.user.mention)
@@ -657,7 +657,7 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
             if not Tracking.get(data[0]["name"], False) or not discord.utils.get(category.channels, name=data[0]["name"].lower()):
 
                 channel = discord.utils.get(category.channels, name=data[0]["name"].lower()) or await guild.create_text_channel(data[0]["name"], category=category)
-                Tracking[data[0]["name"]] = [channel, interaction.user.mention]
+                Tracking[data[0]["name"]] = [channel, [interaction.user.mention]]
                 await interaction.response.send_message(f"Tracking in {channel.mention}")
             elif Tracking.get(data[0]["name"]):
                 Tracking[data[0]["name"]][1].append(interaction.user.mention)
