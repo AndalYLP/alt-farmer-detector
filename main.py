@@ -393,8 +393,8 @@ async def player(interaction: discord.Interaction, username:str):
 # --------------------------- Toggle notifications --------------------------- #
 
 @toggle.command(name="notifications", description="enable/disable notifications.")
-@app_commands.describe(username="Player username to track.")
-async def notifications(interaction: discord.Interaction, member: discord.Member):
+async def notifications(interaction: discord.Interaction):
+    member = interaction.guild.get_member(interaction.user.id)
     role = discord.utils.get(interaction.guild.roles, name="ping")
     MemberRole = discord.utils.get(member.roles, name="ping")
     if MemberRole:
