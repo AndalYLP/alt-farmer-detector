@@ -337,7 +337,7 @@ async def addPlayer(interaction: discord.Interaction, username:str, altaccount:b
                     if result.inserted_id:
                         await interaction.response.send_message("Username added to the loop.", delete_after=3)
                 else:
-                    UsersCollection.update_one({"UserID": data[0].get("id")}, {"Username": data[0].get("name"), "isAlt": True if altaccount else False, "GroupName": groupname})
+                    UsersCollection.update_one({"UserID": data[0].get("id")}, {"$set": {"Username": data[0].get("name"),"isAlt": True if altaccount else False,"GroupName": groupname}})
                     await interaction.response.send_message("That username is already on the list, updated his data.", delete_after=3, ephemeral=True)
             else:
                 await interaction.response.send_message("Username doesn't exist.", delete_after=3, ephemeral=True)
@@ -624,10 +624,9 @@ async def StopStatusTrack(interaction: discord.Interaction, username: str):
         if data and "requestedUsername" in data[0]:
             if TrackingStatus.get(data[0]["name"]):
                 if len(TrackingStatus.get(data[0]["name"])[1]) == 1:
-                    guild = interaction.guild
-                    guild._remove_channel(TrackingStatus.get(data[0]["name"])[0])
+                    TrackingStatus.get(data[0]["name"])[0].delete()
                     TrackingStatus.pop(data[0]["name"])
-                    await interaction.response.send_message(f"Stopped tracking user **{username}**")
+                    await interaction.response.send_message(f"Stopped tracking **{username}**")
                 else: 
                     TrackingStatus.get(data[0]["name"])[1].remove(interaction.user.mention)
                     await interaction.response.send_message(f"Removed from notifications for **{username}**")
@@ -672,7 +671,7 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
 #timesSubGroup = track.create_subgroup(name="times", description="Times subcommand.")
 @track.command(name="stoptimes",description="stop notifications/tracking for a user.")
 @app_commands.describe(username="Player username to stop tracking.")
-async def StopStatusTrack(interaction: discord.Interaction, username: str):
+async def StopTimesTrack(interaction: discord.Interaction, username: str):
     print(interaction.user.name + " used track status command")
     response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": [username], "excludeBannedUsers": True})
     
@@ -683,10 +682,9 @@ async def StopStatusTrack(interaction: discord.Interaction, username: str):
         if data and "requestedUsername" in data[0]:
             if Tracking.get(data[0]["name"]):
                 if len(Tracking.get(data[0]["name"])[1]) == 1:
-                    guild = interaction.guild
-                    guild._remove_channel(Tracking.get(data[0]["name"])[0])
+                    Tracking.get(data[0]["name"])[0].delete()
                     Tracking.pop(data[0]["name"])
-                    await interaction.response.send_message(f"Stopped tracking user **{username}**")
+                    await interaction.response.send_message(f"Stopped tracking **{username}**")
                 else: 
                     Tracking.get(data[0]["name"])[1].remove(interaction.user.mention)
                     await interaction.response.send_message(f"Removed from notifications for **{username}**")
