@@ -624,7 +624,7 @@ async def StopStatusTrack(interaction: discord.Interaction, username: str):
         if data and "requestedUsername" in data[0]:
             if TrackingStatus.get(data[0]["name"]):
                 if len(TrackingStatus.get(data[0]["name"])[1]) == 1:
-                    TrackingStatus.get(data[0]["name"])[0].delete()
+                    await TrackingStatus.get(data[0]["name"])[0].delete()
                     TrackingStatus.pop(data[0]["name"])
                     await interaction.response.send_message(f"Stopped tracking **{username}**")
                 else: 
@@ -682,7 +682,7 @@ async def StopTimesTrack(interaction: discord.Interaction, username: str):
         if data and "requestedUsername" in data[0]:
             if Tracking.get(data[0]["name"]):
                 if len(Tracking.get(data[0]["name"])[1]) == 1:
-                    Tracking.get(data[0]["name"])[0].delete()
+                    await Tracking.get(data[0]["name"])[0].delete()
                     Tracking.pop(data[0]["name"])
                     await interaction.response.send_message(f"Stopped tracking **{username}**")
                 else: 
