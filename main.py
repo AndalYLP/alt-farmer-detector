@@ -148,7 +148,7 @@ async def UserStatus(userPresences, channel, AltChannel):
                         embed = discord.Embed(color=46847,title=f"Time in game: {(str(Result) + " Seconds") if Result < 60 else (str(int(Result / 60)) + ":" + str((Result % 60)).zfill(2) + " Minutes" ) }")
                         embed.add_field(name="From:",value=f"Game: **{GameIdList.get(doc["userId"])[3] }**\nGameId: **{GameIdList.get(doc["userId"])[0][1]}**\nLobby: **{GameIdList.get(doc["userId"])[2]}**",inline=True)
                         embed.add_field(name="To:",value=f"Game: **{GameName}**\nGameId: **{GameId}**\nLobby: **{LobbyStatus}**",inline=True)
-                        await Tracking[Username][0].send(content=f"<t:{int(int(time.time()))}:R>{"".join(Tracking[Username][1])}",embed=embed)
+                        await Tracking[Username][0].send(content=f"<t:{int(time.time())}:R>{"".join(Tracking[Username][1])}",embed=embed)
                     except Exception as e:
                         print(f"Error enviando trackingtimes: {e}.")
                         traceback.print_exc()
@@ -171,11 +171,11 @@ async def UserStatus(userPresences, channel, AltChannel):
                 embed.set_footer(text= "Group: " + Group)
 
             if isAlt and (PresenceType == 2 and not bot.MuteAll and (doc["rootPlaceId"] == None or doc["rootPlaceId"] == 6872265039)):
-                await AltChannel.send(content=f"<t:{int(int(time.time()))}:R><@&1288980643061170188>",embed=embed)
+                await AltChannel.send(content=f"<t:{int(time.time())}:R><@&1288980643061170188>",embed=embed)
 
             if TrackingStatus.get(Username) and not GameIdList.get(doc["userId"])[4] == PresenceType:
                 try:
-                    await TrackingStatus[Username][0].send(content=f"<t:{int(int(time.time()))}:R>{"".join(TrackingStatus[Username][1])}",embed=embed)
+                    await TrackingStatus[Username][0].send(content=f"<t:{int(time.time())}:R>{"".join(TrackingStatus[Username][1])}",embed=embed)
                 except Exception as e:
                     print(f"Error enviando trackingstatus: {e}.")
                     traceback.print_exc()
@@ -198,11 +198,11 @@ async def UserStatus(userPresences, channel, AltChannel):
             if not groupName == "None":
                 SubGroups = [Embeds[i:i + 10] for i in range(0,len(Embeds), 10)]
                 for group in SubGroups:
-                    await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("<@&1288980643061170188>" if group[0] else ""),embeds=group[1:])
+                    await channel.send(content=f"<t:{int(time.time())}:R>" + ("<@&1288980643061170188>" if group[0] else ""),embeds=group[1:])
 
         for i, embed in enumerate(embeds["None"]):
             if not (i % 2) == 0:
-                await channel.send(content=f"<t:{int(int(time.time()))}:R>" + ("<@&1288980643061170188>" if embeds["None"][i-1] else ""),embed=embed)
+                await channel.send(content=f"<t:{int(time.time())}:R>" + ("<@&1288980643061170188>" if embeds["None"][i-1] else ""),embed=embed)
     else:
         await channel.send("Error: 2", delete_after=3)
 
@@ -231,9 +231,9 @@ async def SameGameid(userPresences, channel, channel2):
             if doc["isAlt"] == True:
                 Everyone = True
         Embed = discord.Embed(color=2686720 if list2["isLobby"] == "True" else 1881856, title=Title, description=Description)
-        await channel.send(content=f"<t:{int(int(time.time()))}:R>", embed=Embed)
+        await channel.send(content=f"<t:{int(time.time())}:R>", embed=Embed)
         if Everyone:
-            await channel2.send(content=f"<t:{int(int(time.time()))}:R><@&1288980643061170188>", embed=Embed)
+            await channel2.send(content=f"<t:{int(time.time())}:R><@&1288980643061170188>", embed=Embed)
 
 # ------------------------------ Resume command ------------------------------ #
 
@@ -380,7 +380,7 @@ async def player(interaction: discord.Interaction, username:str):
                     description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
                     embed = discord.Embed(color=color if (not PresenceType == 2 or LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None)
 
-                    await interaction.response.send_message(content=f"<t:{int(int(time.time()))}:R>", embed=embed)
+                    await interaction.response.send_message(content=f"<t:{int(time.time())}:R>", embed=embed)
                 else:
                     await interaction.response.send_message("Error: 2", delete_after=3, ephemeral=True)
             else:
@@ -571,9 +571,9 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                     subEmbeds = [embeds[i:i + 10] for i in range(0,len(embeds), 10)]
                     for i, embeds in enumerate(subEmbeds):
                         if i == 0:
-                            await interaction.followup.send(content=f"<t:{int(int(time.time()))}:R>", embeds=embeds)
+                            await interaction.followup.send(content=f"<t:{int(time.time())}:R>", embeds=embeds)
                         else:
-                            await interaction.channel.send(content=f"<t:{int(int(time.time()))}:R>", embeds=embeds)
+                            await interaction.channel.send(content=f"<t:{int(time.time())}:R>", embeds=embeds)
             else:
                 await interaction.followup.send("No friends found.", ephemeral=True)
         else:
@@ -602,7 +602,7 @@ async def TrackStatus(interaction: discord.Interaction, username: str):
                 await interaction.response.send_message(f"Tracking in {channel.mention}")
             elif TrackingStatus.get(data[0]["name"]):
                 TrackingStatus[data[0]["name"]][1].append(interaction.user.mention)
-                await interaction.response.send_message(f"added to notification list for: {channel.mention}")
+                await interaction.response.send_message(f"added to notification list for: {TrackingStatus[data[0]["name"]][0].mention}")
             else:
                 await interaction.response.send_message("This username is already being tracked.", delete_after=5)
         else:
@@ -660,7 +660,7 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
                 await interaction.response.send_message(f"Tracking in {channel.mention}")
             elif Tracking.get(data[0]["name"]):
                 Tracking[data[0]["name"]][1].append(interaction.user.mention)
-                await interaction.response.send_message(f"added to notification list for: {channel.mention}")
+                await interaction.response.send_message(f"added to notification list for: {TrackingStatus[data[0]["name"]][0].mention}")
             else:
                 await interaction.response.send_message("This username is already being tracked.", delete_after=5)
         else:
