@@ -217,6 +217,7 @@ async def SameGameid(userPresences, channel, channel2):
             else:
                 GameIds[doc["gameId"]] = [[doc["userId"]],{"gameName": doc["lastLocation"], "isLobby": "True" if doc["placeId"] == 6872265039 else "False"}]
 
+    embeds = []
     for gameId, Ids in GameIds.items():
         list2 = Ids[1]
         Ids = Ids[0]
@@ -231,9 +232,12 @@ async def SameGameid(userPresences, channel, channel2):
             if doc["isAlt"] == True:
                 Everyone = True
         Embed = discord.Embed(color=2686720 if list2["isLobby"] == "True" else 1881856, title=Title, description=Description)
-        await channel.send(content=f"<t:{int(time.time())}:R>", embed=Embed)
+        embeds.append(Embed)
         if Everyone:
             await channel2.send(content=f"<t:{int(time.time())}:R><@&1288980643061170188>", embed=Embed)
+    
+    for embedgroup in [embeds[i:i + 10] for i in range(0,len(embeds), 10)]:
+        await channel.send(content=f"<t:{int(time.time())}:R>", embeds=embedgroup)
 
 # ------------------------------ Resume command ------------------------------ #
 
