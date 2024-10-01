@@ -713,7 +713,7 @@ async def addedwith(interaction: discord.Interaction, target: str, usernames:str
     await interaction.response.defer(thinking=True)
 
     tName = ""
-    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": target, "excludeBannedUsers": True})
+    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": [target], "excludeBannedUsers": True})
     if response.status_code == 200:
         responseJSON = response.json()
         data = responseJSON.get("data", [])
