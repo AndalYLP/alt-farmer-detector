@@ -302,7 +302,7 @@ async def List(interaction: discord.Interaction):
             PreviousPage.disabled = False if not page == 0 else True
             NextPage.disabled = False if page < len(pages) - 1 else True
 
-            embed = discord.Embed(color=8585471,title="Player list",description="".join(f"**{i+1+(page*15)}.** ``{str(v["Username"])}`` **|** {str(v["UserID"])} **|** {str(v["GroupName"])}\n" for i,v in enumerate(pages[page])))
+            embed = discord.Embed(color=8585471,title="Player list",description="".join(f"**{i+1+(page*15)}.** ``{str(v["Username"])}`` **|** {str(v["UserID"])} **|** {str(v.get("GroupName", "None"))}\n" for i,v in enumerate(pages[page])))
             await interaction.response.edit_message(embed=embed, view=view)
         else:
             NextPage.disabled = True
@@ -315,14 +315,14 @@ async def List(interaction: discord.Interaction):
             PreviousPage.disabled = False if not page == 0 else True
             NextPage.disabled = False if page < len(pages) - 1 else True
 
-            embed = discord.Embed(color=8585471,title="Player list",description="".join(f"**{i+1+(page*15)}.** ``{str(v["Username"])}`` **|** {str(v["UserID"])}\n" for i,v in enumerate(pages[page])))
+            embed = discord.Embed(color=8585471,title="Player list",description="".join(f"**{i+1+(page*15)}.** ``{str(v["Username"])}`` **|** {str(v["UserID"])} **|** {str(v.get("GroupName", "None"))}\n" for i,v in enumerate(pages[page])))
             await interaction.response.edit_message(embed=embed, view=view)
         else:
             PreviousPage.disabled = True
     NextPage.callback = NextPageCB
     PreviousPage.callback = PreviousPageCB
 
-    embed = discord.Embed(color=8585471,title="Player list",description="".join(f"**{i+1+(page*15)}.** ``{str(v["Username"])}`` **|** {str(v["UserID"])}\n" for i,v in enumerate(pages[page])))
+    embed = discord.Embed(color=8585471,title="Player list",description="".join(f"**{i+1+(page*15)}.** ``{str(v["Username"])}`` **|** {str(v["UserID"])} **|** {str(v.get("GroupName", "None"))}\n" for i,v in enumerate(pages[page])))
     await interaction.response.send_message(embed=embed, view=view)
 
 # ---------------------------- Add player command ---------------------------- #
@@ -608,7 +608,7 @@ async def TrackStatus(interaction: discord.Interaction, username: str):
                 channel = discord.utils.get(category.channels, name=data[0]["name"].lower()) or await guild.create_text_channel(data[0]["name"], category=category)
                 TrackingStatus[data[0]["name"]] = [channel, [interaction.user.mention]]
                 await interaction.response.send_message(f"Tracking in {channel.mention}")
-            elif TrackingStatus.get(data[0]["name"]):
+            elif TrackingStatus.get(data[0]["name"]) and interaction.user.mention not in Tracking[data[0]["name"]][1]:
                 TrackingStatus[data[0]["name"]][1].append(interaction.user.mention)
                 await interaction.response.send_message(f"added to notification list for: {TrackingStatus[data[0]["name"]][0].mention}")
             else:
@@ -632,9 +632,9 @@ async def StopStatusTrack(interaction: discord.Interaction, username: str):
         if data and "requestedUsername" in data[0]:
             if TrackingStatus.get(data[0]["name"]):
                 if len(TrackingStatus.get(data[0]["name"])[1]) == 1:
-                    await TrackingStatus.get(data[0]["name"])[0].delete()
                     TrackingStatus.pop(data[0]["name"])
                     await interaction.response.send_message(f"Stopped tracking **{username}**")
+                    await TrackingStatus.get(data[0]["name"])[0].delete()
                 else: 
                     TrackingStatus.get(data[0]["name"])[1].remove(interaction.user.mention)
                     await interaction.response.send_message(f"Removed from notifications for **{username}**")
@@ -666,7 +666,7 @@ async def TrackQueueTimes(interaction: discord.Interaction, username: str):
                 channel = discord.utils.get(category.channels, name=data[0]["name"].lower()) or await guild.create_text_channel(data[0]["name"], category=category)
                 Tracking[data[0]["name"]] = [channel, [interaction.user.mention]]
                 await interaction.response.send_message(f"Tracking in {channel.mention}")
-            elif Tracking.get(data[0]["name"]):
+            elif Tracking.get(data[0]["name"]) and interaction.user.mention not in Tracking[data[0]["name"]][1]:
                 Tracking[data[0]["name"]][1].append(interaction.user.mention)
                 await interaction.response.send_message(f"added to notification list for: {TrackingStatus[data[0]["name"]][0].mention}")
             else:
@@ -690,9 +690,9 @@ async def StopTimesTrack(interaction: discord.Interaction, username: str):
         if data and "requestedUsername" in data[0]:
             if Tracking.get(data[0]["name"]):
                 if len(Tracking.get(data[0]["name"])[1]) == 1:
-                    await Tracking.get(data[0]["name"])[0].delete()
                     Tracking.pop(data[0]["name"])
                     await interaction.response.send_message(f"Stopped tracking **{username}**")
+                    await Tracking.get(data[0]["name"])[0].delete()
                 else: 
                     Tracking.get(data[0]["name"])[1].remove(interaction.user.mention)
                     await interaction.response.send_message(f"Removed from notifications for **{username}**")
