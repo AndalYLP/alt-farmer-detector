@@ -752,12 +752,12 @@ async def addedwith(interaction: discord.Interaction, target: str, usernames:str
                 if response.status_code == 200:
                     responseJSON = response.json()
                     data = responseJSON.get("PageItems", [])
-
+                    
                     Fresult = []
                     if data:
-                        for user in result.values():
-                            if user in data:
-                                Fresult.append(user)
+                        for item in data:
+                            if item["id"] in result.values():
+                                Fresult.append(item["id"])
                     else:
                         await interaction.followup.send("Error getting friends.", ephemeral=True)
                     
