@@ -51,6 +51,7 @@ snipe = Group(name="snipe",description="Snipe commands")
 friends = Group(name="friends",description="Friends commands")
 track = Group(name="track",description="Tracking commands")
 toggle = Group(name="toggle",description="Toggle commands")
+search = Group(name="search",description="Search commands")
 
 # ------------------------------ On ready event ------------------------------ #
 
@@ -62,6 +63,8 @@ async def on_ready():
     bot.tree.add_command(friends)
     bot.tree.add_command(track)
     bot.tree.add_command(toggle)
+    bot.tree.add_command(search)
+
     bot.loop.create_task(Start())
     try:
         synced = await bot.tree.sync()
@@ -200,9 +203,10 @@ async def UserStatus(userPresences, channel, AltChannel):
                 for group in SubGroups:
                     await channel.send(content=f"<t:{int(time.time())}:R>" + ("<@&1288980643061170188>" if group[0] else ""),embeds=group[1:])
 
-        for i, embed in enumerate(embeds["None"]):
-            if not (i % 2) == 0:
-                await channel.send(content=f"<t:{int(time.time())}:R>" + ("<@&1288980643061170188>" if embeds["None"][i-1] else ""),embed=embed)
+        if embeds.get("None"):
+            for i, embed in enumerate(embeds["None"]):
+                if not (i % 2) == 0:
+                    await channel.send(content=f"<t:{int(time.time())}:R>" + ("<@&1288980643061170188>" if embeds["None"][i-1] else ""),embed=embed)
     else:
         await channel.send("Error: 2", delete_after=3)
 
@@ -298,7 +302,7 @@ async def List(interaction: discord.Interaction):
             PreviousPage.disabled = False if not page == 0 else True
             NextPage.disabled = False if page < len(pages) - 1 else True
 
-            embed = discord.Embed(color=8585471,title="Player list",description="".join(f"**{i+1+(page*15)}.** ``{str(v["Username"])}`` **|** {str(v["UserID"])}\n" for i,v in enumerate(pages[page])))
+            embed = discord.Embed(color=8585471,title="Player list",description="".join(f"**{i+1+(page*15)}.** ``{str(v["Username"])}`` **|** {str(v["UserID"])} **|** {str(v["GroupName"])}\n" for i,v in enumerate(pages[page])))
             await interaction.response.edit_message(embed=embed, view=view)
         else:
             NextPage.disabled = True
@@ -443,7 +447,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool)
                 FriendsID = []
 
                 for id in result.values():
-                    response = requests.get(f"https://friends.roblox.com/v1/users/{id}/friends/find?userSort=2&limit=200", headers={"Cookie": Cookie})
+                    response = requests.get(f"https://friends.roblox.com/v1/users/{id}/friends/find?userSort=2", headers={"Cookie": Cookie})
                     responseJSON = response.json()
                     data = responseJSON.get("PageItems", [])
 
@@ -526,7 +530,7 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver:boo
                 await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                 return
             
-            response = requests.get(f"https://friends.roblox.com/v1/users/{data[0]["id"]}/friends/find?userSort=2&limit=200", headers={"Cookie": Cookie})
+            response = requests.get(f"https://friends.roblox.com/v1/users/{data[0]["id"]}/friends/find?userSort=2", headers={"Cookie": Cookie})
             responseJSON = response.json()
 
             data = responseJSON.get("PageItems", [])
@@ -698,6 +702,87 @@ async def StopTimesTrack(interaction: discord.Interaction, username: str):
             await interaction.response.send_message("Username doesn't exist.", delete_after=3, ephemeral=True)
     else:
         await interaction.response.send_message("Error trying to verify username.", delete_after=3, ephemeral=True)
+
+# ------------------------------- Added command ------------------------------ #
+
+@friends.command(name="added", description="Check if the target is added with the given users.")
+@app_commands.describe(target="User to check his friends.")
+@app_commands.describe(usernames="Users you want to check if they are added with the target, e.g: OrionYeets, chasemaser, ...")
+async def addedwith(interaction: discord.Interaction, target: str, usernames:str):
+    print(interaction.user.name + " Used added command")
+    await interaction.response.defer(thinking=True)
+
+    tName = ""
+    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": target, "excludeBannedUsers": True})
+    if response.status_code == 200:
+        responseJSON = response.json()
+        data = responseJSON.get("data", [])
+
+        if data and "requestedUsername" in data[0]:
+            target = data[0]["id"]
+            tName = data[0]["name"]
+        else:
+            await interaction.followup.send("Error getting target's username.", ephemeral=True)
+            return
+    else:
+        await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
+        return
+
+    UsernamesArray = usernames.split(",")
+    UsernamesArray = [username.strip() for username in UsernamesArray if username.strip()]
+
+    response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": UsernamesArray, "excludeBannedUsers": True})
+    
+    if response.status_code == 200:
+        responseJSON = response.json()
+        data = responseJSON.get("data", [])
+
+        result = {}
+        if data and "requestedUsername" in data[0]:
+            for Pdata in data:
+                result[Pdata["requestedUsername"]] = Pdata["id"]
+
+            if len(result) < len(UsernamesArray):  
+                for username in UsernamesArray:
+                    if username not in result:
+                        await interaction.followup.send(f"Username **{username}** not found", ephemeral=True)
+            else:
+                response = requests.get(f"https://friends.roblox.com/v1/users/{target}/friends/find?userSort=2", headers={"Cookie": Cookie})
+
+                if response.status_code == 200:
+                    responseJSON = response.json()
+                    data = responseJSON.get("PageItems", [])
+
+                    Fresult = []
+                    if data:
+                        for user in result.values():
+                            if user in data:
+                                Fresult.append(user)
+                    else:
+                        await interaction.followup.send("Error getting friends.", ephemeral=True)
+                    
+                    if Fresult:
+                        response = requests.post("https://users.roblox.com/v1/users", json={"userIds": Fresult, "excludeBannedUsers": True})
+                        if response.status_code == 200:
+                            responseJSON = response.json()
+
+                            data = responseJSON.get("data", [])
+                            if data and "id" in data[0]:
+                                embed = discord.Embed(color=8585471,title=f"{tName} is added with:",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])}\n" for i,v in enumerate(data)))
+
+                                await interaction.followup.send(embed=embed)
+                            else:
+                                await interaction.followup.send("Error getting usernames.", ephemeral=True)
+                        else:
+                            await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
+                    else:
+                        await interaction.followup.send("The given usernames are not added with the target.")
+                else:
+                    await interaction.followup.send("Request status code isn't 200 (friends API).", ephemeral=True)
+        else:
+            await interaction.followup.send("Error getting usernames.", ephemeral=True)
+    else:
+        await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
 
 # --------------------------------- Bot start -------------------------------- #
 
