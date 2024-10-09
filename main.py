@@ -261,4 +261,4 @@ class MyBot(commands.Bot):
 
 if __name__ == "__main__":
     bot = MyBot(command_prefix="!", intents=discord.Intents.default())
-    bot.run("TU_TOKEN")
+    bot.run(TOKEN)
