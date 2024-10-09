@@ -72,7 +72,7 @@ async def GetStatus():
     while True:
         try:
             if channel:
-                Documents = UsersCollection.find({})
+                Documents = list(UsersCollection.find({}))
                 if Documents:
                     IDLists = [[doc["UserID"] for doc in Documents[i:i + 30]] for i in range(0, len(Documents), 30)]
                     
