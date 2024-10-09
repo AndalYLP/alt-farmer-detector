@@ -255,5 +255,10 @@ async def load_extensions():
     await bot.load_extension("TrackCommands")
     await bot.load_extension("ListCommands")
 
-bot.loop.run_until_complete(load_extensions())
-bot.run(TOKEN)
+class MyBot(commands.Bot):
+    async def setup_hook(self):
+        await load_extensions()
+
+if __name__ == "__main__":
+    bot = MyBot(command_prefix="!", intents=discord.Intents.default())
+    bot.run("TU_TOKEN")
