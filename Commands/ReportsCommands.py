@@ -62,7 +62,7 @@ class ReportsCommands(commands.Cog):
     # --------------------------- Toggle notifications --------------------------- #
 
     @mainGroup.command(name="notifications", description="enable/disable notifications.")
-    async def notifications(interaction: discord.Interaction):
+    async def notifications(self, interaction: discord.Interaction):
         member = interaction.guild.get_member(interaction.user.id)
         role = discord.utils.get(interaction.guild.roles, name="ping")
         MemberRole = discord.utils.get(member.roles, name="ping")
@@ -77,7 +77,7 @@ class ReportsCommands(commands.Cog):
 
     @addSubGroup.command(name="player",description="Add a player to the loop.")
     @app_commands.describe(username="the username to add.", groupname="Group name NN, None = no group.", altaccount="True if its an alt account.")
-    async def addPlayer(interaction: discord.Interaction, username:str, altaccount:bool, groupname:str):
+    async def addPlayer(self, interaction: discord.Interaction, username:str, altaccount:bool, groupname:str):
         print(interaction.user.name + " Used addplayer command")
         if not UsersCollection.find_one({"Username": username}):
             response = requests.post("https://users.roblox.com/v1/usernames/users",json={"usernames": [username],"excludeBannedUsers": True})

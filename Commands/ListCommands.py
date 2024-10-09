@@ -26,7 +26,7 @@ class ListCommands(commands.Cog):
     # ------------------------------- List command ------------------------------- #
 
     @mainGroup.command(name="get", description="List of users being tracked.")
-    async def List(interaction: discord.Interaction):
+    async def List(self, interaction: discord.Interaction):
         print(interaction.user.name + " Used list command")
         Docs = list(UsersCollection.find({}))   
         page = 0
@@ -73,7 +73,7 @@ class ListCommands(commands.Cog):
 
     @mainGroup.command(name="group", description="")
     @app_commands.describe(groupname="Name of the group to get")
-    async def bygroup(interaction: discord.Interaction, groupname):
+    async def bygroup(self, interaction: discord.Interaction, groupname):
         print(interaction.user.name + " Used bygroup command")
         Docs = list(UsersCollection.find({"GroupName": groupname}))   
         page = 0

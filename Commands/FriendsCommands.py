@@ -22,7 +22,7 @@ class FriendsCommands(commands.Cog):
 
     @mainGroup.command(name="mutuals", description="check mutuals between users.")
     @app_commands.describe(usernames="list of usernames, e.g: OrionYeets, chasemaser, ...", strict="True = Everyone should have the same user added")
-    async def mutuals(interaction: discord.Interaction, usernames: str, strict:bool):
+    async def mutuals(self, interaction: discord.Interaction, usernames: str, strict:bool):
         print(interaction.user.name + " Used mutuals command")
         await interaction.response.defer(thinking=True)
 
@@ -108,7 +108,7 @@ class FriendsCommands(commands.Cog):
 
     @mainGroup.command(name="ingame", description="check in-game friends.")
     @app_commands.describe(sameserver="True will only show in same server friends.", username="Player username to check.")
-    async def ingame(interaction: discord.Interaction, username: str, sameserver:bool):
+    async def ingame(self, interaction: discord.Interaction, username: str, sameserver:bool):
         print(interaction.user.name + " Used ingame command")
         await interaction.response.defer(thinking=True)
 
@@ -197,7 +197,7 @@ class FriendsCommands(commands.Cog):
 
     @mainGroup.command(name="added", description="Check if the target is added with the given users.")
     @app_commands.describe(target="User to check his friends.", usernames="Users you want to check if they are added with the target, e.g: OrionYeets, chasemaser, ...")
-    async def addedwith(interaction: discord.Interaction, target: str, usernames:str):
+    async def addedwith(self, interaction: discord.Interaction, target: str, usernames:str):
         print(interaction.user.name + " Used added command")
         await interaction.response.defer(thinking=True)
 

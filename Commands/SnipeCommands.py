@@ -21,7 +21,7 @@ class SnipeCommands(commands.Cog):
 
     @mainGroup.command(name="player",description="Send player status.")
     @app_commands.describe(username="Player username to snipe.")
-    async def player(interaction: discord.Interaction, username:str):
+    async def player(self, interaction: discord.Interaction, username:str):
         print(interaction.user.name + " Used snipe player command")
         response = requests.post("https://users.roblox.com/v1/usernames/users",json={"usernames": [username],"excludeBannedUsers": True})
         if response.status_code == 200:
