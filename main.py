@@ -249,16 +249,15 @@ async def SameGameId(userPresences, channel, channel2):
 # ----------------------------------- start ---------------------------------- #
 
 async def load_extensions():
-    await bot.load_extension("ReportsCommands")
-    await bot.load_extension("FriendsCommands")
-    await bot.load_extension("SnipeCommands")
-    await bot.load_extension("TrackCommands")
-    await bot.load_extension("ListCommands")
+    await bot.load_extension("Commands.ReportsCommands")
+    await bot.load_extension("Commands.FriendsCommands")
+    await bot.load_extension("Commands.SnipeCommands")
+    await bot.load_extension("Commands.TrackCommands")
+    await bot.load_extension("Commands.ListCommands")
 
-class MyBot(commands.Bot):
-    async def setup_hook(self):
-        await load_extensions()
+async def main():
+    await load_extensions()
+    await bot.start(TOKEN)
 
 if __name__ == "__main__":
-    bot = MyBot(command_prefix="!", intents=discord.Intents.default())
-    bot.run(TOKEN)
+    asyncio.run(main())
