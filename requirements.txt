@@ -1,5 +1,6 @@
-Flask
-pymongo
-discord
 requests
 waitress
+pymongo
+discord
+aiohttp
+Flask
