@@ -73,7 +73,7 @@ class ListCommands(commands.Cog):
 
     @mainGroup.command(name="group", description="")
     @app_commands.describe(groupname="Name of the group to get")
-    async def bygroup(self, interaction: discord.Interaction, groupname):
+    async def bygroup(self, interaction: discord.Interaction, groupname:str):
         print(interaction.user.name + " Used bygroup command")
         Docs = list(UsersCollection.find({"GroupName": groupname}))   
         page = 0
