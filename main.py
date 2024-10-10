@@ -263,5 +263,6 @@ async def loadExtensions():
 async def main():
     await loadExtensions()
     await bot.start(TOKEN)
+    await bot.tree.sync()
 
 asyncio.run(main())
