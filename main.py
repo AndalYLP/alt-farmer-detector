@@ -131,7 +131,7 @@ async def UserStatus(userPresences, channel, AltChannel):
             ud = UserPresence(Data["Username"], presence["userId"], Data["isAlt"], presence["userPresenceType"], "True" if presence["placeId"] == 6872265039 else "False", presence["lastLocation"] or "None", presence["gameId"], Data.get("GroupName", "None"))
 
             if ud.UserID not in GameIdList:
-                GameIdList[ud.UserID] = [["nil", ud.GameId or "nil"], ["nil", f"<t:{int(time.time())}:R>"], ud.LobbyStatus, ud.GameName, ud.PresenceType]
+                GameIdList[ud.UserID] = [["nil", ud.GameId or "nil"], ["nil", f"<t:{round(time.time())}:R>"], ud.LobbyStatus, ud.GameName, ud.PresenceType]
 
             userGameInfo = GameIdList[ud.UserID]
             currentGameId = userGameInfo[0][1]
@@ -141,14 +141,14 @@ async def UserStatus(userPresences, channel, AltChannel):
             if isDifferentGame or isOffline:
                 if bot.Tracking.get(ud.UserID):
                     try:
-                        resultTime = int(time.time()) - int(userGameInfo[1][1][3:-3])
+                        resultTime = round(time.time()) - int(userGameInfo[1][1][3:-3])
                         timeInGame = f"{resultTime} Seconds" if resultTime < 60 else f"{resultTime // 60}:{resultTime % 60:02d} Minutes"
 
                         embed = discord.Embed(color=46847,title="Time in game: " + timeInGame)
                         embed.add_field(name="From:", value=f"Game: **{userGameInfo[3]}**\nGameId: **{userGameInfo[0][1]}**\nLobby: **{userGameInfo[2]}**", inline=True)
                         embed.add_field(name="To:", value=f"Game: **{ud.GameName}**\nGameId: **{ud.GameId}**\nLobby: **{ud.LobbyStatus}**", inline=True)
 
-                        await bot.Tracking[ud.UserID][0].send(content=f"<t:{int(time.time())}:R>{"".join(bot.Tracking[ud.UserID][1])}", embed=embed)
+                        await bot.Tracking[ud.UserID][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.Tracking[ud.UserID][1])}", embed=embed)
                     except Exception as e:
                         print(f"Error enviando trackingtimes: {e}.")
                         traceback.print_exc()
@@ -157,7 +157,7 @@ async def UserStatus(userPresences, channel, AltChannel):
                 userGameInfo[3] = ud.GameName
                 userGameInfo[1][0] = userGameInfo[1][1]
                 userGameInfo[0][0] = currentGameId
-                userGameInfo[1][1] = f"<t:{int(time.time())}:R>"
+                userGameInfo[1][1] = f"<t:{round(time.time())}:R>"
                 userGameInfo[0][1] = ud.GameId
             
             LastGameId = userGameInfo[0][0]
@@ -172,11 +172,11 @@ async def UserStatus(userPresences, channel, AltChannel):
                 embed.set_footer(text= "Group: " + ud.Group)
 
             if ud.isAlt and (ud.PresenceType == 2 and not bot.MuteAll and (presence["rootPlaceId"] == None or presence["rootPlaceId"] == 6872265039)):
-                await AltChannel.send(content=f"<t:{int(time.time())}:R><@&1288980643061170188>",embed=embed)
+                await AltChannel.send(content=f"<t:{round(time.time())}:R><@&1288980643061170188>",embed=embed)
 
             if bot.TrackingStatus.get(ud.UserID) and not userGameInfo[4] == ud.PresenceType:
                 try:
-                    await bot.TrackingStatus[ud.UserID][0].send(content=f"<t:{int(time.time())}:R>{"".join(bot.TrackingStatus[ud.UserID][1])}",embed=embed)
+                    await bot.TrackingStatus[ud.UserID][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.TrackingStatus[ud.UserID][1])}",embed=embed)
                 except Exception as e:
                     print(f"Error enviando trackingstatus: {e}.")
                     traceback.print_exc()
@@ -199,12 +199,12 @@ async def UserStatus(userPresences, channel, AltChannel):
             if not groupName == "None":
                 SubGroups = [Embeds[i:i + 10] for i in range(0,len(Embeds), 10)]
                 for group in SubGroups:
-                    await channel.send(content=f"<t:{int(time.time())}:R>" + ("<@&1288980643061170188>" if group[0] else ""),embeds=group[1:])
+                    await channel.send(content=f"<t:{round(time.time())}:R>" + ("<@&1288980643061170188>" if group[0] else ""),embeds=group[1:])
 
         if embeds.get("None"):
             for i, embed in enumerate(embeds["None"]):
                 if not (i % 2) == 0:
-                    await channel.send(content=f"<t:{int(time.time())}:R>" + ("<@&1288980643061170188>" if embeds["None"][i-1] else ""),embed=embed)
+                    await channel.send(content=f"<t:{round(time.time())}:R>" + ("<@&1288980643061170188>" if embeds["None"][i-1] else ""),embed=embed)
     else:
         await channel.send("Error: 2", delete_after=3)
 
@@ -242,10 +242,10 @@ async def SameGameId(userPresences, channel, channel2):
         Embed = discord.Embed(color=2686720 if list2["isLobby"] == "True" else 1881856, title=Title, description=Description)
         embeds.append(Embed)
         if Everyone:
-            await channel2.send(content=f"<t:{int(time.time())}:R><@&1288980643061170188>", embed=Embed)
+            await channel2.send(content=f"<t:{round(time.time())}:R><@&1288980643061170188>", embed=Embed)
     
     for embedgroup in [embeds[i:i + 10] for i in range(0,len(embeds), 10)]:
-        await channel.send(content=f"<t:{int(time.time())}:R>", embeds=embedgroup)
+        await channel.send(content=f"<t:{round(time.time())}:R>", embeds=embedgroup)
 
 # ----------------------------------- start ---------------------------------- #
 
