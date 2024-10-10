@@ -260,5 +260,5 @@ async def loadExtensions():
     await bot.load_extension("Commands.TrackCommands")
     await bot.load_extension("Commands.ListCommands")
 
-loadExtensions()
+asyncio.run(loadExtensions())
 bot.run(TOKEN)
