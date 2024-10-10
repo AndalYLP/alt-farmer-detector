@@ -35,7 +35,26 @@ Thread(target=lambda: serve(app, host="0.0.0.0", port=8080)).start()
 
 # ------------------------------------ Bot ----------------------------------- #
 
-bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
+class MyBot(commands.Bot):
+    async def setup_hook(self):
+        await self.loadExtensions()
+
+    async def loadExtensions(self):
+        extensions = [
+            "Commands.ReportsCommands",
+            "Commands.FriendsCommands",
+            "Commands.SnipeCommands",
+            "Commands.TrackCommands",
+            "Commands.ListCommands"
+        ]
+        for extension in extensions:
+            try:
+                await self.load_extension(extension)
+                print(f"Loaded {extension}")
+            except Exception as e:
+                print(f"Failed to load extension {extension}: {e}")
+
+bot = MyBot(command_prefix="!", intents=discord.Intents.all())
 
 @bot.event
 async def on_ready():
@@ -54,16 +73,6 @@ async def on_ready():
     except Exception as e:
         print(e)
         traceback.print_exc()
-
-@bot.event
-async def setup_hook(self):
-    await self.load_extension("Commands.ReportsCommands")
-    await self.load_extension("Commands.FriendsCommands")
-    await self.load_extension("Commands.SnipeCommands")
-    await self.load_extension("Commands.TrackCommands")
-    await self.load_extension("Commands.ListCommands")
-    await self.load_xtension("commands.ReportsCommands")
-    await bot.tree.sync()
 
 bot.Tracking = {}
 bot.TrackingStatus = {}
