@@ -47,7 +47,7 @@ async def on_ready():
         print("Comandos slash registrados:")
         for command in bot.tree.get_commands():
             print(command.name)
-            
+
         synced = await bot.tree.sync()
         print(f"Synced {len(synced)} command(s)")
     except Exception as e:
@@ -260,9 +260,5 @@ async def load_extensions():
     await bot.load_extension("Commands.TrackCommands")
     await bot.load_extension("Commands.ListCommands")
 
-async def main():
-    await load_extensions()
-    await bot.start(TOKEN)
-
-if __name__ == "__main__":
-    asyncio.run(main())
+bot.loop.run_until_complete(load_extensions())
+bot.start(TOKEN)
