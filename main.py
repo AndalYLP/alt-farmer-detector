@@ -131,7 +131,7 @@ async def UserStatus(userPresences, channel, AltChannel):
             ud = UserPresence(Data["Username"], presence["userId"], Data["isAlt"], presence["userPresenceType"], "True" if presence["placeId"] == 6872265039 else "False", presence["lastLocation"] or "None", presence["gameId"], Data.get("GroupName", "None"))
 
             if ud.UserID not in GameIdList:
-                GameIdList[ud.UserID] = [["nil", ud.GameId or "nil"], ["nil", f"<t:{time.time()}:R>"], ud.LobbyStatus, ud.GameName, ud.PresenceType]
+                GameIdList[ud.UserID] = [["nil", ud.GameId or "nil"], ["nil", f"<t:{int(time.time())}:R>"], ud.LobbyStatus, ud.GameName, ud.PresenceType]
 
             userGameInfo = GameIdList[ud.UserID]
             currentGameId = userGameInfo[0][1]
