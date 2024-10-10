@@ -125,11 +125,9 @@ async def UserStatus(userPresences, channel, AltChannel):
         userIDs = [presence["userId"] for presence in userPresences]
         
         results = list(UsersCollection.find({"UserID": {"$in": userIDs}}))
-        for doc in results:
-            print(doc)
-        return
+
         for presence in userPresences:
-            Data = (doc for doc in results if doc["UserID"] == presence["userId"])
+            Data = dict(doc for doc in results if doc["UserID"] == presence["userId"])
             ud = UserPresence(Data["Username"], presence["userId"], Data["isAlt"], presence["userPresenceType"], "True" if presence["placeId"] == 6872265039 else "False", presence["lastLocation"] or "None", presence["gameId"], Data.get("GroupName", "None"))
 
             if ud.UserID not in GameIdList:
@@ -214,7 +212,7 @@ async def UserStatus(userPresences, channel, AltChannel):
 
 async def SameGameId(userPresences, channel, channel2):
     userIDs = [presence["userId"] for presence in userPresences]
-    results = UsersCollection.find({"UserID": {"$in": userIDs}})
+    results = list(UsersCollection.find({"UserID": {"$in": userIDs}}))
 
     GameIds = {}
     
@@ -234,7 +232,7 @@ async def SameGameId(userPresences, channel, channel2):
         Everyone = False
 
         for Userid in Ids:
-            doc = (doc for doc in results if doc["UserID"] == Userid)
+            doc = dict(doc for doc in results if doc["UserID"] == Userid)
             Username = doc["Username"]
             Description += f"\nUsername: **{Username}**\n- isAlt: **{doc["isAlt"]}**"
 
