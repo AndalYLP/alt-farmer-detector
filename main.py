@@ -47,11 +47,23 @@ async def on_ready():
         print("Comandos slash registrados:")
         for command in bot.tree.get_commands():
             print(command.name)
+            traceback.print_exc()
 
         synced = await bot.tree.sync()
         print(f"Synced {len(synced)} command(s)")
     except Exception as e:
         print(e)
+        traceback.print_exc()
+
+@bot.event
+async def setup_hook(self):
+    await self.load_extension("Commands.ReportsCommands")
+    await self.load_extension("Commands.FriendsCommands")
+    await self.load_extension("Commands.SnipeCommands")
+    await self.load_extension("Commands.TrackCommands")
+    await self.load_extension("Commands.ListCommands")
+    await self.load_xtension("commands.ReportsCommands")
+    await bot.tree.sync()
 
 bot.Tracking = {}
 bot.TrackingStatus = {}
@@ -261,8 +273,6 @@ async def loadExtensions():
     await bot.load_extension("Commands.ListCommands")
 
 async def main():
-    await loadExtensions()
     await bot.start(TOKEN)
-    await bot.tree.sync()
 
 asyncio.run(main())
