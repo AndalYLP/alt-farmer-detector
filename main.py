@@ -39,11 +39,15 @@ bot = commands.Bot(command_prefix="!", intents=discord.Intents.all())
 
 @bot.event
 async def on_ready():
-    print(f"Bot is ready")
+    print("Bot is ready")
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Bedwars Ranked"))
 
     bot.loop.create_task(GetStatus())
     try:
+        print("Comandos slash registrados:")
+        for command in bot.tree.get_commands():
+            print(command.name)
+            
         synced = await bot.tree.sync()
         print(f"Synced {len(synced)} command(s)")
     except Exception as e:
