@@ -71,7 +71,7 @@ class ListCommands(commands.Cog):
 
     # ----------------------------- Get group command ---------------------------- #
 
-    @mainGroup.command(name="group", description="")
+    @mainGroup.command(name="group", description="Get a list of players in a group.")
     @app_commands.describe(groupname="Name of the group to get")
     async def bygroup(self, interaction: discord.Interaction, groupname:str):
         print(interaction.user.name + " Used bygroup command")
