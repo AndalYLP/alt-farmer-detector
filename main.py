@@ -271,4 +271,4 @@ async def SameGameId(userPresences, channel, channel2):
 
 # ----------------------------------- start ---------------------------------- #
 
-bot.start(TOKEN)
+asyncio.run(bot.start(TOKEN))
