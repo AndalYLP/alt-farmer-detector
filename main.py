@@ -161,7 +161,7 @@ async def UserStatus(userPresences, channel, AltChannel):
             isOffline = ud.PresenceType == 0 and currentGameId
 
             if isDifferentGame or isOffline:
-                if bot.Tracking.get(ud.UserID):
+                if bot.Tracking.get(ud.Username):
                     try:
                         resultTime = round(time.time()) - int(userGameInfo[1][1][3:-3])
                         timeInGame = f"{resultTime} Seconds" if resultTime < 60 else f"{resultTime // 60}:{resultTime % 60:02d} Minutes"
@@ -170,7 +170,7 @@ async def UserStatus(userPresences, channel, AltChannel):
                         embed.add_field(name="From:", value=f"Game: **{userGameInfo[3]}**\nGameId: **{userGameInfo[0][1]}**\nLobby: **{userGameInfo[2]}**", inline=True)
                         embed.add_field(name="To:", value=f"Game: **{ud.GameName}**\nGameId: **{ud.GameId}**\nLobby: **{ud.LobbyStatus}**", inline=True)
 
-                        await bot.Tracking[ud.UserID][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.Tracking[ud.UserID][1])}", embed=embed)
+                        await bot.Tracking[ud.Username][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.Tracking[ud.Username][1])}", embed=embed)
                     except Exception as e:
                         print(f"Error enviando trackingtimes: {e}.")
                         traceback.print_exc()
@@ -196,9 +196,9 @@ async def UserStatus(userPresences, channel, AltChannel):
             if ud.isAlt and (ud.PresenceType == 2 and not bot.MuteAll and (presence["rootPlaceId"] == None or presence["rootPlaceId"] == 6872265039)):
                 await AltChannel.send(content=f"<t:{round(time.time())}:R><@&1288980643061170188>",embed=embed)
 
-            if bot.TrackingStatus.get(ud.UserID) and not userGameInfo[4] == ud.PresenceType:
+            if bot.TrackingStatus.get(ud.Username) and not userGameInfo[4] == ud.PresenceType:
                 try:
-                    await bot.TrackingStatus[ud.UserID][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.TrackingStatus[ud.UserID][1])}",embed=embed)
+                    await bot.TrackingStatus[ud.Username][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.TrackingStatus[ud.Username][1])}",embed=embed)
                 except Exception as e:
                     print(f"Error enviando trackingstatus: {e}.")
                     traceback.print_exc()
