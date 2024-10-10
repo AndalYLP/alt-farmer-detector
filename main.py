@@ -253,10 +253,12 @@ async def SameGameId(userPresences, channel, channel2):
 
 # ----------------------------------- start ---------------------------------- #
 
-bot.load_extension("Commands.ReportsCommands")
-bot.load_extension("Commands.FriendsCommands")
-bot.load_extension("Commands.SnipeCommands")
-bot.load_extension("Commands.TrackCommands")
-bot.load_extension("Commands.ListCommands")
+async def loadExtensions():
+    await bot.load_extension("Commands.ReportsCommands")
+    await bot.load_extension("Commands.FriendsCommands")
+    await bot.load_extension("Commands.SnipeCommands")
+    await bot.load_extension("Commands.TrackCommands")
+    await bot.load_extension("Commands.ListCommands")
 
-bot.start(TOKEN)
+loadExtensions()
+bot.run(TOKEN)
