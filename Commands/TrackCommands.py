@@ -87,9 +87,9 @@ class TrackCommands(commands.Cog):
             if data and "requestedUsername" in data[0]:
                 if self.bot.Tracking.get(data[0]["name"]):
                     if len(self.bot.Tracking.get(data[0]["name"])[1]) == 1:
-                        self.bot.Tracking.pop(data[0]["name"])
-                        await self.bot.Tracking.get(data[0]["name"])[0].delete()
                         await interaction.response.send_message(f"Stopped tracking **{username}**")
+                        await self.bot.Tracking.get(data[0]["name"])[0].delete()
+                        self.bot.Tracking.pop(data[0]["name"])
                     else: 
                         self.bot.Tracking.get(data[0]["name"])[1].remove(interaction.user.mention)
                         await interaction.response.send_message(f"Removed from notifications for **{username}**")
@@ -115,9 +115,9 @@ class TrackCommands(commands.Cog):
             if data and "requestedUsername" in data[0]:
                 if self.bot.TrackingStatus.get(data[0]["name"]):
                     if len(self.bot.TrackingStatus.get(data[0]["name"])[1]) == 1:
-                        self.bot.TrackingStatus.pop(data[0]["name"])
-                        await self.bot.TrackingStatus.get(data[0]["name"])[0].delete()
                         await interaction.response.send_message(f"Stopped tracking **{username}**")
+                        await self.bot.TrackingStatus.get(data[0]["name"])[0].delete()
+                        self.bot.TrackingStatus.pop(data[0]["name"])
                     else: 
                         self.bot.TrackingStatus.get(data[0]["name"])[1].remove(interaction.user.mention)
                         await interaction.response.send_message(f"Removed from notifications for **{username}**")

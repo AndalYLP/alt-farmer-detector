@@ -35,18 +35,16 @@ Thread(target=lambda: serve(app, host="0.0.0.0", port=8080)).start()
 
 # ------------------------------------ Bot ----------------------------------- #
 
-class MyBot(commands.Bot):
+class Bot(commands.Bot):
     async def setup_hook(self):
         await self.loadExtensions()
 
     async def loadExtensions(self):
-        extensions = [
-            "Commands.ReportsCommands",
-            "Commands.FriendsCommands",
-            "Commands.SnipeCommands",
-            "Commands.TrackCommands",
-            "Commands.ListCommands"
-        ]
+        extensions = []
+        for filename in os.listdir("./Commands"):
+            if filename.endswith(".py"):
+                extensions.append("Commands." + filename[:-3])
+
         for extension in extensions:
             try:
                 await self.load_extension(extension)
@@ -54,7 +52,7 @@ class MyBot(commands.Bot):
             except Exception as e:
                 print(f"Failed to load extension {extension}: {e}")
 
-bot = MyBot(command_prefix="!", intents=discord.Intents.all())
+bot = Bot(command_prefix="!", intents=discord.Intents.all())
 
 @bot.event
 async def on_ready():
@@ -150,7 +148,6 @@ async def UserStatus(userPresences, channel, AltChannel):
         userIDs = [presence["userId"] for presence in userPresences]
         
         results = list(UsersCollection.find({"UserID": {"$in": userIDs}}))
-
         for presence in userPresences:
             Data = next((doc for doc in results if doc["UserID"] == presence["userId"]))
             ud = UserPresence(Data["Username"], presence["userId"], Data["isAlt"], presence["userPresenceType"], "True" if presence["placeId"] == 6872265039 else "False", presence["lastLocation"] or "None", presence["gameId"], Data.get("GroupName", "None"))
@@ -274,14 +271,4 @@ async def SameGameId(userPresences, channel, channel2):
 
 # ----------------------------------- start ---------------------------------- #
 
-async def loadExtensions():
-    await bot.load_extension("Commands.ReportsCommands")
-    await bot.load_extension("Commands.FriendsCommands")
-    await bot.load_extension("Commands.SnipeCommands")
-    await bot.load_extension("Commands.TrackCommands")
-    await bot.load_extension("Commands.ListCommands")
-
-async def main():
-    await bot.start(TOKEN)
-
-asyncio.run(main())
+bot.start(TOKEN)
