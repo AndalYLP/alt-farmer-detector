@@ -248,13 +248,13 @@ class FriendsCommands(commands.Cog):
 
                         if response.status_code == 200:
                             responseJSON = response.json()
-                            data = responseJSON.get("data", [])
+                            data = responseJSON.get("PageItems", [])
                             nextCursor = responseJSON.get("nextPageCursor")
 
                             if data:
                                 Fresult.extend([item["id"] for item in data if item["id"] in result.values()])
                             else:
-                                await interaction.followup.send("No friends found.", ephemeral=True)
+                                await interaction.followup.send(f"No friends found.", ephemeral=True)
                                 return
                             
                             if not nextCursor:
