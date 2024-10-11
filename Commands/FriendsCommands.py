@@ -254,9 +254,8 @@ class FriendsCommands(commands.Cog):
                             if data:
                                 Fresult.extend([item["id"] for item in data if item["id"] in result.values()])
                             else:
-                                await interaction.followup.send(f"No friends found. {data, nextCursor}", ephemeral=True)
-                                return
-                            
+                                break
+
                             if not nextCursor:
                                 break
                         else:
