@@ -242,14 +242,14 @@ class FriendsCommands(commands.Cog):
                     while True:
                         url = f"https://friends.roblox.com/v1/users/{target}/friends/find?userSort=2"
                         if nextCursor:
-                            url += f"&nextPageCursor={nextCursor}"
+                            url += f"&cursor={nextCursor}"
 
                         response = requests.get(url, headers={"Cookie": COOKIE})
 
                         if response.status_code == 200:
                             responseJSON = response.json()
                             data = responseJSON.get("PageItems", [])
-                            nextCursor = responseJSON.get("nextPageCursor")
+                            nextCursor = responseJSON.get("NextCursor")
 
                             if data:
                                 Fresult.extend([item["id"] for item in data if item["id"] in result.values()])
