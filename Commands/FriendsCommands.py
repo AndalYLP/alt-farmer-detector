@@ -236,19 +236,32 @@ class FriendsCommands(commands.Cog):
                         if username not in result:
                             await interaction.followup.send(f"Username **{username}** not found", ephemeral=True)
                 else:
-                    response = requests.get(f"https://friends.roblox.com/v1/users/{target}/friends/find?userSort=2", headers={"Cookie": COOKIE})
+                    Fresult = []
+                    nextCursor = None
 
-                    if response.status_code == 200:
-                        responseJSON = response.json()
-                        data = responseJSON.get("PageItems", [])
-                        
-                        Fresult = []
-                        if data:
-                            for item in data:
-                                if item["id"] in result.values():
-                                    Fresult.append(item["id"])
+                    while True:
+                        url = f"https://friends.roblox.com/v1/users/{target}/friends/find?userSort=2"
+                        if nextCursor:
+                            url += f"&nextPageCursor={nextCursor}"
+
+                        response = requests.get(url, headers={"Cookie": COOKIE})
+
+                        if response.status_code == 200:
+                            responseJSON = response.json()
+                            data = responseJSON.get("data", [])
+                            nextCursor = responseJSON.get("nextPageCursor")
+
+                            if data:
+                                Fresult.extend([item["id"] for item in data if item["id"] in result.values()])
+                            else:
+                                await interaction.followup.send("No friends found.", ephemeral=True)
+                                return
+                            
+                            if not nextCursor:
+                                break
                         else:
-                            await interaction.followup.send("Error getting friends.", ephemeral=True)
+                            await interaction.followup.send("Request status code isn't 200 (Friends API).", ephemeral=True)
+                            return
                         
                         if Fresult:
                             response = requests.post("https://users.roblox.com/v1/users", json={"userIds": Fresult, "excludeBannedUsers": True})
@@ -266,8 +279,6 @@ class FriendsCommands(commands.Cog):
                                 await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
                         else:
                             await interaction.followup.send("The given usernames are not added with the target.")
-                    else:
-                        await interaction.followup.send("Request status code isn't 200 (friends API).", ephemeral=True)
             else:
                 await interaction.followup.send("Error getting usernames.", ephemeral=True)
         else:
