@@ -263,22 +263,22 @@ class FriendsCommands(commands.Cog):
                             await interaction.followup.send("Request status code isn't 200 (Friends API).", ephemeral=True)
                             return
                         
-                        if Fresult:
-                            response = requests.post("https://users.roblox.com/v1/users", json={"userIds": Fresult, "excludeBannedUsers": True})
-                            if response.status_code == 200:
-                                responseJSON = response.json()
+                    if Fresult:
+                        response = requests.post("https://users.roblox.com/v1/users", json={"userIds": Fresult, "excludeBannedUsers": True})
+                        if response.status_code == 200:
+                            responseJSON = response.json()
 
-                                data = responseJSON.get("data", [])
-                                if data and "id" in data[0]:
-                                    embed = discord.Embed(color=8585471,title=f"{tName} is added with:",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])}\n" for i,v in enumerate(data)))
+                            data = responseJSON.get("data", [])
+                            if data and "id" in data[0]:
+                                embed = discord.Embed(color=8585471,title=f"{tName} is added with:",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])}\n" for i,v in enumerate(data)))
 
-                                    await interaction.followup.send(embed=embed)
-                                else:
-                                    await interaction.followup.send("Error getting usernames.", ephemeral=True)
+                                await interaction.followup.send(embed=embed)
                             else:
-                                await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
+                                await interaction.followup.send("Error getting usernames.", ephemeral=True)
                         else:
-                            await interaction.followup.send("The given usernames are not added with the target.")
+                            await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
+                    else:
+                        await interaction.followup.send("The given usernames are not added with the target.")
             else:
                 await interaction.followup.send("Error getting usernames.", ephemeral=True)
         else:
