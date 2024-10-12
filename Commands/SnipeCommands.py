@@ -52,16 +52,16 @@ class AvatarFetcher:
                     description = f"Game: **Bedwars** (yes.)\nLobby: **True** (yes.)\nGameId: **{tokens[found_data[self.image_url]]}**" 
                     embed = discord.Embed(color=color,title=title,description=description)
                     await self.interaction.followup.send(content=f"<t:{int(time.time())}:R>" + (f"Data from:<t:{int(TokensTime)}:R>" if Force else ""),embed=embed)
-                    print("FOUND", flush=True)
+                    print("FOUND!", flush=True)
                 else:
                     print("NOT FOUND", flush=True)
 
-    async def check_images(self, tokens):
+    async def check_images(self, tokens, forced):
         async with aiohttp.ClientSession() as session:
             tasks = []
             for i in range(0, len(tokens), 100):
                 token_batch = [self.token_format(token) for token in list(tokens.keys())[i:i + 100]]
-                tasks.append(self.fetch_batch_data(session, token_batch, False, tokens))
+                tasks.append(self.fetch_batch_data(session, token_batch, forced, tokens))
             await asyncio.gather(*tasks)
 
     @staticmethod
@@ -89,7 +89,7 @@ class AvatarFetcher:
                     tokens = {token: server["id"] for server in response_json["data"] for token in server["playerTokens"]}
                     TokensTotal.update(tokens)
                     TokensTime = time.time()
-                    await self.check_images(tokens)
+                    await self.check_images(tokens, False)
                     next_cursor = response_json.get("nextPageCursor")
                     if not next_cursor:
                         busy = False
@@ -182,8 +182,8 @@ class SnipeCommands(commands.Cog):
                     Debounce = False
                 else:
                     fetcher = AvatarFetcher(id, Username, interaction)
-                    async with aiohttp.ClientSession() as session:
-                        await fetcher.fetch_batch_data(session, TokensTotal, True)
+                    await fetcher.check_images(TokensTotal, True)
+
                 await interaction.followup.send("Finished.", ephemeral=True)
             else:
                 await interaction.followup.send("Username doesn't exist.", ephemeral=True)
