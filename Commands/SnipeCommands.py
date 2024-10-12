@@ -40,7 +40,7 @@ async def GetData(session, Data, i, image, Tokens, interaction: discord.Interact
                 title = f"Found {Username}'s server!"
                 description = f"Game: **Bedwars** (yes.)\nLobby: **True** (yes.)\nGameId: **{Tokens[thing[image]]}**" 
                 embed = discord.Embed(color=color,title=title,description=description)
-                interaction.followup.send(content=f"<t:{int(time.time())}:R>" + (f"Tokens Time: <t:{TokensTime}:R>" if Forced else ""),embed=embed)
+                await interaction.followup.send(content=f"<t:{int(time.time())}:R>" + (f"Tokens Time: <t:{TokensTime}:R>" if Forced else ""),embed=embed)
             return
 
 async def CheckImage(Tokens, image, interaction, Username, Forced):
@@ -113,7 +113,7 @@ class SnipeCommands(commands.Cog):
             await interaction.response.send_message("Im busy rn!.", delete_after=3, ephemeral=True)
         
         if Credits != 3 and forceupdate:
-            await interaction.response.send_message("On cooldown, pls wait. " + Credits, delete_after=3, ephemeral=True)
+            await interaction.response.send_message("On cooldown, pls wait. " + str(Credits), delete_after=3, ephemeral=True)
         print(interaction.user.name + " Used snipe player command")
 
         await interaction.response.defer(thinking=True)
