@@ -20,7 +20,7 @@ busy = False
 
 class AvatarFetcher:
     def __init__(self, user_id, username, interaction):
-        self.user_id = user_id
+        self.user_id = str(user_id)
         self.image_url = None
         self.found = False
         self.username = username
@@ -34,7 +34,7 @@ class AvatarFetcher:
                 else:
                     await self.interaction.followup.send("Request status code isn't 200 (Thumbnail API).")
 
-    async def fetch_batch_data(self, session, data, Force):
+    async def fetch_batch_data(self, session, data, Force, tokens):
         global busy
         async with session.post("https://thumbnails.roblox.com/v1/batch", json=data) as response:
             if response.status == 200:
@@ -49,7 +49,7 @@ class AvatarFetcher:
                     busy = False
                     color = 2686720
                     title = f"Found {self.username}'s server!"
-                    description = f"Game: **Bedwars** (yes.)\nLobby: **True** (yes.)\nGameId: **{data[found_data[self.image_url]]}**" 
+                    description = f"Game: **Bedwars** (yes.)\nLobby: **True** (yes.)\nGameId: **{tokens[found_data[self.image_url]]}**" 
                     embed = discord.Embed(color=color,title=title,description=description)
                     await self.interaction.followup.send(content=f"<t:{int(time.time())}:R>" + (f"Data from:<t:{int(TokensTime)}:R>" if Force else ""),embed=embed)
 
@@ -58,7 +58,7 @@ class AvatarFetcher:
             tasks = []
             for i in range(0, len(tokens), 100):
                 token_batch = [self.token_format(token) for token in list(tokens.keys())[i:i + 100]]
-                tasks.append(self.fetch_batch_data(session, token_batch, False))
+                tasks.append(self.fetch_batch_data(session, token_batch, False, tokens))
             await asyncio.gather(*tasks)
 
     @staticmethod
