@@ -49,7 +49,7 @@ class AvatarFetcher:
                     busy = False
                     color = 2686720
                     title = f"Found {self.username}'s server!"
-                    description = f"Game: **Bedwars** (yes.)\nLobby: **True** (yes.)\nGameId: **{found_data[self.image_url]}**" 
+                    description = f"Game: **Bedwars** (yes.)\nLobby: **True** (yes.)\nGameId: **{data[found_data[self.image_url]]}**" 
                     embed = discord.Embed(color=color,title=title,description=description)
                     await self.interaction.followup.send(content=f"<t:{int(time.time())}:R>" + (f"Data from:<t:{int(TokensTime)}:R>" if Force else ""),embed=embed)
 
@@ -168,7 +168,7 @@ class SnipeCommands(commands.Cog):
                 id = data[0].get("id")
                 Username = data[0].get("name")
 
-                if not forceupdate:
+                if forceupdate:
                     Debounce = True
                     fetcher = AvatarFetcher(id, Username, interaction)
                     await fetcher.run()
