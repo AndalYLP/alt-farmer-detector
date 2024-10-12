@@ -56,7 +56,7 @@ class AvatarFetcher:
                 else:
                     print("NOT FOUND", flush=True)
             else:
-                print("error thumbnail api", await response.json())
+                print("error thumbnail api", await response.text())
 
     async def check_images(self, tokens, forced):
         async with aiohttp.ClientSession() as session:
@@ -64,7 +64,11 @@ class AvatarFetcher:
             for i in range(0, len(tokens), 100):
                 token_batch = [self.token_format(token) for token in list(tokens.keys())[i:i + 100]]
                 tasks.append(self.fetch_batch_data(session, token_batch, forced, tokens))
-            await asyncio.gather(*tasks)
+            
+            tasks_sub_list = [tasks[i:i + 3] for i in range(0, len(tasks), 3)]
+            for tasks in tasks_sub_list:
+                asyncio.create_task(*tasks)
+                await asyncio.sleep(0.1)
 
     @staticmethod
     def token_format(token):
