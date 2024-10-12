@@ -154,11 +154,11 @@ class SnipeCommands(commands.Cog):
                                 if Credits == 0:
                                     if notFound:
                                         await interaction.followup.send("Sent 3 requests, waiting 60 seconds.")
-                                        time.sleep(60)
+                                        await asyncio.sleep(60)
                                         Credits = 3
                                         continue
                                     else:
-                                        time.sleep(60)
+                                        await asyncio.sleep(60)
                                         Credits = 3
                                         break
                                     
@@ -168,12 +168,12 @@ class SnipeCommands(commands.Cog):
                                         await interaction.followup.send("No servers left, player not found.")
                                     break
                             else:
-                                print("Response code is not 200", response.json())
-                                time.sleep(30) 
+                                await interaction.followup.send("Request status code isn't 200 (Games API).", ephemeral=True)
+                                await asyncio.sleep(30) 
                         await interaction.followup.send("Finished.")
                         busy = False
                         if Credits != 3:
-                            time.sleep(60)
+                            await asyncio.sleep(60)
                             Credits = 3
                     else:
                         await interaction.followup.send("Error getting user's thumbnail.", ephemeral=True)
