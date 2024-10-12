@@ -52,6 +52,9 @@ class AvatarFetcher:
                     description = f"Game: **Bedwars** (yes.)\nLobby: **True** (yes.)\nGameId: **{tokens[found_data[self.image_url]]}**" 
                     embed = discord.Embed(color=color,title=title,description=description)
                     await self.interaction.followup.send(content=f"<t:{int(time.time())}:R>" + (f"Data from:<t:{int(TokensTime)}:R>" if Force else ""),embed=embed)
+                    print("FOUND")
+                else:
+                    print("NOT FOUND")
 
     async def check_images(self, tokens):
         async with aiohttp.ClientSession() as session:
@@ -174,7 +177,7 @@ class SnipeCommands(commands.Cog):
                     Debounce = True
                     fetcher = AvatarFetcher(id, Username, interaction)
                     await fetcher.run()
-                    asyncio.wait(60)
+                    await asyncio.sleep(60)
                     Debounce = False
                 else:
                     fetcher = AvatarFetcher(id, Username, interaction)
