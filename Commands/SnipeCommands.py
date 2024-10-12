@@ -92,6 +92,7 @@ class AvatarFetcher:
                     await self.check_images(tokens)
                     next_cursor = response_json.get("nextPageCursor")
                     if not next_cursor:
+                        busy = False
                         break
                 else:
                     await self.interaction.followup.send("Request status code isn't 200 (Games API), waiting 60 seconds.", ephemeral=True)
