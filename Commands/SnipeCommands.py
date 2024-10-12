@@ -55,6 +55,8 @@ class AvatarFetcher:
                     print("FOUND!", flush=True)
                 else:
                     print("NOT FOUND", flush=True)
+            else:
+                print("error thumbnail api")
 
     async def check_images(self, tokens, forced):
         async with aiohttp.ClientSession() as session:
