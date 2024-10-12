@@ -109,8 +109,11 @@ class SnipeCommands(commands.Cog):
     @app_commands.describe(username="Player username to snipe.", forceupdate="If true you will get the latest data and update the current data, if false you will search through the current data")
     async def joinsOffPlayer(self, interaction: discord.Interaction, username:str, forceupdate:bool):
         global Credits, TokensTotal, notFound, TokensTime, busy
-        if busy or Credits != 3:
+        if busy:
             await interaction.response.send_message("Im busy rn!.", delete_after=3, ephemeral=True)
+        
+        if Credits != 3 and forceupdate:
+            await interaction.response.send_message("On cooldown, pls wait. " + Credits, delete_after=3, ephemeral=True)
         print(interaction.user.name + " Used snipe player command")
 
         await interaction.response.defer(thinking=True)
@@ -167,6 +170,7 @@ class SnipeCommands(commands.Cog):
                             else:
                                 print("Response code is not 200", response.json())
                                 time.sleep(30) 
+                        await interaction.followup.send("Finished.")
                         busy = False
                     else:
                         await interaction.followup.send("Error getting user's thumbnail.", ephemeral=True)
