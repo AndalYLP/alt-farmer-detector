@@ -34,9 +34,9 @@ class AvatarFetcher:
                 else:
                     await self.interaction.followup.send("Request status code isn't 200 (Thumbnail API).")
 
-    async def fetch_batch_data(self, session, data, Force, tokens):
+    async def fetch_batch_data(self, session:aiohttp.ClientSession, data, Force, tokens):
         global busy
-        async with session.post("https://thumbnails.roblox.com/v1/batch", json=data) as response:
+        async with session.post("https://thumbnails.roblox.com/v1/batch", json=data, headers={"Cookie": COOKIE}) as response:
             if response.status == 200:
                 result = await response.json()
                 found_data = {item["imageUrl"]: item["requestId"].split(":")[1] for item in result["data"]}
