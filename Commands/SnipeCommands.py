@@ -177,7 +177,7 @@ class SnipeCommands(commands.Cog):
                 else:
                     fetcher = AvatarFetcher(id, Username, interaction)
                     async with aiohttp.ClientSession() as session:
-                        fetcher.fetch_batch_data(session, TokensTotal, True)
+                        await fetcher.fetch_batch_data(session, TokensTotal, True)
                 await interaction.followup.send("Finished.", ephemeral=True)
             else:
                 await interaction.followup.send("Username doesn't exist.", ephemeral=True)
