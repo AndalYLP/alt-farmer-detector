@@ -154,7 +154,7 @@ class SnipeCommands(commands.Cog):
         if busy:
             await interaction.response.send_message("Im busy rn!.", delete_after=3, ephemeral=True)
         
-        if not Debounce and forceupdate:
+        if Debounce and forceupdate:
             await interaction.response.send_message("On cooldown, pls wait.", delete_after=3, ephemeral=True)
         print(interaction.user.name + " Used snipe player command")
 
