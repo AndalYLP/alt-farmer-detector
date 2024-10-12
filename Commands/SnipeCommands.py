@@ -52,9 +52,9 @@ class AvatarFetcher:
                     description = f"Game: **Bedwars** (yes.)\nLobby: **True** (yes.)\nGameId: **{tokens[found_data[self.image_url]]}**" 
                     embed = discord.Embed(color=color,title=title,description=description)
                     await self.interaction.followup.send(content=f"<t:{int(time.time())}:R>" + (f"Data from:<t:{int(TokensTime)}:R>" if Force else ""),embed=embed)
-                    print("FOUND")
+                    print("FOUND", flush=True)
                 else:
-                    print("NOT FOUND")
+                    print("NOT FOUND", flush=True)
 
     async def check_images(self, tokens):
         async with aiohttp.ClientSession() as session:
