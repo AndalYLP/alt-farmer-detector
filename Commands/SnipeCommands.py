@@ -172,6 +172,9 @@ class SnipeCommands(commands.Cog):
                                 time.sleep(30) 
                         await interaction.followup.send("Finished.")
                         busy = False
+                        if Credits != 3:
+                            time.sleep(60)
+                            Credits = 3
                     else:
                         await interaction.followup.send("Error getting user's thumbnail.", ephemeral=True)
                 else:
