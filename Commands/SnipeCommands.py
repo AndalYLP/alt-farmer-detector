@@ -17,6 +17,7 @@ Credits = 3
 TokensTotal = {}
 TokensTime = None
 notFound = True
+busy = False
 def tokenFormat(token):
     return {
         "requestId": f"0:{token}:AvatarHeadshot:48x48:png:regular",
@@ -57,7 +58,7 @@ class SnipeCommands(commands.Cog):
 
     mainGroup = app_commands.Group(name="snipe", description="Snipe commands")
 
-    joinsOffGroup = app_commands.Group(name="add", description="add commands", parent=mainGroup)
+    joinsOffGroup = app_commands.Group(name="joinsoff", description="joinsoff commands", parent=mainGroup)
     
     # --------------------------- Snipe player command --------------------------- #
 
@@ -107,8 +108,11 @@ class SnipeCommands(commands.Cog):
     @joinsOffGroup.command(name="player",description="Send player status, only works with bedwars.")
     @app_commands.describe(username="Player username to snipe.", forceupdate="If true you will get the latest data and update the current data, if false you will search through the current data")
     async def joinsOffPlayer(self, interaction: discord.Interaction, username:str, forceupdate:bool):
-        global Credits, TokensTotal, notFound, TokensTime
+        global Credits, TokensTotal, notFound, TokensTime, busy
+        if busy or Credits != 3:
+            await interaction.response.send_message("Im busy rn!.", delete_after=3, ephemeral=True)
         print(interaction.user.name + " Used snipe player command")
+
         await interaction.response.defer(thinking=True)
         response = requests.post("https://users.roblox.com/v1/usernames/users",json={"usernames": [username],"excludeBannedUsers": True})
         if response.status_code == 200:
@@ -132,7 +136,8 @@ class SnipeCommands(commands.Cog):
 
                         notFound = True
                         nextCursor = None
-                        while notFound:
+                        busy = True
+                        while notFound or Credits != 0:
                             response = requests.get("https://games.roblox.com/v1/games/6872265039/servers/public?limit=100" + (f"&cursor={nextCursor}" if nextCursor else ""))
                             if response.status_code == 200:
                                 responseJSON = response.json()
@@ -144,10 +149,16 @@ class SnipeCommands(commands.Cog):
                                 nextCursor = responseJSON["nextPageCursor"]
                                 Credits -= 1
                                 if Credits == 0:
-                                    await interaction.followup.send("Sent 3 requests, waiting 60 seconds.")
-                                    time.sleep(60)
-                                    Credits = 3
-                                    continue
+                                    if notFound:
+                                        await interaction.followup.send("Sent 3 requests, waiting 60 seconds.")
+                                        time.sleep(60)
+                                        Credits = 3
+                                        continue
+                                    else:
+                                        time.sleep(60)
+                                        Credits = 3
+                                        break
+                                    
                                 
                                 if not nextCursor:
                                     if notFound:
@@ -156,6 +167,7 @@ class SnipeCommands(commands.Cog):
                             else:
                                 print("Response code is not 200", response.json())
                                 time.sleep(30) 
+                        busy = False
                     else:
                         await interaction.followup.send("Error getting user's thumbnail.", ephemeral=True)
                 else:
