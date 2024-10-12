@@ -44,7 +44,7 @@ class AvatarFetcher:
                 if self.found:
                     return
                 
-                if self.image_url in found_data:
+                if self.image_url in found_data.keys():
                     self.found = True
                     busy = False
                     color = 2686720
