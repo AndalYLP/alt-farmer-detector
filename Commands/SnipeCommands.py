@@ -178,6 +178,8 @@ class SnipeCommands(commands.Cog):
                     Debounce = True
                     fetcher = AvatarFetcher(id, Username, interaction)
                     await fetcher.run()
+                    if not fetcher.found:
+                        await interaction.followup.send("Didn't find the given player.", ephemeral=True)
                     await asyncio.sleep(60)
                     Debounce = False
                 else:
