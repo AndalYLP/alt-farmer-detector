@@ -240,9 +240,7 @@ class FriendsCommands(commands.Cog):
                     nextCursor = None
 
                     while True:
-                        url = f"https://friends.roblox.com/v1/users/{target}/friends/find?userSort=2"
-                        if nextCursor:
-                            url += f"&cursor={nextCursor}"
+                        url = f"https://friends.roblox.com/v1/users/{target}/friends/find?userSort=2" + (f"&cursor={nextCursor}" if nextCursor else "")
 
                         response = requests.get(url, headers={"Cookie": COOKIE})
 
