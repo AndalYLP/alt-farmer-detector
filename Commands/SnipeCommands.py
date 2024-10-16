@@ -41,8 +41,11 @@ class SnipeCommands(commands.Cog):
         else:
             usernames = usernames.split(" ")
 
+        if not isinstance(usernames, list):
+            usernames = [usernames]
+
         try:
-            presenceGroup, userIds = await RobloxPy.Presence.getPresenceFromUsername(usernames)
+            presenceGroup, userIds = await RobloxPy.Presence.getPresenceFromUsername(*usernames)
             inversedUserIds = {userId: name for name, userId in userIds.items()}
 
             embeds = []
