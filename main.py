@@ -99,7 +99,10 @@ async def getStatus():
                     
                     for presence in userPresences.presences:
                         data = next((doc for doc in results if doc["UserID"] == presence.userId))
-                        presence.username = data["Username"], presence.lobbyStatus = "True" if presence.placeId == 6872265039 else "False", presence.groupName = data.get("GroupName", "None"), presence.isAlt = data["isAlt"]
+                        presence.username = data["Username"]
+                        presence.lobbyStatus = "True" if presence.placeId == 6872265039 else "False"
+                        presence.groupName = data.get("GroupName", "None")
+                        presence.isAlt = data["isAlt"]
 
                     if userPresences:
                         await channel.purge(limit=100)
