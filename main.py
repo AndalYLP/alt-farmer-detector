@@ -134,7 +134,7 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
         isOffline = presence.userPresenceType == 0 and currentGameId
 
         if isDifferentGame or isOffline:
-            if bot.Tracking.get(presence.username):
+            if bot.Tracking.get(presence.userId):
                 try:
                     resultTime = round(time.time()) - int(userGameInfo[1][1][3:-3])
                     timeInGame = f"{resultTime} Seconds" if resultTime < 60 else f"{resultTime // 60}:{resultTime % 60:02d} Minutes"
@@ -149,7 +149,7 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
                         inline=True
                     )
 
-                    await bot.Tracking[presence.username][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.Tracking[presence.username][1])}", embed=embed)
+                    await bot.Tracking[presence.userId][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.Tracking[presence.userId][1])}", embed=embed)
                 except Exception as e:
                         print(f"Error sending tracking times: {e}.")
                         traceback.print_exc()
@@ -175,9 +175,9 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
         if presence.isAlt and (presence.gameId == None or presence.gameId == 6872265039):
             asyncio.create_task(altChannel.send(content=f"<t:{round(time.time())}:R><@&1288980643061170188>",embed=embed))
         
-        if bot.TrackingStatus.get(presence.username) and not userGameInfo[4] == presence.userPresenceType:
+        if bot.TrackingStatus.get(presence.userId) and not userGameInfo[4] == presence.userPresenceType:
             try:
-                await bot.TrackingStatus[presence.username][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.TrackingStatus[presence.username][1])}",embed=embed)
+                await bot.TrackingStatus[presence.userId][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.TrackingStatus[presence.userId][1])}",embed=embed)
             except Exception as e:
                 print(f"Error enviando trackingstatus: {e}.")
                 traceback.print_exc()
