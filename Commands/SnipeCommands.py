@@ -106,7 +106,7 @@ class SnipeCommands(commands.Cog):
 
         except Exception as e:
             busy = Debounce = False
-            await interaction.followup.send(embed=discord.Embed(color=16765440,title="Error",description=e.args[0]), delete_after=5)
+            await interaction.followup.send(embed=discord.Embed(color=16765440,title="Error",description=e.args[0]))
 
 
 async def setup(bot: commands.Bot):

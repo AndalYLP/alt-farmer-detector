@@ -120,7 +120,7 @@ def getUsersAvatar(*userIds:int, type:str = "headshot", size:str = "48x48", form
 def getUsersAvatarFromUsername(*usernames:int, type:str = "headshot", size:str = "48x48", format:str = "Png", isCircular:bool = False)  -> tuple[(BatchObject | ThumbnailObject), dict[str, int]]:
     userIds = getIds(*usernames, excludeBanned=False)
 
-    return getUsersAvatar(*userIds, type=type, size=size, format=format, isCircular=isCircular), userIds
+    return getUsersAvatar(*userIds.values(), type=type, size=size, format=format, isCircular=isCircular), userIds
     
 def batch(*batchObjects:ThumbnailBatchObject) -> BatchObject:
     async def fetchData(session:aiohttp.ClientSession, group):
