@@ -172,7 +172,7 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
         if presence.groupName != "None":
             embed.set_footer(text= "Group: " + presence.groupName)
 
-        if presence.isAlt:
+        if presence.isAlt and (presence.gameId == None or presence.gameId == 6872265039):
             asyncio.create_task(altChannel.send(content=f"<t:{round(time.time())}:R><@&1288980643061170188>",embed=embed))
         
         if bot.TrackingStatus.get(presence.username) and not userGameInfo[4] == presence.userPresenceType:
