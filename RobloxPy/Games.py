@@ -30,7 +30,7 @@ class ServerGroup:
         self.servers = [Server(server) for server in data["data"]]
     
     def getPlayerThumbnails(self, type:str = "AvatarHeadShot", size:str = "48x48", format:str = "png", isCircular:bool = False) -> BatchObject:
-            batchObject = [ThumbnailBatchObject(requestId=jobId, token=playerToken, type=type, size=size, format=format, isCircular=isCircular) for jobId, playerToken in {server.jobId: server.playerTokens for server in self.servers}]
+            batchObject = [ThumbnailBatchObject(requestId=jobId, token=playerToken, type=type, size=size, format=format, isCircular=isCircular) for jobId, playerToken in {server.jobId: server.playerTokens for server in self.servers}.items()]
             return batch(*batchObject)
          
 
