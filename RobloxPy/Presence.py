@@ -120,7 +120,7 @@ async def getPresence(*userIds:int) -> UserPresenceGroup:
 
     return UserPresenceGroup(results)
     
-def getPresenceFromUsername(*usernames:str) -> tuple[UserPresenceGroup, dict[str, int | None]]:
+async def getPresenceFromUsername(*usernames:str) -> tuple[UserPresenceGroup, dict[str, int | None]]:
     UserIds = getIds(*list(usernames))
 
-    return asyncio.run(getPresence(*UserIds.values())), UserIds
+    return await getPresence(*UserIds.values()), UserIds
