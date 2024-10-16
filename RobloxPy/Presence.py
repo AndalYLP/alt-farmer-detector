@@ -122,6 +122,5 @@ async def getPresence(*userIds:int) -> UserPresenceGroup:
     
 def getPresenceFromUsername(*usernames:str) -> tuple[UserPresenceGroup, dict[str, int | None]]:
     UserIds = getIds(*list(usernames))
-    userIds = list(userIds)
 
-    return getPresence(*userIds), UserIds
+    return getPresence(*UserIds.values()), UserIds
