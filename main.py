@@ -116,7 +116,7 @@ async def getStatus():
             else:
                 print("Channel doesn't exist or not added")
 
-            await asyncio.sleep(10)
+            await asyncio.sleep(20)
         except Exception as e:
             print(f"Error en el bucle principal: {e}.")
             traceback.print_exc()
