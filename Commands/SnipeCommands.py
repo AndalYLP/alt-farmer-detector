@@ -84,7 +84,7 @@ class SnipeCommands(commands.Cog):
         await interaction.response.defer(thinking=True)
 
         try:
-            thumbnail, userId = RobloxPy.Thumbnails.getUsersAvatarFromUsername(username)
+            thumbnail, userIds = RobloxPy.Thumbnails.getUsersAvatarFromUsername(username)
             if forceupdate:
                 busy = True
                 serverGroup = RobloxPy.Games.getAllServers(6872265039)
@@ -96,7 +96,7 @@ class SnipeCommands(commands.Cog):
                 serverGroup:RobloxPy.Games.ServerGroup = currentData
                 
             imageUrls = serverGroup.getPlayerThumbnails().getAllImageUrls()
-            if thumbnail.imageUrl in imageUrls:
+            if thumbnail.imageUrl in imageUrls.keys():
                 await interaction.followup.send(content=f"<t:{int(time.time())}:R>" + (f"Data from:<t:{int(TokensTime)}:R>" if forceupdate else ""), embed=discord.Embed(
                     color=2686720,
                     title=f"Found {username}'s server!",
