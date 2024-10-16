@@ -123,7 +123,7 @@ async def getStatus():
 
 # ----------------------- User status function ----------------------- #
 
-async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel, altChannel, results):
+async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel, altChannel):
     async def createEmbeds(presence):
         if presence.userId not in GameIdList:
             GameIdList[presence.userId] = [["nil", presence.jobId or "nil"], ["nil", f"<t:{round(time.time())}:R>"], presence.lobbyStatus, presence.lastlocation, presence.userPresenceType]
@@ -211,7 +211,7 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
 
 # ----------------------- Same game id function ---------------------- #
 
-async def sameGameId(userPresences:RobloxPy.Presence.UserPresenceGroup, channel, channel2, results):
+async def sameGameId(userPresences:RobloxPy.Presence.UserPresenceGroup, channel, channel2):
     gameIds = {}
 
     userPresences.filterByPresenceTypes(2)
