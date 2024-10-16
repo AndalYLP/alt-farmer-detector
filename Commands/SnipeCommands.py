@@ -36,7 +36,7 @@ class SnipeCommands(commands.Cog):
     async def player(self, interaction: discord.Interaction, usernames:str):
         print(f"{interaction.user.name} used {interaction.command.name} command")
 
-        if "," in usernames:
+        if usernames.find(","):
             usernames = usernames.split(",")
         else:
             usernames = usernames.split(" ")
