@@ -200,7 +200,7 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
     presenceTypes = [p for p in presenceTypes if not ((p == 0 and bot.OfflineMuted) or (p == 1 and bot.OnlineMuted))]
 
     if bot.OtherGame:
-        userPresences.filterByGameIds(6872265039)
+        userPresences.filterByGameIds(6872265039, None)
     userPresences.filterByPresenceTypes(*presenceTypes)
     
     tasks = []
