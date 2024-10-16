@@ -36,10 +36,10 @@ class SnipeCommands(commands.Cog):
     async def player(self, interaction: discord.Interaction, usernames:str):
         print(f"{interaction.user.name} used {interaction.command.name} command")
 
-        if usernames.find(","):
-            usernames.split(",")
+        if "," in usernames:
+            usernames = usernames.split(",")
         else:
-            usernames.split(" ")
+            usernames = usernames.split(" ")
 
         try:
             presenceGroup, userIds = await RobloxPy.Presence.getPresenceFromUsername(usernames)
@@ -60,9 +60,9 @@ class SnipeCommands(commands.Cog):
             embedGroups = [[embed for embed in embeds[i:i + 10]] for i in range(0, len(embeds), 10)]
             for i, embedGroup in enumerate(embedGroups):
                 if i != 0:
-                    await interaction.followup.send(content=f"<t:{int(time.time())}:R>", embed=embedGroup)
+                    await interaction.followup.send(content=f"<t:{int(time.time())}:R>", embeds=embedGroup)
                 else:
-                    await interaction.response.send_message(content=f"<t:{int(time.time())}:R>", embed=embedGroup)
+                    await interaction.response.send_message(content=f"<t:{int(time.time())}:R>", embeds=embedGroup)
         except Exception as e:
             await interaction.response.send_message(embed=discord.Embed(color=16765440,title="Error",description=e.args[0]), delete_after=5)
 
