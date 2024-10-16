@@ -164,7 +164,7 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
         LastGameId = userGameInfo[0][0]
         TimeInGameId = userGameInfo[1][1]
 
-        color = (2686720 if presence.userPresenceType == 2 else 46847 if presence.userPresenceType == 1 else 7763574) if presence.userPresenceType != 2 or presence.userPresenceType == "True" else 1881856
+        color = (2686720 if presence.userPresenceType == 2 else 46847 if presence.userPresenceType == 1 else 7763574) if presence.userPresenceType != 2 or presence.lobbyStatus == "True" else 1881856
         title = presence.username + (" is in a game" if presence.userPresenceType == 2 else " is online" if presence.userPresenceType == 1 else f" is offline")
         description = f"Game: **{presence.lastlocation}**" + (f"\nLobby: **{presence.lobbyStatus}**\nGameId: **{presence.jobId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**" if presence.userPresenceType == 2 and presence.gameId == 6872265039 else "")
         embed = discord.Embed(color=color,title=title,description=description if presence.userPresenceType == 2 and presence.gameId != None else None)
