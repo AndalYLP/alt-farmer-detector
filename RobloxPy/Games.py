@@ -48,14 +48,14 @@ def getServerPage(gameId:int, serverType:int = 0, sortOrder:int = 2, excludeFull
     
 def getAllServers(gameId:int, serverType:int = 0, excludeFullGames:bool = False, useCookie:bool = False) -> ServerGroup:
     currentPage = getServerPage(gameId, serverType, excludeFullGames=excludeFullGames, useCookie=useCookie)
-    servers = currentPage.servers
+    firstPage = currentPage
 
     while True:
         if currentPage.nextPageCursor:
             currentPage = getServerPage(gameId, serverType, excludeFullGames=excludeFullGames, cursor=currentPage.nextPageCursor, useCookie=useCookie)
             
-            servers.extend(currentPage.servers)
+            firstPage.servers.extend(currentPage.servers)
         else:
             break
     
-    return ServerGroup(servers)
+    return firstPage
