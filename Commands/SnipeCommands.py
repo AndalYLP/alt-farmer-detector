@@ -43,11 +43,12 @@ class SnipeCommands(commands.Cog):
 
         try:
             presenceGroup, userIds = await RobloxPy.Presence.getPresenceFromUsername(usernames)
+            inversedUserIds = {userId: name for name, userId in userIds.items()}
 
             embeds = []
             for presence in presenceGroup.presences:
                 lobbyStatus = "True" if presence.placeId == 6872265039 else "False"
-                username = userIds[presence.userId]
+                username = inversedUserIds[presence.userId]
 
                 color = 2686720 if presence.userPresenceType == 2 else 46847 if presence.userPresenceType == 1 else 7763574
                 title = username + (" is in a game" if presence.userPresenceType == 2 else " is online" if presence.userPresenceType == 1 else f" is offline")
