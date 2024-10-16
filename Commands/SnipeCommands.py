@@ -1,9 +1,8 @@
 from discord import app_commands
 from discord.ext import commands
+import traceback
 import RobloxPy
-import requests
 import discord
-import aiohttp
 import asyncio
 import time
 import os
@@ -67,6 +66,7 @@ class SnipeCommands(commands.Cog):
                 else:
                     await interaction.response.send_message(content=f"<t:{int(time.time())}:R>", embeds=embedGroup)
         except Exception as e:
+            traceback.print_exc()
             await interaction.response.send_message(embed=discord.Embed(color=16765440,title="Error",description=e.args[0]), delete_after=5)
 
     @joinsOffGroup.command(name="player",description="Send player status, only works with bedwars.")
@@ -109,7 +109,11 @@ class SnipeCommands(commands.Cog):
             Debounce = False
 
         except Exception as e:
-            busy = Debounce = False
+            traceback.print_exc()
+            busy = True
+            if Debounce:
+                await asyncio.sleep(60)
+                Debounce = False
             await interaction.followup.send(embed=discord.Embed(color=16765440,title="Error",description=e.args[0]))
 
 
