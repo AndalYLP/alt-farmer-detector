@@ -75,7 +75,7 @@ def getLastOnline(*userIds:int) -> (dict[int, datetime] | datetime):
     else:
         raise requests.exceptions.HTTPError(f"Error in the request: {response.status_code}", response.text)
 
-def getPresence(*userIds:int) -> UserPresenceGroup:
+async def getPresence(*userIds:int) -> UserPresenceGroup:
     loop = asyncio.get_event_loop()
     async def fetchData(session:aiohttp.ClientSession, userIds):
         while True:
@@ -116,13 +116,7 @@ def getPresence(*userIds:int) -> UserPresenceGroup:
         
         return results
     
-    if loop.is_running():
-        task = asyncio.ensure_future(proccessGroups()) 
-        loop.run_until_complete(task)
-        results = task.result()
-    
-    else:
-        results = loop.run_until_complete(proccessGroups())
+    results = await proccessGroups()
 
     return UserPresenceGroup(results)
     

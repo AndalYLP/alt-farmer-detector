@@ -94,7 +94,7 @@ async def getStatus():
             if channel:
                 documents = list(UsersCollection.find({}))
                 if documents:
-                    userPresences = RobloxPy.Presence.getPresence(*[doc["UserID"] for doc in documents])
+                    userPresences = await RobloxPy.Presence.getPresence(*[doc["UserID"] for doc in documents])
                     results = list(UsersCollection.find({"UserID": {"$in": userPresences.userIds}}))
                     
                     for presence in userPresences.presences:
