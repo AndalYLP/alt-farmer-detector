@@ -11,8 +11,8 @@ class Server:
             self.maxPlayers = serverData["maxPlayers"]
             self.playerTokens = serverData["playerTokens"]
 
-            self.fps = serverData["fps"]
-            self.ping = serverData["ping"]
+            self.fps = serverData.get("fps")
+            self.ping = serverData.get("ping")
 
         def getPlayerThumbnails(self, type:str = "AvatarHeadShot", size:str = "48x48", format:str = "png", isCircular:bool = False) -> BatchObject:
             batchObject = [ThumbnailBatchObject(requestId=playerToken, token=playerToken, type=type, size=size, format=format, isCircular=isCircular) for playerToken in self.playerTokens]
