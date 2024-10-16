@@ -3,8 +3,8 @@ from pymongo import MongoClient
 from threading import Thread
 from waitress import serve
 from flask import Flask
-from . import RobloxPy
 import traceback
+import RobloxPy
 import discord
 import asyncio
 import time
