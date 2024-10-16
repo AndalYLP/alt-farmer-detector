@@ -225,8 +225,8 @@ async def sameGameId(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
 
     embeds = []
     for gameId, ids in gameIds.items():
-        list2 = Ids[1]
-        Ids = Ids[0]
+        list2 = ids[1]
+        Ids = ids[0]
         Title = "GameId: " + gameId
         Description = f"## GameId description\nGame: **{list2["gameName"]}**\nLobby: **{list2["isLobby"]}**\n## In-game player ({len(Ids)})"
         Everyone = False
