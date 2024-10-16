@@ -184,23 +184,22 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
             
             userGameInfo[4] = presence.userPresenceType
 
-            if not presence.groupName in embeds:
-                embeds[presence.groupName] = [presence.userPresenceType == 2 and (presence.gameId == None or (presence.gameId == 6872265039 and not presence.placeId == 6872265039))]
-                embeds[presence.groupName].append(embed)
-            else:
-                if not presence.groupName == "None":
-                    if embeds[presence.groupName][1] == False:
-                        embeds[presence.groupName][1] = presence.userPresenceType == 2 and (presence.gameId == None or (presence.gameId == 6872265039 and not presence.placeId == 6872265039))
+            if (presence.gameId == 6872265039 or presence.gameId == None) or not bot.OtherGame:
+                if not presence.groupName in embeds:
+                    embeds[presence.groupName] = [presence.userPresenceType == 2 and (presence.gameId == None or (presence.gameId == 6872265039 and not presence.placeId == 6872265039))]
+                    embeds[presence.groupName].append(embed)
                 else:
-                    embeds[presence.groupName].append(presence.userPresenceType == 2 and (presence.gameId == None or (presence.gameId == 6872265039 and not presence.placeId == 6872265039)))
-                embeds[presence.groupName].append(embed)
+                    if not presence.groupName == "None":
+                        if embeds[presence.groupName][1] == False:
+                            embeds[presence.groupName][1] = presence.userPresenceType == 2 and (presence.gameId == None or (presence.gameId == 6872265039 and not presence.placeId == 6872265039))
+                    else:
+                        embeds[presence.groupName].append(presence.userPresenceType == 2 and (presence.gameId == None or (presence.gameId == 6872265039 and not presence.placeId == 6872265039)))
+                    embeds[presence.groupName].append(embed)
 
     embeds = {}
     presenceTypes = [0, 1, 2] if not bot.MuteAll else []
     presenceTypes = [p for p in presenceTypes if not ((p == 0 and bot.OfflineMuted) or (p == 1 and bot.OnlineMuted))]
 
-    if bot.OtherGame:
-        userPresences.filterByGameIds(6872265039, None)
     userPresences.filterByPresenceTypes(*presenceTypes)
     
     tasks = []
