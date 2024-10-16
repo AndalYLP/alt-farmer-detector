@@ -206,8 +206,6 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
         for i, embed in enumerate(embeds["None"]):
             if not (i % 2) == 0:
                 await channel.send(content=f"<t:{round(time.time())}:R>" + ("<@&1288980643061170188>" if embeds["None"][i-1] else ""),embed=embed)
-    else:
-        await channel.send("Error: 2", delete_after=3)
 
 # ----------------------- Same game id function ---------------------- #
 
@@ -228,7 +226,7 @@ async def sameGameId(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
         list2 = ids[1]
         Ids = ids[0]
         Title = "GameId: " + gameId
-        Description = f"## GameId description\nGame: **{list2["gameName"]}**\nLobby: **{list2["isLobby"]}**\n## In-game player ({len(Ids)})"
+        description = f"## GameId description\nGame: **{list2["gameName"]}**\nLobby: **{list2["isLobby"]}**\n## In-game player ({len(Ids)})"
         Everyone = False
 
         for userId in Ids:
@@ -238,7 +236,7 @@ async def sameGameId(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
             if presence.isAlt == True:
                 Everyone = True
 
-        Embed = discord.Embed(color=2686720 if list2["isLobby"] == "True" else 1881856, title=Title, description=Description)
+        Embed = discord.Embed(color=2686720 if list2["isLobby"] == "True" else 1881856, title=Title, description=description)
         embeds.append(Embed)
         if Everyone:
             asyncio.create_task(channel2.send(content=f"<t:{round(time.time())}:R><@&1288980643061170188>", embed=Embed))
