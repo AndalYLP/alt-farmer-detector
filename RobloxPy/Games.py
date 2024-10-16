@@ -29,9 +29,9 @@ class ServerGroup:
         self.jobIds = [server["id"] for server in data["data"]]
         self.servers = [Server(server) for server in data["data"]]
     
-    def getPlayerThumbnails(self, type:str = "AvatarHeadShot", size:str = "48x48", format:str = "png", isCircular:bool = False) -> BatchObject:
+    async def getPlayerThumbnails(self, type:str = "AvatarHeadShot", size:str = "48x48", format:str = "png", isCircular:bool = False) -> BatchObject:
             batchObject = [ThumbnailBatchObject(requestId=jobId, token=playerToken, type=type, size=size, format=format, isCircular=isCircular) for jobId, playerToken in {server.jobId: server.playerTokens for server in self.servers}.items()]
-            return batch(*batchObject)
+            return await batch(*batchObject)
          
 
 def getServerPage(gameId:int, serverType:int = 0, sortOrder:int = 2, excludeFullGames:bool = False, limit:int = 100, cursor:str = "", useCookie:bool = False) -> ServerGroup:

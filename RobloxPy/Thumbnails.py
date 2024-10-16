@@ -122,7 +122,7 @@ def getUsersAvatarFromUsername(*usernames:int, type:str = "headshot", size:str =
 
     return getUsersAvatar(*userIds.values(), type=type, size=size, format=format, isCircular=isCircular), userIds
     
-def batch(*batchObjects:ThumbnailBatchObject) -> BatchObject:
+async def batch(*batchObjects:ThumbnailBatchObject) -> BatchObject:
     async def fetchData(session:aiohttp.ClientSession, group):
         while True:
             async with session.post(thumbnailsApi + "/v1/batch",
@@ -160,6 +160,6 @@ def batch(*batchObjects:ThumbnailBatchObject) -> BatchObject:
 
         return results
         
-    results = asyncio.run(proccessGroups())
+    results = await proccessGroups()
 
     return BatchObject(results)

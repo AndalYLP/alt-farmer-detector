@@ -95,7 +95,8 @@ class SnipeCommands(commands.Cog):
             else:
                 serverGroup:RobloxPy.Games.ServerGroup = currentData
                 
-            imageUrls = serverGroup.getPlayerThumbnails().getAllImageUrls()
+            imageUrls = await serverGroup.getPlayerThumbnails()
+            imageUrls = imageUrls.getAllImageUrls()
             if thumbnail.imageUrl in imageUrls.keys():
                 await interaction.followup.send(content=f"<t:{int(time.time())}:R>" + (f"Data from:<t:{int(TokensTime)}:R>" if forceupdate else ""), embed=discord.Embed(
                     color=2686720,
