@@ -42,7 +42,7 @@ class SnipeCommands(commands.Cog):
             usernames.split(" ")
 
         try:
-            presenceGroup, userIds = await RobloxPy.Presence.getPresenceFromUsername(usernames)
+            presenceGroup, userIds = RobloxPy.Presence.getPresenceFromUsername(usernames)
 
             embeds = []
             for presence in presenceGroup.presences:
