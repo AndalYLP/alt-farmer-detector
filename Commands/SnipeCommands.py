@@ -109,12 +109,12 @@ class SnipeCommands(commands.Cog):
             Debounce = False
 
         except Exception as e:
+            busy = False
             traceback.print_exc()
-            busy = True
+            await interaction.followup.send(embed=discord.Embed(color=16765440,title="Error",description=e.args[0]))
             if Debounce:
                 await asyncio.sleep(60)
                 Debounce = False
-            await interaction.followup.send(embed=discord.Embed(color=16765440,title="Error",description=e.args[0]))
 
 
 async def setup(bot: commands.Bot):
