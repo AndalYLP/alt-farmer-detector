@@ -175,7 +175,7 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
         if presence.isAlt and (presence.gameId == None or presence.gameId == 6872265039):
             asyncio.create_task(altChannel.send(content=f"<t:{round(time.time())}:R><@&1288980643061170188>",embed=embed))
         
-        print(bot.TrackingStatus.get(presence.userId) and not userGameInfo[4] == presence.userPresenceType, flush=True)
+        print(presence.userPresenceType,userGameInfo[4], bot.TrackingStatus.get(presence.userId), not userGameInfo[4] == presence.userPresenceType,bot.TrackingStatus.get(presence.userId) and not userGameInfo[4] == presence.userPresenceType, flush=True)
         if bot.TrackingStatus.get(presence.userId) and not userGameInfo[4] == presence.userPresenceType:
             try:
                 await bot.TrackingStatus[presence.userId][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.TrackingStatus[presence.userId][1])}",embed=embed)
