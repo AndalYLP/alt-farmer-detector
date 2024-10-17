@@ -124,7 +124,9 @@ def getUsersAvatarFromUsername(*usernames:int, type:str = "headshot", size:str =
     
 async def batch(*batchObjects:ThumbnailBatchObject) -> BatchObject:
     async def fetchData(session:aiohttp.ClientSession, group):
+        attempts = 0
         while True:
+            attempts += 1
             async with session.post(thumbnailsApi + "/v1/batch",
                     headers={
                         "Cookie": cookies.getCookie()
@@ -135,7 +137,10 @@ async def batch(*batchObjects:ThumbnailBatchObject) -> BatchObject:
                 if response.status == 200:
                     return await response.json()
                 else:
-                    print(f"Error in the request: {response.status}\n{await response.text()}\nTrying again in 500ms", file=sys.stderr)
+                    if attempts == 4:
+                        break
+                    print(f"Error in the request: {response.status}\n{await response.text()}\nTrying again in 500ms ({attempts}/3)", file=sys.stderr)
+                    
             await asyncio.sleep(0.5)
 
     groups = [[batchObject for batchObject in batchObjects[i:i + 50]] for i in range(0, len(batchObjects), 50)]
