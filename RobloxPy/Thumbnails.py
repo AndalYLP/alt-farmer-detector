@@ -126,7 +126,6 @@ async def batch(*batchObjects:ThumbnailBatchObject) -> BatchObject:
     async def fetchData(session:aiohttp.ClientSession, group):
         attempts = 0
         while True:
-            attempts += 1
             async with session.post(thumbnailsApi + "/v1/batch",
                     headers={
                         "Cookie": cookies.getCookie()
@@ -137,9 +136,14 @@ async def batch(*batchObjects:ThumbnailBatchObject) -> BatchObject:
                 if response.status == 200:
                     return await response.json()
                 else:
-                    if attempts == 4:
-                        break
-                    print(f"Error in the request: {response.status}\n{await response.text()}\nTrying again in 500ms ({attempts}/3)", file=sys.stderr)
+                    errorCode = response.json()["errors"][0]["code"]
+                    
+                    if errorCode != 0:
+                        attempts += 1
+                        if attempts == 4:
+                            break
+                    
+                    print(f"Error in the request: {response.status}\n{await response.text()}\nTrying again in 500ms {f"({attempts}/3)" if errorCode != 0 else ""}", file=sys.stderr)
                     
             await asyncio.sleep(0.5)
 
@@ -160,7 +164,7 @@ async def batch(*batchObjects:ThumbnailBatchObject) -> BatchObject:
             for response in responses:
                 if isinstance(response, Exception):
                     print(f"Error encountered: {response}", file=sys.stderr)
-                else:
+                elif response:
                     results.extend(response["data"])
 
         return results
