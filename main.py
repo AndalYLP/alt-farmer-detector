@@ -172,10 +172,9 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
         if presence.groupName != "None":
             embed.set_footer(text= "Group: " + presence.groupName)
 
-        if presence.isAlt and (presence.gameId == None or presence.gameId == 6872265039):
+        if presence.isAlt and (presence.userPresenceType == 2 and not bot.MuteAll and (presence.gameId == None or presence.gameId == 6872265039)):
             asyncio.create_task(altChannel.send(content=f"<t:{round(time.time())}:R><@&1288980643061170188>",embed=embed))
         
-        print(presence.userPresenceType,userGameInfo[4], bot.TrackingStatus.get(presence.userId), not userGameInfo[4] == presence.userPresenceType,bot.TrackingStatus.get(presence.userId) and not userGameInfo[4] == presence.userPresenceType, flush=True)
         if bot.TrackingStatus.get(presence.userId) and not userGameInfo[4] == presence.userPresenceType:
             try:
                 await bot.TrackingStatus[presence.userId][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.TrackingStatus[presence.userId][1])}",embed=embed)
@@ -185,7 +184,7 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
         
         userGameInfo[4] = presence.userPresenceType
 
-        if (presence.gameId == 6872265039 or presence.gameId == None) or not bot.OtherGame:
+        if (presence.userPresenceType == 2 and ((presence.gameId == 6872265039 or presence.gameId == None) or not bot.OtherGame) and not bot.MuteAll) or (presence.userPresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (presence.userPresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
             if not presence.groupName in embeds:
                 embeds[presence.groupName] = [presence.userPresenceType == 2 and (presence.gameId == None or (presence.gameId == 6872265039 and not presence.placeId == 6872265039))]
                 embeds[presence.groupName].append(embed)
@@ -198,11 +197,7 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
                 embeds[presence.groupName].append(embed)
 
     embeds = {}
-    presenceTypes = [0, 1, 2] if not bot.MuteAll else []
-    presenceTypes = [p for p in presenceTypes if not ((p == 0 and bot.OfflineMuted) or (p == 1 and bot.OnlineMuted))]
-
-    userPresences.filterByPresenceTypes(*presenceTypes)
-    
+  
     tasks = []
     for presence in userPresences.presences:
         tasks.append(asyncio.create_task(createEmbeds(presence)))
