@@ -1,6 +1,6 @@
 from .CookieManager import cookies
+from . import Presence, Thumbnails
 from datetime import datetime
-from . import Presence
 import requests
 
 userApi = "https://users.roblox.com"
@@ -19,6 +19,9 @@ class User:
 
     async def getPresence(self) -> Presence.UserPresence:
         return (await Presence.getPresence(self.userId)).getByUserId(self.userId)
+    
+    def getThumbnail(self) -> Thumbnails.ThumbnailObject:
+        return Thumbnails.getUsersAvatar(self.userId, size="150x150").getByTargetId(self.userId)
 
 class UserGroup:
     def __init__(self, data):
