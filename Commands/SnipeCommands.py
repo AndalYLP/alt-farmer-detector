@@ -1,5 +1,6 @@
 from discord import app_commands
 from discord.ext import commands
+from datetime import datetime
 import traceback
 import RobloxPy
 import discord
@@ -48,13 +49,16 @@ class SnipeCommands(commands.Cog):
 
             embeds = []
             for presence in presenceGroup.presences:
+                user = users.getByUserId(presence.userId)
                 lobbyStatus = "True" if presence.placeId == 6872265039 else "False"
-                username = users.getByUserId(presence.userId).username
+                username = user.username
 
                 color = 2686720 if presence.userPresenceType == 2 else 46847 if presence.userPresenceType == 1 else 7763574
                 title = username + (" is in a game" if presence.userPresenceType == 2 else " is online" if presence.userPresenceType == 1 else f" is offline")
                 description = f"Game: **{presence.lastlocation}**" + (f"\nLobby: **{lobbyStatus}**\nGameId: **{presence.jobId}**" if presence.userPresenceType == 2 and presence.gameId == 6872265039 else "")
                 embed = discord.Embed(color=color if (not presence.userPresenceType == 2 or lobbyStatus == "True") else 1881856,title=title,description=description if presence.userPresenceType == 2 and not presence.gameId == None else None)
+                embed.set_thumbnail(user.getThumbnail().imageUrl)
+                embed.set_footer(text= "Last online: " + presence.lastOnline.strftime("%d/%m/%Y, %H:%M:%S"))
 
                 embeds.append(embed)
             
