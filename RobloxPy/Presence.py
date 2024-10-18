@@ -1,6 +1,6 @@
+from .Users import getUsersFromUsername, UserGroup
 from .CookieManager import cookies
 from datetime import datetime
-from .Users import getIds
 import requests
 import aiohttp
 import asyncio
@@ -76,7 +76,6 @@ def getLastOnline(*userIds:int) -> (dict[int, datetime] | datetime):
         raise requests.exceptions.HTTPError(f"Error in the request: {response.status_code}", response.text)
 
 async def getPresence(*userIds:int) -> UserPresenceGroup:
-    loop = asyncio.get_event_loop()
     async def fetchData(session:aiohttp.ClientSession, userIds):
         while True:
             async with session.post(presenceApi + "/v1/presence/users",
@@ -120,7 +119,7 @@ async def getPresence(*userIds:int) -> UserPresenceGroup:
 
     return UserPresenceGroup(results)
     
-async def getPresenceFromUsername(*usernames:str) -> tuple[UserPresenceGroup, dict[str, int | None]]:
-    UserIds = getIds(*list(usernames))
+async def getPresenceFromUsername(*usernames:str) -> tuple[UserPresenceGroup, UserGroup]:
+    users = getUsersFromUsername(*list(usernames))
 
-    return await getPresence(*UserIds.values()), UserIds
+    return await getPresence(*users.userIds), users

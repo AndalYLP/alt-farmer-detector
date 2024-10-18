@@ -44,13 +44,12 @@ class SnipeCommands(commands.Cog):
             usernames = [usernames]
 
         try:
-            presenceGroup, userIds = await RobloxPy.Presence.getPresenceFromUsername(*usernames)
-            inversedUserIds = {userId: name for name, userId in userIds.items()}
+            presenceGroup, users = await RobloxPy.Presence.getPresenceFromUsername(*usernames)
 
             embeds = []
             for presence in presenceGroup.presences:
                 lobbyStatus = "True" if presence.placeId == 6872265039 else "False"
-                username = inversedUserIds[presence.userId]
+                username = users.getByUserId(presence.userId).username
 
                 color = 2686720 if presence.userPresenceType == 2 else 46847 if presence.userPresenceType == 1 else 7763574
                 title = username + (" is in a game" if presence.userPresenceType == 2 else " is online" if presence.userPresenceType == 1 else f" is offline")
@@ -84,7 +83,7 @@ class SnipeCommands(commands.Cog):
         await interaction.response.defer(thinking=True)
 
         try:
-            thumbnail, userIds = RobloxPy.Thumbnails.getUsersAvatarFromUsername(username)
+            thumbnail, users = RobloxPy.Thumbnails.getUsersAvatarFromUsername(username)
             if forceupdate:
                 busy = True
                 serverGroup = RobloxPy.Games.getAllServers(6872265039)
@@ -100,7 +99,7 @@ class SnipeCommands(commands.Cog):
             if thumbnail.imageUrl in imageUrls.keys():
                 await interaction.followup.send(content=f"<t:{int(time.time())}:R>" + (f"Data from:<t:{int(TokensTime)}:R>" if forceupdate else ""), embed=discord.Embed(
                     color=2686720,
-                    title=f"Found {username}'s server!",
+                    title=f"Found {users.getByRequestedUsername(username).username}'s server!",
                     description=f"Game: **Bedwars** (yes.)\nLobby: **True** (yes.)\nGameId: **{imageUrls[thumbnail.imageUrl]}**" 
                 ))
             else:
