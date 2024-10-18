@@ -1,5 +1,5 @@
 from .CookieManager import cookies
-from . import Presence, Thumbnails
+from RobloxPy import Presence, Thumbnails
 from datetime import datetime
 import requests
 
