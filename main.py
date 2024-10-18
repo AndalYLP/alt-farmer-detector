@@ -116,7 +116,7 @@ async def getStatus():
             else:
                 print("Channel doesn't exist or not added")
 
-            await asyncio.sleep(20)
+            await asyncio.sleep(10)
         except Exception as e:
             print(f"Error en el bucle principal: {e}.")
             traceback.print_exc()
@@ -154,12 +154,12 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
                         print(f"Error sending tracking times: {e}.")
                         traceback.print_exc()
                 
-                userGameInfo[2] = presence.lobbyStatus
-                userGameInfo[3] = presence.lastlocation
-                userGameInfo[1][0] = userGameInfo[1][1]
-                userGameInfo[0][0] = currentGameId
-                userGameInfo[1][1] = f"<t:{round(time.time())}:R>"
-                userGameInfo[0][1] = presence.jobId
+            userGameInfo[2] = presence.lobbyStatus
+            userGameInfo[3] = presence.lastlocation
+            userGameInfo[1][0] = userGameInfo[1][1]
+            userGameInfo[0][0] = currentGameId
+            userGameInfo[1][1] = f"<t:{round(time.time())}:R>"
+            userGameInfo[0][1] = presence.jobId
             
         LastGameId = userGameInfo[0][0]
         TimeInGameId = userGameInfo[1][1]
