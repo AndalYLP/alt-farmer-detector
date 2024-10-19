@@ -1,4 +1,4 @@
-from RobloxPy.Users import getUsersFromUsername, UserGroup
+from RobloxPy.Common import getUsersFromUsername, UserGroup
 from .CookieManager import cookies
 import requests
 import aiohttp
