@@ -1,4 +1,3 @@
-from RobloxPy.Common import getUsersFromUsername, UserGroup
 from .CookieManager import cookies
 import requests
 import aiohttp
@@ -172,3 +171,5 @@ async def batch(*batchObjects:ThumbnailBatchObject) -> BatchObject:
     results = await proccessGroups()
 
     return BatchObject(results)
+
+from .Users import getUsersFromUsername, UserGroup

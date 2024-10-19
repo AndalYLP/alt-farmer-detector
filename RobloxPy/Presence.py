@@ -1,4 +1,3 @@
-from RobloxPy.Common import getUsersFromUsername, UserGroup
 from .CookieManager import cookies
 from datetime import datetime
 import requests
@@ -123,3 +122,5 @@ async def getPresenceFromUsername(*usernames:str) -> tuple[UserPresenceGroup, Us
     users = getUsersFromUsername(*list(usernames))
 
     return await getPresence(*users.userIds), users
+
+from .Users import getUsersFromUsername, UserGroup
