@@ -118,7 +118,7 @@ async def getPresence(*userIds:int) -> UserPresenceGroup:
 
     return UserPresenceGroup(results)
     
-async def getPresenceFromUsername(*usernames:str) -> tuple[UserPresenceGroup, UserGroup]:
+async def getPresenceFromUsername(*usernames:str) -> tuple[UserPresenceGroup, "UserGroup"]:
     users = getUsersFromUsername(*list(usernames))
 
     return await getPresence(*users.userIds), users

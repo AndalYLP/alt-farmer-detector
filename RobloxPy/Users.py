@@ -16,7 +16,7 @@ class User:
     def getLastOnline(self) -> datetime:
         return getLastOnline(self.userId)
 
-    async def getPresence(self) -> UserPresence:
+    async def getPresence(self) -> "UserPresence":
         return (await getPresence(self.userId)).getByUserId(self.userId)
     
     def getThumbnail(self) -> ThumbnailObject:
