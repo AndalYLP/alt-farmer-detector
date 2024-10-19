@@ -1,5 +1,6 @@
+from RobloxPy.Presence import getLastOnline, getPresence, UserPresence
+from RobloxPy.Thumbnails import ThumbnailObject, getUsersAvatar
 from .CookieManager import cookies
-from RobloxPy import Presence, Thumbnails
 from datetime import datetime
 import requests
 
@@ -15,13 +16,13 @@ class User:
         self.requestedUsername = data.get("requestedUsername")
     
     def getLastOnline(self) -> datetime:
-        return Presence.getLastOnline(self.userId)
+        return getLastOnline(self.userId)
 
-    async def getPresence(self) -> Presence.UserPresence:
-        return (await Presence.getPresence(self.userId)).getByUserId(self.userId)
+    async def getPresence(self) -> UserPresence:
+        return (await getPresence(self.userId)).getByUserId(self.userId)
     
-    def getThumbnail(self) -> Thumbnails.ThumbnailObject:
-        return Thumbnails.getUsersAvatar(self.userId, size="150x150").getByTargetId(self.userId)
+    def getThumbnail(self) -> ThumbnailObject:
+        return getUsersAvatar(self.userId, size="150x150").getByTargetId(self.userId)
 
 class UserGroup:
     def __init__(self, data):
