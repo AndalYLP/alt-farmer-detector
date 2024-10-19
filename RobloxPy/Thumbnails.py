@@ -81,7 +81,7 @@ class ThumbnailBatchObject:
 
         return {name: getattr(self, name) for name in names if getattr(self, name)}
     
-def getUsersAvatar(*userIds:int, type:str = "headshot", size:str = "48x48", format:str = "Png", isCircular:bool = False)  -> (BatchObject | ThumbnailObject):
+def getUsersAvatar(*userIds:int, type:str = "headshot", size:str = "48x48", format:str = "Png", isCircular:bool = False)  -> BatchObject:
     response = requests.get(thumbnailsApi + f"/v1/users/avatar-{type}?userIds={",".join(map(str, userIds))}&size={size}&format={format}&isCircular={isCircular}",
         headers={
             "Cookie": cookies.getCookie()
@@ -92,27 +92,16 @@ def getUsersAvatar(*userIds:int, type:str = "headshot", size:str = "48x48", form
         responseJson = response.json()
         data:list = responseJson["data"]
 
-        if len(userIds) == 1:
-            if data:
-                return ThumbnailObject(data[0])
-            else:
-                return ThumbnailObject({
-                    "targetId": userIds[0],
-                    "errorMessage": "Didn't find thumbnail data.",
-                    "state": "Error",
-                    "imageUrl": None,
-                })
-        else:
-            for id in userIds:
-                if not next((thumbnail for thumbnail in data if thumbnail["targetId"] == id), None):
-                    data.append({
-                    "targetId": userIds[0],
-                    "errorMessage": "Didn't find thumbnail data.",
-                    "state": "Error",
-                    "imageUrl": None,
-                })
+        for id in userIds:
+            if not next((thumbnail for thumbnail in data if thumbnail["targetId"] == id), None):
+                data.append({
+                "targetId": userIds[0],
+                "errorMessage": "Didn't find thumbnail data.",
+                "state": "Error",
+                "imageUrl": None,
+            })
 
-            return BatchObject(data)
+        return BatchObject(data)
     else:
         raise requests.exceptions.HTTPError(f"Error in the request: {response.status_code}", response.text)
 
