@@ -116,7 +116,7 @@ def getUsersAvatar(*userIds:int, type:str = "headshot", size:str = "48x48", form
     else:
         raise requests.exceptions.HTTPError(f"Error in the request: {response.status_code}", response.text)
 
-def getUsersAvatarFromUsername(*usernames:int, type:str = "headshot", size:str = "48x48", format:str = "Png", isCircular:bool = False)  -> tuple[(BatchObject | ThumbnailObject), UserGroup]:
+def getUsersAvatarFromUsername(*usernames:int, type:str = "headshot", size:str = "48x48", format:str = "Png", isCircular:bool = False)  -> tuple['BatchObject | ThumbnailObject', 'UserGroup']:
     users = getUsersFromUsername(*usernames, excludeBanned=False)
 
     return getUsersAvatar(*users.userIds, type=type, size=size, format=format, isCircular=isCircular), users
