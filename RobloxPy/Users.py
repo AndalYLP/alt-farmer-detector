@@ -19,7 +19,7 @@ class User:
     async def getPresence(self) -> "UserPresence":
         return (await getPresence(self.userId)).getByUserId(self.userId)
     
-    def getThumbnail(self) -> ThumbnailObject:
+    def getThumbnail(self) -> "ThumbnailObject":
         return getUsersAvatar(self.userId, size="150x150").getByTargetId(self.userId)
 
 class UserGroup:
