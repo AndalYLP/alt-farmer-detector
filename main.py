@@ -105,8 +105,6 @@ async def getStatus():
                         presence.isAlt = data["isAlt"]
 
                     if userPresences:
-                        await channel.purge(limit=100)
-                        await altChannel.purge(limit=100)
                         await asyncio.gather(
                             userStatus(userPresences, channel, altChannel),
                             sameGameId(userPresences, gameIdChannel, gameIdWithAltsChannel)
@@ -198,7 +196,7 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
 
     embeds = {}
   
-    tasks = []
+    tasks = [channel.purge(limit=100), altChannel.purge(limit=100)]
     for presence in userPresences.presences:
         tasks.append(asyncio.create_task(createEmbeds(presence)))
 

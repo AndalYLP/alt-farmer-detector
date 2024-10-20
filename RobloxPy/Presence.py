@@ -1,4 +1,4 @@
-from .CookieManager import cookies
+from ._CookieManager import cookies
 from datetime import datetime
 import requests
 import aiohttp

@@ -38,7 +38,7 @@ class SnipeCommands(commands.Cog):
         if usernames.find(","):
             usernames = usernames.split(",")
         else:
-            usernames = usernames.split(" ")
+            usernames = usernames.split()
 
         if not isinstance(usernames, list):
             usernames = [usernames]
@@ -57,7 +57,7 @@ class SnipeCommands(commands.Cog):
                 description = f"Game: **{presence.lastlocation}**" + (f"\nLobby: **{lobbyStatus}**\nGameId: **{presence.jobId}**" if presence.userPresenceType == 2 and presence.gameId == 6872265039 else "")
                 embed = discord.Embed(color=color if (not presence.userPresenceType == 2 or lobbyStatus == "True") else 1881856,title=title,description=description if presence.userPresenceType == 2 and not presence.gameId == None else None)
                 embed.set_thumbnail(url=user.getThumbnail().imageUrl)
-                embed.set_footer(text="Last online: " + presence.lastOnline.strftime("%d/%m/%Y, %H:%M:%S"))
+                embed.set_footer(text=f"Last online: {round(presence.lastOnline.timestamp)}")
 
                 embeds.append(embed)
             

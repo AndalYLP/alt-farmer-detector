@@ -3,4 +3,5 @@ waitress
 pymongo
 discord
 aiohttp
+loguru
 Flask
