@@ -132,6 +132,9 @@ async def get_status():
 
                     if userPresences:
                         await asyncio.gather(
+                            channel.purge(limit=100), altChannel.purge(limit=100)
+                        )
+                        await asyncio.gather(
                             user_status(userPresences, channel, altChannel),
                             same_gameid(
                                 userPresences, gameIdChannel, gameIdWithAltsChannel
@@ -324,7 +327,7 @@ async def user_status(
 
     embeds = {}
 
-    tasks = [channel.purge(limit=100), altChannel.purge(limit=100)]
+    tasks = []
     for presence in userPresences.presences:
         tasks.append(asyncio.create_task(create_embeds(presence)))
 
