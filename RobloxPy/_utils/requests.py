@@ -79,7 +79,9 @@ async def async_request(
 
 def _get_url(*params: str, special: bool = False, query: dict[str, str] = {}):
     frame = CurrentFrame().f_back
-    classNames: list[str] = frame.f_locals["cls"].__qualname__.split(".")
+    classNames: list[str] = (
+        frame.f_locals["cls"].__qualname__.replace("_", "").split(".")
+    )
     classNames = classNames[:-1] if len(classNames) == 3 else classNames
     functionName = (
         frame.f_code.co_name.replace("___", "-")
