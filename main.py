@@ -351,8 +351,8 @@ async def same_gameid(
 ):
     gameIds = {}
 
-    userPresences.filterByPresenceTypes(2)
-    userPresences.filterByGameIds(6872265039)
+    userPresences.filter_by_presence_types(2)
+    userPresences.filter_by_gameids(6872265039)
     for presence in userPresences.presences:
         if presence.jobId:
             if gameIds.get(presence.jobId):
