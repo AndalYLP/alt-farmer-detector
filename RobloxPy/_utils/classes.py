@@ -387,7 +387,7 @@ class Presences:
         def get_by_userid(self, userId: str) -> Optional["Presences.UserPresence"]:
             return self._userIdsDict.get(userId)
 
-        def filter_by_game(self, *gameIds: int):
+        def filter_by_gameids(self, *gameIds: int):
             self.presences = [
                 presence for presence in self.presences if presence.gameId in gameIds
             ]
