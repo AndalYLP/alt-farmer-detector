@@ -220,7 +220,7 @@ class _PresenceAPI:
                     raise
 
             @classmethod
-            async def users(cls, *userIds) -> list[dict]:
+            async def presence_users(cls, *userIds) -> list[dict]:
                 groups = [
                     [userId for userId in userIds[i : i + 30]]
                     for i in range(0, len(userIds), 30)
