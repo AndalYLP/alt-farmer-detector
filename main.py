@@ -1,14 +1,19 @@
-from discord.ext import commands
-from pymongo import MongoClient
 from threading import Thread
-from waitress import serve
-from flask import Flask
 import traceback
-import RobloxPy
-import discord
 import asyncio
 import time
 import os
+
+
+from discord.ext import commands
+from pymongo import MongoClient
+from waitress import serve
+from loguru import logger
+from flask import Flask
+import discord
+
+
+import RobloxPy
 
 # --------------------------- Environment variables -------------------------- #
 
@@ -58,6 +63,8 @@ class Bot(commands.Bot):
             except Exception as e:
                 print(f"Failed to load extension {extension}: {e}")
 
+
+logger.level("COMMAND", no=25, color="<yellow>")
 
 bot = Bot(command_prefix="!", intents=discord.Intents.all())
 
