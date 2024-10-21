@@ -243,7 +243,7 @@ class _PresenceAPI:
                                 headers={
                                     "Cookie": cookies.get_cookie(),
                                 },
-                                json=group,
+                                json={"userIds": group},
                             )
                         )
                         for group in groups
