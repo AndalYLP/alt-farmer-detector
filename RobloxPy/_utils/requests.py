@@ -45,10 +45,10 @@ async def async_request(
                     reason = response.reason
 
                 if 400 <= response.status < 500:
-                    http_error_msg = f"{response.status} Client Error: {reason} for url: {response.url}"
+                    http_error_msg = f"{response.status} Client Error: {reason} for url: {response.url} response text: {await response.text()}"
 
                 elif 500 <= response.status < 600:
-                    http_error_msg = f"{response.status} Server Error: {reason} for url: {response.url}"
+                    http_error_msg = f"{response.status} Server Error: {reason} for url: {response.url} response text: {await response.text()}"
 
                 if http_error_msg:
                     raise requests.exceptions.HTTPError(
