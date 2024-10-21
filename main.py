@@ -375,7 +375,7 @@ async def same_gameid(
         Everyone = False
 
         for userId in Ids:
-            presence = userPresences.getByUserId(userId)
+            presence = userPresences.get_by_userid(userId)
             description += (
                 f"\nUsername: **{presence.username}**\n- isAlt: **{presence.isAlt}**"
             )
