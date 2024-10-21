@@ -32,7 +32,7 @@ def get_last_online(*userIds: int) -> dict[int, datetime]:
 
 
 async def get_presence(*userIds: int) -> Presences.UserPresenceGroup:
-    data = await _PresenceAPI.V1.Presence.users(*userIds)
+    data = await _PresenceAPI.V1.Presence.presence_users(*userIds)
 
     return Presences.UserPresenceGroup(data)
 
