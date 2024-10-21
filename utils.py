@@ -2,6 +2,7 @@ from datetime import datetime
 import traceback
 
 import discord
+from humanize import naturaltime
 
 import RobloxPy
 
@@ -39,9 +40,7 @@ def format_user_embed(
 
     if groupOrLastOnline:
         if isinstance(groupOrLastOnline, datetime):
-            embed.set_footer(
-                text=f"Last online: <t:{round(groupOrLastOnline.timestamp())}:R>"
-            )
+            embed.set_footer(text=f"Last online: **{naturaltime(groupOrLastOnline)}**")
         else:
             embed.set_footer(text=f"Group: {groupOrLastOnline}")
 
