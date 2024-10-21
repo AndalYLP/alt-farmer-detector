@@ -5,8 +5,11 @@ RobloxPy._utils.classes
 This module provides classes to other modules that need it.
 """
 
+from datetime import datetime
 from typing import Optional
-from ..Thumbnails import get_users_avatar
+
+from .._common.thumbnails import Thumbnails, get_users_avatar, batch
+from .._common.friends import get_friend_users
 
 
 class Users:
@@ -17,7 +20,7 @@ class Users:
             self.userIds: list[int] = [user["id"] for user in data]
             self.usernames: list[str] = [user["name"] for user in data]
             self.displayNames: list[str] = [user["displayName"] for user in data]
-            self.users: list[Users.User] = [Users.User(user) for user in data]
+            self.users = [Users.User(user) for user in data]
 
             self._userIdsDict: dict[int, Users.User] = {
                 user.userId: user for user in self.users
@@ -29,44 +32,50 @@ class Users:
                 user.requestedUsername: user for user in self.users
             }
 
-        def __bool__(self):
-            return bool(self.users)
-
-        def __eq__(self, value):
-            if isinstance(value, Users.UserGroup):
-                return set(self.users) == set(value.users)
+        def __contains__(self, item):
+            if isinstance(item, Users.User):
+                return item in self.users
 
             return False
 
-        def __add__(self, value):
-            if isinstance(value, Users.UserGroup):
-                return Users.UserGroup(list(dict.fromkeys([*self.data, *value.data])))
-            elif isinstance(value, Users.User):
-                return Users.UserGroup(list(dict.fromkeys([*self.data, value.data])))
-
-            return NotImplemented
-
-        def __iadd__(self, value):
-            if isinstance(value, Users.UserGroup):
-                return Users.UserGroup(list(dict.fromkeys([*self.data, *value.data])))
-            elif isinstance(value, Users.User):
-                return Users.UserGroup(list(dict.fromkeys([*self.data, value.data])))
-
-            return NotImplemented
-
-        def __sub__(self, value):
-            if isinstance(value, Users.UserGroup):
-                for value in value.data:
-                    self.data.remove(value)
-
-                return Users.UserGroup(self.data)
-            elif isinstance(value, Users.User):
-                self.data.remove(value.data)
-
-                return Users.UserGroup(self.data)
+        def __bool__(self):
+            return bool(self.users)
 
         def __len__(self):
             return len(self.users)
+
+        def __eq__(self, other):
+            if isinstance(other, Users.UserGroup):
+                return set(self.users) == set(other.users)
+
+            return False
+
+        def __add__(self, other):
+            if isinstance(other, Users.UserGroup):
+                return Users.UserGroup(list(dict.fromkeys([*self.data, *other.data])))
+            elif isinstance(other, Users.User):
+                return Users.UserGroup(list(dict.fromkeys([*self.data, other.data])))
+
+            return NotImplemented
+
+        def __iadd__(self, other):
+            if isinstance(other, Users.UserGroup):
+                return Users.UserGroup(list(dict.fromkeys([*self.data, *other.data])))
+            elif isinstance(other, Users.User):
+                return Users.UserGroup(list(dict.fromkeys([*self.data, other.data])))
+
+            return NotImplemented
+
+        def __sub__(self, other):
+            if isinstance(other, Users.UserGroup):
+                for value in other.data:
+                    self.data.remove(value)
+
+                return Users.UserGroup(self.data)
+            elif isinstance(other, Users.User):
+                self.data.remove(other.data)
+
+                return Users.UserGroup(self.data)
 
         def get_by_userid(self, userId: int) -> Optional["Users.User"]:
             return self._userIdsDict.get(userId)
@@ -91,27 +100,36 @@ class Users:
         def __bool__(self):
             return bool(self.userId)
 
-        def __eq__(self, value):
-            if isinstance(value, Users.User):
-                return self.userId == value.userId
+        def __eq__(self, other):
+            if isinstance(other, Users.User):
+                return self.userId == other.userId
 
             return False
 
-        def __add__(self, value) -> "Users.UserGroup":
-            if isinstance(value, Users.User):
-                return Users.UserGroup([self.data, value.data])
-            elif isinstance(value, Users.UserGroup):
-                return Users.UserGroup(list(dict.fromkeys([self.data, *value.data])))
+        def __add__(self, other) -> "Users.UserGroup":
+            if isinstance(other, Users.User):
+                return Users.UserGroup([self.data, other.data])
+            elif isinstance(other, Users.UserGroup):
+                return Users.UserGroup(list(dict.fromkeys([self.data, *other.data])))
 
             return NotImplemented
 
-        def __iadd__(self, value) -> "Users.UserGroup":
-            if isinstance(value, Users.User):
-                return Users.UserGroup([self.data, value.data])
-            elif isinstance(value, Users.UserGroup):
-                return Users.UserGroup(list(dict.fromkeys([self.data, *value.data])))
+        def __iadd__(self, other) -> "Users.UserGroup":
+            if isinstance(other, Users.User):
+                return Users.UserGroup([self.data, other.data])
+            elif isinstance(other, Users.UserGroup):
+                return Users.UserGroup(list(dict.fromkeys([self.data, *other.data])))
 
             return NotImplemented
+
+        def get_thumbnail(self) -> Thumbnails.ThumbnailObject:
+            return get_users_avatar(self.userId, size="150x150").get_by_targetid(
+                self.userId
+            )
+
+        async def get_friends(self) -> list:
+            response = await get_friend_users(self.userId)
+            return response[self.userId]
 
 
 class Servers:
@@ -126,63 +144,69 @@ class Servers:
             self.jobIds = [server["id"] for server in self.data]
             self.servers = [Servers.Server(server) for server in self.data]
 
-        def __bool__(self):
-            return bool(self.servers)
-
-        def __eq__(self, value):
-            if isinstance(value, Servers.ServerGroup):
-                return set(self.servers) == set(value.servers)
+        def __contains__(self, item):
+            if isinstance(item, Servers.Server):
+                return item in self.servers
 
             return False
 
-        def __add__(self, value):
-            if isinstance(value, Servers.ServerGroup):
+        def __bool__(self):
+            return bool(self.servers)
+
+        def __eq__(self, other):
+            if isinstance(other, Servers.ServerGroup):
+                return set(self.servers) == set(other.servers)
+
+            return False
+
+        def __add__(self, other):
+            if isinstance(other, Servers.ServerGroup):
                 return Servers.ServerGroup(
                     {
-                        "previousPageCursor": value.previousPageCursor,
-                        "nextPageCursor": value.nextPageCursor,
-                        "data": list(dict.fromkeys([*self.data, *value.data])),
+                        "previousPageCursor": other.previousPageCursor,
+                        "nextPageCursor": other.nextPageCursor,
+                        "data": list(dict.fromkeys([*self.data, *other.data])),
                     }
                 )
-            elif isinstance(value, Servers.Server):
+            elif isinstance(other, Servers.Server):
                 return Servers.ServerGroup(
                     {
                         "previousPageCursor": self.previousPageCursor,
                         "nextPageCursor": self.nextPageCursor,
-                        "data": list(dict.fromkeys([*self.data, value.data])),
+                        "data": list(dict.fromkeys([*self.data, other.data])),
                     }
                 )
 
             return NotImplemented
 
-        def __iadd__(self, value):
-            if isinstance(value, Servers.ServerGroup):
+        def __iadd__(self, other):
+            if isinstance(other, Servers.ServerGroup):
                 return Servers.ServerGroup(
                     {
-                        "previousPageCursor": value.previousPageCursor,
-                        "nextPageCursor": value.nextPageCursor,
-                        "data": list(dict.fromkeys([*self.data, *value.data])),
+                        "previousPageCursor": other.previousPageCursor,
+                        "nextPageCursor": other.nextPageCursor,
+                        "data": list(dict.fromkeys([*self.data, *other.data])),
                     }
                 )
-            elif isinstance(value, Servers.Server):
+            elif isinstance(other, Servers.Server):
                 return Servers.ServerGroup(
                     {
                         "previousPageCursor": self.previousPageCursor,
                         "nextPageCursor": self.nextPageCursor,
-                        "data": list(dict.fromkeys([*self.data, value.data])),
+                        "data": list(dict.fromkeys([*self.data, other.data])),
                     }
                 )
 
             return NotImplemented
 
-        def __sub__(self, value):
-            if isinstance(value, Servers.ServerGroup):
-                for value in value.data:
+        def __sub__(self, other):
+            if isinstance(other, Servers.ServerGroup):
+                for value in other.data:
                     self.data.remove(value)
 
                 return Users.UserGroup(self.data)
-            elif isinstance(value, Servers.Server):
-                self.data.remove(value.data)
+            elif isinstance(other, Servers.Server):
+                self.data.remove(other.data)
 
                 return Users.UserGroup(self.data)
 
@@ -190,6 +214,29 @@ class Servers:
 
         def __len__(self):
             return len(self.servers)
+
+        async def get_player_thumbnails(
+            self,
+            type: str = "AvatarHeadShot",
+            size: str = "48x48",
+            format: str = "png",
+            isCircular: bool = False,
+        ) -> Thumbnails.BatchObject:
+            batchObject = [
+                Thumbnails.ThumbnailBatchObject(
+                    requestId=jobId,
+                    token=playerToken,
+                    type=type,
+                    size=size,
+                    format=format,
+                    isCircular=isCircular,
+                )
+                for jobId, playerTokens in {
+                    server.jobId: server.playerTokens for server in self.servers
+                }.items()
+                for playerToken in playerTokens
+            ]
+            return await batch(*batchObject)
 
     class Server:
         def __init__(self, data: dict):
@@ -206,48 +253,197 @@ class Servers:
         def __bool__(self):
             return bool(self.jobId)
 
-        def __eq__(self, value):
-            if isinstance(value, Servers.Server):
-                return self.jobId == value.jobId
+        def __eq__(self, other):
+            if isinstance(other, Servers.Server):
+                return self.jobId == other.jobId
 
             return False
 
-        def __add__(self, value) -> "Servers.ServerGroup":
-            if isinstance(value, Servers.Server):
+        def __add__(self, other) -> "Servers.ServerGroup":
+            if isinstance(other, Servers.Server):
                 return Servers.ServerGroup(
                     {
                         "previousPageCursor": None,
                         "nextPageCursor": None,
-                        "data": list(dict.fromkeys([self.data, value.data])),
+                        "data": list(dict.fromkeys([self.data, other.data])),
                     }
                 )
-            elif isinstance(value, Servers.ServerGroup):
+            elif isinstance(other, Servers.ServerGroup):
                 return Servers.ServerGroup(
                     {
-                        "previousPageCursor": value.previousPageCursor,
-                        "nextPageCursor": value.nextPageCursor,
-                        "data": list(dict.fromkeys([self.data, *value.data])),
+                        "previousPageCursor": other.previousPageCursor,
+                        "nextPageCursor": other.nextPageCursor,
+                        "data": list(dict.fromkeys([self.data, *other.data])),
                     }
                 )
 
             return NotImplemented
 
-        def __iadd__(self, value) -> "Servers.ServerGroup":
-            if isinstance(value, Servers.Server):
+        def __iadd__(self, other) -> "Servers.ServerGroup":
+            if isinstance(other, Servers.Server):
                 return Servers.ServerGroup(
                     {
                         "previousPageCursor": None,
                         "nextPageCursor": None,
-                        "data": list(dict.fromkeys([self.data, value.data])),
+                        "data": list(dict.fromkeys([self.data, other.data])),
                     }
                 )
-            elif isinstance(value, Servers.ServerGroup):
+            elif isinstance(other, Servers.ServerGroup):
                 return Servers.ServerGroup(
                     {
-                        "previousPageCursor": value.previousPageCursor,
-                        "nextPageCursor": value.nextPageCursor,
-                        "data": list(dict.fromkeys([self.data, *value.data])),
+                        "previousPageCursor": other.previousPageCursor,
+                        "nextPageCursor": other.nextPageCursor,
+                        "data": list(dict.fromkeys([self.data, *other.data])),
                     }
+                )
+
+            return NotImplemented
+
+        def get_player_thumbnails(
+            self,
+            type: str = "AvatarHeadShot",
+            size: str = "48x48",
+            format: str = "png",
+            isCircular: bool = False,
+        ) -> Thumbnails.BatchObject:
+            batchObject = [
+                Thumbnails.ThumbnailBatchObject(
+                    requestId=playerToken,
+                    token=playerToken,
+                    type=type,
+                    size=size,
+                    format=format,
+                    isCircular=isCircular,
+                )
+                for playerToken in self.playerTokens
+            ]
+            return batch(*batchObject)
+
+
+class Presences:
+    class UserPresenceGroup:
+        def __init__(self, data: list):
+            self.data = data
+            self.presences = [Presences.UserPresence(presence) for presence in data]
+            self.userIds: list[int] = [presence.userId for presence in self.presences]
+
+            self._userIdsDict: dict[int, Presences.UserPresence] = {
+                presence.userId: presence for presence in self.presences
+            }
+
+        def __contains__(self, item):
+            if isinstance(item, Presences.UserPresence):
+                return item in self.presences
+
+            return False
+
+        def __bool__(self):
+            return bool(self.presences)
+
+        def __len__(self):
+            return len(self.presences)
+
+        def __eq__(self, other):
+            if isinstance(other, Presences.UserPresenceGroup):
+                return set(self.presences) == set(other.presences)
+
+            return False
+
+        def __add__(self, other):
+            if isinstance(other, Presences.UserPresenceGroup):
+                return Presences.UserPresenceGroup(
+                    list(dict.fromkeys([*self.data, *other.data]))
+                )
+            elif isinstance(other, Presences.UserPresence):
+                return Presences.UserPresenceGroup(
+                    list(dict.fromkeys([*self.data, other.data]))
+                )
+
+            return NotImplemented
+
+        def __iadd__(self, other):
+            if isinstance(other, Presences.UserPresenceGroup):
+                return Presences.UserPresenceGroup(
+                    list(dict.fromkeys([*self.data, *other.data]))
+                )
+            elif isinstance(other, Presences.UserPresence):
+                return Presences.UserPresenceGroup(
+                    list(dict.fromkeys([*self.data, other.data]))
+                )
+
+            return NotImplemented
+
+        def __sub__(self, other):
+            if isinstance(other, Presences.UserPresenceGroup):
+                for value in other.data:
+                    self.data.remove(value)
+
+                return Presences.UserPresence(self.data)
+            elif isinstance(other, Presences.UserPresence):
+                self.data.remove(other.data)
+
+                return Presences.UserPresence(self.data)
+
+        def get_by_userid(self, userId: str) -> Optional["Presences.UserPresence"]:
+            return self._userIdsDict.get(userId)
+
+        def filter_by_game(self, *gameIds: int):
+            self.presences = [
+                presence for presence in self.presences if presence.gameId in gameIds
+            ]
+
+        def filter_by_placeid(self, *placeIds: int):
+            self.presences = [
+                presence for presence in self.presences if presence.placeId in placeIds
+            ]
+
+        def filter_by_presence_types(self, *presenceTypes: int):
+            self.presences = [
+                presence
+                for presence in self.presences
+                if presence.userPresenceType in presenceTypes
+            ]
+
+    class UserPresence:
+        def __init__(self, data: list):
+            self.data = data
+
+            self.userPresenceType = data["userPresenceType"]
+            self.lastlocation = data["lastLocation"]
+            self.placeId = data["placeId"]
+            self.gameId = data["rootPlaceId"]
+            self.jobId = data["gameId"]
+            self.universeId = data["universeId"]
+            self.userId = data["userId"]
+            self.lastOnline = datetime.fromisoformat(
+                data["lastOnline"].replace("Z", "+00:00")
+            )
+
+        def __bool__(self):
+            return bool(self.userId)
+
+        def __eq__(self, other):
+            if isinstance(other, Presences.UserPresence):
+                return (self.userId == other.userId) or (self.jobId == other.jobId)
+
+            return False
+
+        def __add__(self, other) -> "Presences.UserPresenceGroup":
+            if isinstance(other, Presences.UserPresence):
+                return Presences.UserPresenceGroup([self.data, other.data])
+            elif isinstance(other, Presences.UserPresenceGroup):
+                return Presences.UserPresenceGroup(
+                    list(dict.fromkeys([self.data, *other.data]))
+                )
+
+            return NotImplemented
+
+        def __iadd__(self, other) -> "Presences.UserPresenceGroup":
+            if isinstance(other, Presences.UserPresence):
+                return Presences.UserPresenceGroup([self.data, other.data])
+            elif isinstance(other, Presences.UserPresenceGroup):
+                return Presences.UserPresenceGroup(
+                    list(dict.fromkeys([self.data, *other.data]))
                 )
 
             return NotImplemented

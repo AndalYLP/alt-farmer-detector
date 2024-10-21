@@ -26,17 +26,20 @@ UsersCollection = dataBase["Users"]
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def answer():
-      return "Alive"
+    return "Alive"
+
 
 Thread(target=lambda: serve(app, host="0.0.0.0", port=8080)).start()
 
 # ------------------------------ RobloxPy start ------------------------------ #
 
-RobloxPy.cookies.setCookie(COOKIE)
+RobloxPy.cookies.set_cookie(COOKIE)
 
 # ------------------------------------ Bot ----------------------------------- #
+
 
 class Bot(commands.Bot):
     async def setup_hook(self):
@@ -55,14 +58,20 @@ class Bot(commands.Bot):
             except Exception as e:
                 print(f"Failed to load extension {extension}: {e}")
 
+
 bot = Bot(command_prefix="!", intents=discord.Intents.all())
+
 
 @bot.event
 async def on_ready():
     print("Bot is ready")
-    await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Bedwars Ranked"))
+    await bot.change_presence(
+        activity=discord.Activity(
+            type=discord.ActivityType.playing, name="Bedwars Ranked"
+        )
+    )
 
-    bot.loop.create_task(getStatus())
+    bot.loop.create_task(get_status())
     try:
         print("Comandos slash registrados:")
         for command in bot.tree.get_commands():
@@ -75,6 +84,7 @@ async def on_ready():
         print(e)
         traceback.print_exc()
 
+
 bot.Tracking = {}
 bot.TrackingStatus = {}
 bot.MuteAll = False
@@ -83,7 +93,8 @@ GameIdList = {}
 
 # -------------------------- Get status fnction -------------------------- #
 
-async def getStatus():
+
+async def get_status():
     gameIdWithAltsChannel = bot.get_channel(1277089252676472894)
     gameIdChannel = bot.get_channel(1277046568033194115)
     altChannel = bot.get_channel(1277302313949593742)
@@ -94,20 +105,30 @@ async def getStatus():
             if channel:
                 documents = list(UsersCollection.find({}))
                 if documents:
-                    userPresences = await RobloxPy.Presence.getPresence(*[doc["UserID"] for doc in documents])
-                    results = list(UsersCollection.find({"UserID": {"$in": userPresences.userIds}}))
-                    
+                    userPresences = await RobloxPy.Presence.get_presence(
+                        *[doc["UserID"] for doc in documents]
+                    )
+                    results = list(
+                        UsersCollection.find({"UserID": {"$in": userPresences.userIds}})
+                    )
+
                     for presence in userPresences.presences:
-                        data = next((doc for doc in results if doc["UserID"] == presence.userId))
+                        data = next(
+                            (doc for doc in results if doc["UserID"] == presence.userId)
+                        )
                         presence.username = data["Username"]
-                        presence.lobbyStatus = "True" if presence.placeId == 6872265039 else "False"
+                        presence.lobbyStatus = (
+                            "True" if presence.placeId == 6872265039 else "False"
+                        )
                         presence.groupName = data.get("GroupName", "None")
                         presence.isAlt = data["isAlt"]
 
                     if userPresences:
                         await asyncio.gather(
-                            userStatus(userPresences, channel, altChannel),
-                            sameGameId(userPresences, gameIdChannel, gameIdWithAltsChannel)
+                            user_status(userPresences, channel, altChannel),
+                            same_gameid(
+                                userPresences, gameIdChannel, gameIdWithAltsChannel
+                            ),
                         )
                 else:
                     print("Docs not found")
@@ -119,12 +140,22 @@ async def getStatus():
             print(f"Error en el bucle principal: {e}.")
             traceback.print_exc()
 
+
 # ----------------------- User status function ----------------------- #
 
-async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel, altChannel):
-    async def createEmbeds(presence:RobloxPy.Presence.UserPresence):
+
+async def user_status(
+    userPresences: RobloxPy.Presence.Presences.UserPresenceGroup, channel, altChannel
+):
+    async def create_embeds(presence: RobloxPy.Presence.Presences.UserPresence):
         if presence.userId not in GameIdList:
-            GameIdList[presence.userId] = [["nil", presence.jobId or "nil"], ["nil", f"<t:{round(time.time())}:R>"], presence.lobbyStatus, presence.lastlocation, presence.userPresenceType]
+            GameIdList[presence.userId] = [
+                ["nil", presence.jobId or "nil"],
+                ["nil", f"<t:{round(time.time())}:R>"],
+                presence.lobbyStatus,
+                presence.lastlocation,
+                presence.userPresenceType,
+            ]
 
         userGameInfo = GameIdList[presence.userId]
         currentGameId = userGameInfo[0][1]
@@ -135,87 +166,189 @@ async def userStatus(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
             if bot.Tracking.get(presence.userId):
                 try:
                     resultTime = round(time.time()) - int(userGameInfo[1][1][3:-3])
-                    timeInGame = f"{resultTime} Seconds" if resultTime < 60 else f"{resultTime // 60}:{resultTime % 60:02d} Minutes"
+                    timeInGame = (
+                        f"{resultTime} Seconds"
+                        if resultTime < 60
+                        else f"{resultTime // 60}:{resultTime % 60:02d} Minutes"
+                    )
 
-                    embed = discord.Embed(title="Time in game: " + timeInGame, color=46847)
-                    embed.add_field(name="From:",
+                    embed = discord.Embed(
+                        title="Time in game: " + timeInGame, color=46847
+                    )
+                    embed.add_field(
+                        name="From:",
                         value=f"Game: **{userGameInfo[3]}**\nGameId: **{userGameInfo[0][1]}**\nLobby: **{userGameInfo[2]}**",
-                        inline=True
+                        inline=True,
                     )
-                    embed.add_field(name="To:",
+                    embed.add_field(
+                        name="To:",
                         value=f"Game: **{presence.lastlocation}**\nGameId: **{presence.jobId}**\nLobby: **{presence.lobbyStatus}**",
-                        inline=True
+                        inline=True,
                     )
 
-                    await bot.Tracking[presence.userId][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.Tracking[presence.userId][1])}", embed=embed)
+                    await bot.Tracking[presence.userId][0].send(
+                        content=f"<t:{round(time.time())}:R>{"".join(bot.Tracking[presence.userId][1])}",
+                        embed=embed,
+                    )
                 except Exception as e:
-                        print(f"Error sending tracking times: {e}.")
-                        traceback.print_exc()
-                
+                    print(f"Error sending tracking times: {e}.")
+                    traceback.print_exc()
+
             userGameInfo[2] = presence.lobbyStatus
             userGameInfo[3] = presence.lastlocation
             userGameInfo[1][0] = userGameInfo[1][1]
             userGameInfo[0][0] = currentGameId
             userGameInfo[1][1] = f"<t:{round(time.time())}:R>"
             userGameInfo[0][1] = presence.jobId
-            
+
         LastGameId = userGameInfo[0][0]
         TimeInGameId = userGameInfo[1][1]
 
-        color = (2686720 if presence.userPresenceType == 2 else 46847 if presence.userPresenceType == 1 else 7763574) if presence.userPresenceType != 2 or presence.lobbyStatus == "True" else 1881856
-        title = presence.username + (" is in a game" if presence.userPresenceType == 2 else " is online" if presence.userPresenceType == 1 else f" is offline")
-        description = f"Game: **{presence.lastlocation}**" + (f"\nLobby: **{presence.lobbyStatus}**\nGameId: **{presence.jobId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**" if presence.userPresenceType == 2 and presence.gameId == 6872265039 else "")
-        embed = discord.Embed(color=color,title=title,description=description if presence.userPresenceType == 2 and presence.gameId != None else None)
+        color = (
+            (
+                2686720
+                if presence.userPresenceType == 2
+                else 46847 if presence.userPresenceType == 1 else 7763574
+            )
+            if presence.userPresenceType != 2 or presence.lobbyStatus == "True"
+            else 1881856
+        )
+        title = presence.username + (
+            " is in a game"
+            if presence.userPresenceType == 2
+            else " is online" if presence.userPresenceType == 1 else f" is offline"
+        )
+        description = f"Game: **{presence.lastlocation}**" + (
+            f"\nLobby: **{presence.lobbyStatus}**\nGameId: **{presence.jobId}**\nLastGameId: **{LastGameId}**\nTime in gameId: **{TimeInGameId}**"
+            if presence.userPresenceType == 2 and presence.gameId == 6872265039
+            else ""
+        )
+        embed = discord.Embed(
+            color=color,
+            title=title,
+            description=(
+                description
+                if presence.userPresenceType == 2 and presence.gameId != None
+                else None
+            ),
+        )
 
         if presence.groupName != "None":
-            embed.set_footer(text= "Group: " + presence.groupName)
+            embed.set_footer(text="Group: " + presence.groupName)
 
-        if presence.isAlt and (presence.userPresenceType == 2 and not bot.MuteAll and (presence.gameId == None or presence.gameId == 6872265039)):
-            asyncio.create_task(altChannel.send(content=f"<t:{round(time.time())}:R><@&1288980643061170188>",embed=embed))
-        
-        if bot.TrackingStatus.get(presence.userId) and not userGameInfo[4] == presence.userPresenceType:
+        if presence.isAlt and (
+            presence.userPresenceType == 2
+            and not bot.MuteAll
+            and (presence.gameId == None or presence.gameId == 6872265039)
+        ):
+            asyncio.create_task(
+                altChannel.send(
+                    content=f"<t:{round(time.time())}:R><@&1288980643061170188>",
+                    embed=embed,
+                )
+            )
+
+        if (
+            bot.TrackingStatus.get(presence.userId)
+            and not userGameInfo[4] == presence.userPresenceType
+        ):
             try:
-                await bot.TrackingStatus[presence.userId][0].send(content=f"<t:{round(time.time())}:R>{"".join(bot.TrackingStatus[presence.userId][1])}",embed=embed)
+                await bot.TrackingStatus[presence.userId][0].send(
+                    content=f"<t:{round(time.time())}:R>{"".join(bot.TrackingStatus[presence.userId][1])}",
+                    embed=embed,
+                )
             except Exception as e:
                 print(f"Error enviando trackingstatus: {e}.")
                 traceback.print_exc()
-        
+
         userGameInfo[4] = presence.userPresenceType
 
-        if (presence.userPresenceType == 2 and ((presence.gameId == 6872265039 or presence.gameId == None) or not bot.OtherGame) and not bot.MuteAll) or (presence.userPresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll)) or (presence.userPresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)):
+        if (
+            (
+                presence.userPresenceType == 2
+                and (
+                    (presence.gameId == 6872265039 or presence.gameId == None)
+                    or not bot.OtherGame
+                )
+                and not bot.MuteAll
+            )
+            or (presence.userPresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll))
+            or (
+                presence.userPresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)
+            )
+        ):
             if not presence.groupName in embeds:
-                embeds[presence.groupName] = [presence.userPresenceType == 2 and (presence.gameId == None or (presence.gameId == 6872265039 and not presence.placeId == 6872265039))]
+                embeds[presence.groupName] = [
+                    presence.userPresenceType == 2
+                    and (
+                        presence.gameId == None
+                        or (
+                            presence.gameId == 6872265039
+                            and not presence.placeId == 6872265039
+                        )
+                    )
+                ]
                 embeds[presence.groupName].append(embed)
             else:
                 if not presence.groupName == "None":
                     if embeds[presence.groupName][1] == False:
-                        embeds[presence.groupName][1] = presence.userPresenceType == 2 and (presence.gameId == None or (presence.gameId == 6872265039 and not presence.placeId == 6872265039))
+                        embeds[presence.groupName][1] = (
+                            presence.userPresenceType == 2
+                            and (
+                                presence.gameId == None
+                                or (
+                                    presence.gameId == 6872265039
+                                    and not presence.placeId == 6872265039
+                                )
+                            )
+                        )
                 else:
-                    embeds[presence.groupName].append(presence.userPresenceType == 2 and (presence.gameId == None or (presence.gameId == 6872265039 and not presence.placeId == 6872265039)))
+                    embeds[presence.groupName].append(
+                        presence.userPresenceType == 2
+                        and (
+                            presence.gameId == None
+                            or (
+                                presence.gameId == 6872265039
+                                and not presence.placeId == 6872265039
+                            )
+                        )
+                    )
                 embeds[presence.groupName].append(embed)
 
     embeds = {}
-  
+
     tasks = [channel.purge(limit=100), altChannel.purge(limit=100)]
     for presence in userPresences.presences:
-        tasks.append(asyncio.create_task(createEmbeds(presence)))
+        tasks.append(asyncio.create_task(create_embeds(presence)))
 
     await asyncio.gather(*tasks)
 
     for groupName, Embeds in embeds.items():
-            if not groupName == "None":
-                SubGroups = [Embeds[i:i + 10] for i in range(0,len(Embeds), 10)]
-                for group in SubGroups:
-                    await channel.send(content=f"<t:{round(time.time())}:R>" + ("<@&1288980643061170188>" if group[0] else ""),embeds=group[1:])
+        if not groupName == "None":
+            SubGroups = [Embeds[i : i + 10] for i in range(0, len(Embeds), 10)]
+            for group in SubGroups:
+                await channel.send(
+                    content=f"<t:{round(time.time())}:R>"
+                    + ("<@&1288980643061170188>" if group[0] else ""),
+                    embeds=group[1:],
+                )
 
     if embeds.get("None"):
         for i, embed in enumerate(embeds["None"]):
             if not (i % 2) == 0:
-                await channel.send(content=f"<t:{round(time.time())}:R>" + ("<@&1288980643061170188>" if embeds["None"][i-1] else ""),embed=embed)
+                await channel.send(
+                    content=f"<t:{round(time.time())}:R>"
+                    + ("<@&1288980643061170188>" if embeds["None"][i - 1] else ""),
+                    embed=embed,
+                )
+
 
 # ----------------------- Same game id function ---------------------- #
 
-async def sameGameId(userPresences:RobloxPy.Presence.UserPresenceGroup, channel, channel2):
+
+async def same_gameid(
+    userPresences: RobloxPy.Presence.Presences.UserPresenceGroup, channel, channel2
+):
     gameIds = {}
 
     userPresences.filterByPresenceTypes(2)
@@ -225,7 +358,13 @@ async def sameGameId(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
             if gameIds.get(presence.jobId):
                 gameIds[presence.jobId][0].append(presence.userId)
             else:
-                gameIds[presence.jobId] = [[presence.userId], {"gameName": presence.lastlocation, "isLobby": presence.lobbyStatus}]
+                gameIds[presence.jobId] = [
+                    [presence.userId],
+                    {
+                        "gameName": presence.lastlocation,
+                        "isLobby": presence.lobbyStatus,
+                    },
+                ]
 
     embeds = []
     for gameId, ids in gameIds.items():
@@ -237,18 +376,30 @@ async def sameGameId(userPresences:RobloxPy.Presence.UserPresenceGroup, channel,
 
         for userId in Ids:
             presence = userPresences.getByUserId(userId)
-            description += f"\nUsername: **{presence.username}**\n- isAlt: **{presence.isAlt}**"
+            description += (
+                f"\nUsername: **{presence.username}**\n- isAlt: **{presence.isAlt}**"
+            )
 
             if presence.isAlt == True:
                 Everyone = True
 
-        Embed = discord.Embed(color=2686720 if list2["isLobby"] == "True" else 1881856, title=Title, description=description)
+        Embed = discord.Embed(
+            color=2686720 if list2["isLobby"] == "True" else 1881856,
+            title=Title,
+            description=description,
+        )
         embeds.append(Embed)
         if Everyone:
-            asyncio.create_task(channel2.send(content=f"<t:{round(time.time())}:R><@&1288980643061170188>", embed=Embed))
-    
-    for embedgroup in [embeds[i:i + 10] for i in range(0,len(embeds), 10)]:
+            asyncio.create_task(
+                channel2.send(
+                    content=f"<t:{round(time.time())}:R><@&1288980643061170188>",
+                    embed=Embed,
+                )
+            )
+
+    for embedgroup in [embeds[i : i + 10] for i in range(0, len(embeds), 10)]:
         await channel.send(content=f"<t:{round(time.time())}:R>", embeds=embedgroup)
+
 
 # ----------------------------------- start ---------------------------------- #
 

@@ -3,12 +3,11 @@ RobloxPy.Games
 ~~~~~~~~~~~~~~
 """
 
-from .Thumbnails import ThumbnailBatchObject, BatchObject, batch
-from ._utils.requests import GamesAPI
+from ._utils.requests import _GamesAPI
 from ._utils.classes import Servers
 
 
-def getServerPage(
+def get_server_page(
     gameId: int,
     useCookie: bool = False,
     serverType: int = 0,
@@ -17,27 +16,27 @@ def getServerPage(
     limit: int = 100,
     cursor: str = "",
 ) -> Servers.ServerGroup:
-    response = GamesAPI.V1.GameInstances.games__servers__(
+    response = _GamesAPI.V1.GameInstances.games__servers__(
         gameId, useCookie, serverType, sortOrder, excludeFullGames, limit, cursor
     )
 
     return Servers.ServerGroup(response.json())
 
 
-def getAllServers(
+def get_all_servers(
     gameId: int,
     serverType: int = 0,
     excludeFullGames: bool = False,
     useCookie: bool = False,
 ) -> Servers.ServerGroup:
-    currentPage = getServerPage(
+    currentPage = get_server_page(
         gameId, useCookie, serverType, excludeFullGames=excludeFullGames
     )
     mainPage = currentPage
 
     while True:
         if currentPage.nextPageCursor:
-            currentPage = getServerPage(
+            currentPage = get_server_page(
                 gameId,
                 serverType,
                 excludeFullGames=excludeFullGames,

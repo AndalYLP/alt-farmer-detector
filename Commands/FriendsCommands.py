@@ -1,285 +1,194 @@
+import time
+
 from discord import app_commands
 from discord.ext import commands
 from collections import Counter
-import requests
+from loguru import logger
 import discord
-import time
-import os
 
-# --------------------------- Environment variables -------------------------- #
-
-COOKIE = os.environ.get("COOKIE")
+from utils import (
+    format_mutuals_embed,
+    error_embed,
+    UserNotFound,
+    format_user_embed,
+    format_addedwith_embed,
+)
+from CommandDescriptions import FriendsDesc
+import RobloxPy
 
 # ------------------------------------ Cog ----------------------------------- #
+
 
 class FriendsCommands(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
     mainGroup = app_commands.Group(name="friends", description="friends commands")
-    
+
     # ---------------------------------- Mutuals --------------------------------- #
 
-    @mainGroup.command(name="mutuals", description="check mutuals between users.")
-    @app_commands.describe(usernames="list of usernames, e.g: OrionYeets, chasemaser, ...", strict="True = Everyone should have the same user added")
-    async def mutuals(self, interaction: discord.Interaction, usernames: str, strict:bool):
-        print(interaction.user.name + " Used mutuals command")
-        await interaction.response.defer(thinking=True)
+    @mainGroup.command(name="mutuals", description=FriendsDesc.mutuals)
+    @app_commands.describe(
+        usernames=FriendsDesc.usernamesMutuals, strict=FriendsDesc.strict
+    )
+    async def mutuals(
+        self, interaction: discord.Interaction, usernames: str, strict: bool
+    ):
+        logger.log(
+            "COMMAND",
+            f"{interaction.user.name} used {interaction.command.name} command",
+        )
 
-        UsernamesArray = usernames.split(",")
-        UsernamesArray = [username.strip() for username in UsernamesArray if username.strip()] 
-
-        if len(UsernamesArray) < 2:
-            await interaction.followup.send("You need to give 2+ usernames, e.g: OrionYeets, chasemaser, ...", ephemeral=True)
-            return
-
-        response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": UsernamesArray, "excludeBannedUsers": True})
-        
-        if response.status_code == 200:
-            responseJSON = response.json()
-            data = responseJSON.get("data", [])
-
-            result = {}
-            if data and "requestedUsername" in data[0]:
-                for Pdata in data:
-                    result[Pdata["requestedUsername"]] = Pdata["id"]
-
-                if len(result) < len(UsernamesArray):
-                    for username in UsernamesArray:
-                        if username not in result:
-                            await interaction.followup.send(f"Username **{username}** not found", ephemeral=True)
-                else:
-                    FriendsID = []
-
-                    for id in result.values():
-                        response = requests.get(f"https://friends.roblox.com/v1/users/{id}/friends/find?userSort=2", headers={"Cookie": COOKIE})
-                        responseJSON = response.json()
-                        data = responseJSON.get("PageItems", [])
-
-                        currentUser = [Pdata["id"] for Pdata in data]
-                        FriendsID.append(currentUser if data else [])
-
-                    if strict:    
-                        commonFriends = list(set.intersection(*map(set, FriendsID)))
-                    else:
-                        JointLists = [item for sublista in FriendsID for item in sublista]
-                        counter = Counter(JointLists)
-
-                        commonFriends = {item: count for item, count in counter.items() if count > 1}
-
-                    if len(commonFriends) > 0:
-                        if strict:
-                            response = requests.post("https://users.roblox.com/v1/users", json={"userIds": commonFriends, "excludeBannedUsers": True})
-                            if response.status_code == 200:
-                                responseJSON = response.json()
-
-                                data = responseJSON.get("data", [])
-                                if data and "id" in data[0]:
-                                    embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])}\n" for i,v in enumerate(data)))
-
-                                    await interaction.followup.send(embed=embed)
-                                else:
-                                    await interaction.followup.send("Error getting usernames.", ephemeral=True)
-                            else:
-                                await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
-                        else:
-                            response = requests.post("https://users.roblox.com/v1/users", json={"userIds": list(commonFriends.keys()), "excludeBannedUsers": True})
-
-                            if response.status_code == 200:
-                                responseJSON = response.json()
-
-                                data = responseJSON.get("data", [])
-                                if data and "name" in data[0]:
-                                    embed = discord.Embed(color=8585471,title="Mutuals",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])} **({str(commonFriends[int(v["id"])])})** \n" for i,v in enumerate(data)))
-
-                                    await interaction.followup.send(embed=embed)
-                                else:
-                                    await interaction.followup.send("Error getting usernames.", ephemeral=True)
-                            else:
-                                await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
-                    else:
-                        await interaction.followup.send("No mutuals found.")
+        try:
+            if usernames.find(","):
+                usernames = usernames.split(",")
             else:
-                await interaction.followup.send("Error getting usernames.", ephemeral=True)
-        else:
-            await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
+                usernames = usernames.split()
+
+            if not isinstance(usernames, list):
+                usernames = [usernames]
+
+            friends, users = await RobloxPy.Friends.get_friend_users_from_username(
+                *usernames
+            )
+
+            for username in usernames:
+                if not users.get_by_requested_username(username):
+                    raise UserNotFound(username)
+
+            counter = Counter(
+                [friend for friendList in friends.values() for friend in friendList]
+            )
+
+            if strict:
+                mutuals = {
+                    item: count
+                    for item, count in counter.items()
+                    if count == len(friends)
+                }
+            else:
+                mutuals = {item: count for item, count in counter.items() if count == 2}
+
+            if mutuals:
+                embed = format_mutuals_embed(mutuals, users, strict)
+                await interaction.response.send_message(embed=embed)
+            else:
+                await interaction.response.send_message("no mutuals found.")
+        except Exception as e:
+            logger.exception(e)
+            await interaction.response.send_message(embed=error_embed(e))
 
     # ------------------------------ in-game command ----------------------------- #
 
-    @mainGroup.command(name="ingame", description="check in-game friends.")
-    @app_commands.describe(sameserver="True will only show in same server friends.", username="Player username to check.")
-    async def ingame(self, interaction: discord.Interaction, username: str, sameserver:bool):
-        print(interaction.user.name + " Used ingame command")
-        await interaction.response.defer(thinking=True)
+    @mainGroup.command(name="ingame", description=FriendsDesc.ingame)
+    @app_commands.describe(
+        sameserver=FriendsDesc.sameserver, username=FriendsDesc.username
+    )
+    async def ingame(
+        self, interaction: discord.Interaction, username: str, sameserver: bool
+    ):
+        logger.log(
+            "COMMAND",
+            f"{interaction.user.name} used {interaction.command.name} command",
+        )
+        try:
+            targetPresence, user = await RobloxPy.Presence.get_presence_from_username(
+                username
+            )
+            user = user.get_by_requested_username(username)
+            targetPresence = targetPresence.get_by_userid(user.userId)
 
-        response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": [username], "excludeBannedUsers": True})
-        
-        if response.status_code == 200:
-            responseJSON = response.json()
-            data = responseJSON.get("data", [])
+            if not user:
+                raise UserNotFound(username)
 
-            if data and "requestedUsername" in data[0]:
-                response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": [data[0]["id"]]},headers={"Cookie": COOKIE})
-                GameId = None
-                if response.status_code == 200:
-                    responseJSON = response.json()
-                    data2 = responseJSON.get("userPresences", [])
-                    
-                    if data2:
-                        GameId = data2[0]["gameId"]
-                        if not GameId and sameserver:
-                            await interaction.followup.send("Same server is true, but requested user is not in a game.", ephemeral=True)
-                            return
+            friends = await user.get_friends()
+
+            presences = await RobloxPy.Presence.get_presence(*friends)
+            presences.filter_by_presence_types(2)
+
+            friendsUsers = RobloxPy.Users.get_users_by_userid(*presences.userIds)
+
+            embeds = []
+            for presence in presences.presences:
+                if not sameserver or (sameserver and (presence == targetPresence)):
+                    embeds.append(
+                        format_user_embed(
+                            presenceType=presence.userPresenceType,
+                            username=friendsUsers.get_by_userid(
+                                presence.userId
+                            ).username,
+                            game=presence.lastlocation,
+                            lobby="True" if presence.placeId == 6872265039 else "False",
+                            jobId=presence.jobId,
+                            groupOrLastOnline=presence.lastOnline,
+                        )
+                    )
+
+            embedGroups = [
+                [embed for embed in embeds[i : i + 10]]
+                for i in range(0, len(embeds), 10)
+            ]
+            for i, embedGroup in enumerate(embedGroups):
+                if i != 0:
+                    await interaction.followup.send(
+                        content=f"<t:{int(time.time())}:R>", embeds=embedGroup
+                    )
                 else:
-                    await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
-                    return
-                
-                response = requests.get(f"https://friends.roblox.com/v1/users/{data[0]["id"]}/friends/find?userSort=2", headers={"Cookie": COOKIE})
-                responseJSON = response.json()
+                    await interaction.response.send_message(
+                        content=f"<t:{int(time.time())}:R>", embeds=embedGroup
+                    )
 
-                data = responseJSON.get("PageItems", [])
-                Friends = [Pdata["id"] for Pdata in data]
-                if Friends:
-                    IDLists = [Friends[i:i + 30] for i in range(0,len(Friends), 30)]
-                    userPresences = []
-                    userIds  = []
-                    UsernamesFromId = {}
-                    for i, SubList in enumerate(IDLists):
-                        response = requests.post("https://presence.roblox.com/v1/presence/users",json={"userIds": SubList},headers={"Cookie": COOKIE})
-                        if response.status_code == 200:
-                            userPresences.extend([presence for presence in response.json().get("userPresences", []) if presence["userPresenceType"] == 2 and (presence["rootPlaceId"] == 6872265039 or presence["rootPlaceId"] == None) and (not sameserver or presence["gameId"] == GameId)])
-                            userIds = [presence["userId"] for presence in userPresences]
-                        else:
-                            await interaction.followup.send(f"Request status code isn't 200.\n{response.json(), i}", ephemeral=True)
-                            return
-                    
-                    if not len(userPresences):
-                        await interaction.followup.send("No friends in-game found.", ephemeral=True)
+        except Exception as e:
+            logger.exception(e)
+            await interaction.response.send_message(embed=error_embed(e))
 
-                    response = requests.post("https://users.roblox.com/v1/users", json={"userIds": userIds, "excludeBannedUsers": True})
-                    if response.status_code == 200:
-                        responseJSON = response.json()
-                        data = responseJSON.get("data", [])
-                        
-                        UsernamesFromId = {UserData["id"]: UserData["name"] for UserData in data}
-                    else:
-                        await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
-                        return
-                    
-                    embeds = []
-                    for doc in userPresences:
-                        PresenceType = doc["userPresenceType"]
-
-                        GameName = doc["lastLocation"]
-                        LobbyStatus = "True" if doc["placeId"] == 6872265039 else "False"
-                        GameId = doc["gameId"]
-
-                        color = 2686720
-                        title = f"{UsernamesFromId[doc["userId"]]} is in a game"
-                        description = f"Game: **{GameName}**" + (f"\nLobby: **{LobbyStatus}**\nGameId: **{GameId}**" if PresenceType == 2 and doc["rootPlaceId"] == 6872265039 else "")
-                        embeds.append(discord.Embed(color=color if (not PresenceType == 2 or LobbyStatus == "True") else 1881856,title=title,description=description if PresenceType == 2 and not doc["rootPlaceId"] == None else None))
-                    
-                    if embeds:
-                        subEmbeds = [embeds[i:i + 10] for i in range(0,len(embeds), 10)]
-                        for i, embeds in enumerate(subEmbeds):
-                            if i == 0:
-                                await interaction.followup.send(content=f"<t:{int(time.time())}:R>", embeds=embeds)
-                            else:
-                                await interaction.channel.send(content=f"<t:{int(time.time())}:R>", embeds=embeds)
-                else:
-                    await interaction.followup.send("No friends found.", ephemeral=True)
-            else:
-                await interaction.followup.send("Error getting username.", ephemeral=True)
-        else:
-            await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
-    
     # ------------------------------- Added command ------------------------------ #
 
-    @mainGroup.command(name="added", description="Check if the target is added with the given users.")
-    @app_commands.describe(target="User to check his friends.", usernames="Users you want to check if they are added with the target, e.g: OrionYeets, chasemaser, ...")
-    async def addedwith(self, interaction: discord.Interaction, target: str, usernames:str):
-        print(interaction.user.name + " Used added command")
-        await interaction.response.defer(thinking=True)
+    @mainGroup.command(name="added", description=FriendsDesc.added)
+    @app_commands.describe(
+        target=FriendsDesc.target, usernames=FriendsDesc.usernamesAdded
+    )
+    async def addedwith(
+        self, interaction: discord.Interaction, target: str, usernames: str
+    ):
+        logger.log(
+            "COMMAND",
+            f"{interaction.user.name} used {interaction.command.name} command",
+        )
 
-        tName = ""
-        response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": [target], "excludeBannedUsers": True})
-        if response.status_code == 200:
-            responseJSON = response.json()
-            data = responseJSON.get("data", [])
-
-            if data and "requestedUsername" in data[0]:
-                target = data[0]["id"]
-                tName = data[0]["name"]
+        try:
+            if usernames.find(","):
+                usernames = usernames.split(",")
             else:
-                await interaction.followup.send("Error getting target's username.", ephemeral=True)
-                return
-        else:
-            await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
-            return
+                usernames = usernames.split()
 
-        UsernamesArray = usernames.split(",")
-        UsernamesArray = [username.strip() for username in UsernamesArray if username.strip()]
+            if not isinstance(usernames, list):
+                usernames = [usernames]
 
-        response = requests.post("https://users.roblox.com/v1/usernames/users", json={"usernames": UsernamesArray, "excludeBannedUsers": True})
-        
-        if response.status_code == 200:
-            responseJSON = response.json()
-            data = responseJSON.get("data", [])
+            users = RobloxPy.Users.get_users_by_username(*usernames, target)
 
-            result = {}
-            if data and "requestedUsername" in data[0]:
-                for Pdata in data:
-                    result[Pdata["requestedUsername"]] = Pdata["id"]
+            for username in [*usernames, target]:
+                if not users.get_by_requested_username(username):
+                    raise UserNotFound(username)
 
-                if len(result) < len(UsernamesArray):  
-                    for username in UsernamesArray:
-                        if username not in result:
-                            await interaction.followup.send(f"Username **{username}** not found", ephemeral=True)
-                else:
-                    Fresult = []
-                    nextCursor = None
+            friends = await RobloxPy.Friends.get_friend_users(
+                users.get_by_requested_username(target)
+            )
+            friends = friends[users.get_by_requested_username(target)]
 
-                    while True:
-                        url = f"https://friends.roblox.com/v1/users/{target}/friends/find?userSort=2" + (f"&cursor={nextCursor}" if nextCursor else "")
+            counter = Counter(friends + users.userIds)
+            addedWith = [item for item, count in counter if count == 2]
 
-                        response = requests.get(url, headers={"Cookie": COOKIE})
+            format_addedwith_embed(
+                target=users.get_by_requested_username(target).username,
+                addedwith=addedWith,
+                users=users,
+            )
 
-                        if response.status_code == 200:
-                            responseJSON = response.json()
-                            data = responseJSON.get("PageItems", [])
-                            nextCursor = responseJSON.get("NextCursor")
+        except Exception as e:
+            logger.exception(e)
+            await interaction.response.send_message(embed=error_embed(e))
 
-                            if data:
-                                Fresult.extend([item["id"] for item in data if item["id"] in result.values()])
-                            else:
-                                break
-
-                            if not nextCursor:
-                                break
-                        else:
-                            await interaction.followup.send("Request status code isn't 200 (Friends API).", ephemeral=True)
-                            return
-                        
-                    if Fresult:
-                        response = requests.post("https://users.roblox.com/v1/users", json={"userIds": Fresult, "excludeBannedUsers": True})
-                        if response.status_code == 200:
-                            responseJSON = response.json()
-
-                            data = responseJSON.get("data", [])
-                            if data and "id" in data[0]:
-                                embed = discord.Embed(color=8585471,title=f"{tName} is added with:",description="".join(f"**{i+1}.** ``{str(v["name"])}`` **|** {str(v["id"])}\n" for i,v in enumerate(data)))
-
-                                await interaction.followup.send(embed=embed)
-                            else:
-                                await interaction.followup.send("Error getting usernames.", ephemeral=True)
-                        else:
-                            await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
-                    else:
-                        await interaction.followup.send("The given usernames are not added with the target.")
-            else:
-                await interaction.followup.send("Error getting usernames.", ephemeral=True)
-        else:
-            await interaction.followup.send("Request status code isn't 200 (Users API).", ephemeral=True)
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(FriendsCommands(bot))

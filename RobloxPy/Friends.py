@@ -1,20 +1,14 @@
-from ._CookieManager import cookies
-import requests
+"""
+RobloxPy.Friends
+~~~~~~~~~~~~~~~~
+"""
 
-userApi = "https://friends.roblox.com"
-
-
-def getFriendsId(): ...
-
-
-def getFriendsIdFromUsername(): ...
+from ._common.friends import get_friend_users
+from ._utils.requests import _FriendsAPI
 
 
-def getFriendsUser(): ...
+async def get_friend_users_from_username(*usernames: str, limit: int = None):
+    from .Users import get_users_by_username
 
-
-def getFriendsUserFromUsername(): ...
-
-
-from .Presence import getLastOnline, getPresence, UserPresence
-from .Thumbnails import ThumbnailObject, getUsersAvatar
+    users = get_users_by_username(*usernames)
+    return await get_friend_users(*users.userIds, limit=limit), users

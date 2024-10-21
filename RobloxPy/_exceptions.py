@@ -5,6 +5,11 @@ RobloxPy._exceptions
 This module contains the set of RobloxPy's exceptions and warnings.
 """
 
+
+class MaxAttempts(Exception):
+    """Reached maximum attempts within a request."""
+
+
 # --------------------------------- Warnings --------------------------------- #
 
 

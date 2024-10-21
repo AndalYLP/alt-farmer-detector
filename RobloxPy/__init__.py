@@ -9,8 +9,8 @@ Get an easy access to roblox api!
 
 from ._CookieManager import cookies
 
-# from . import Thumbnails
-# from . import Presence
+from . import Thumbnails
+from . import Presence
+from . import Friends
 from . import Users
-
-# from . import Games
+from . import Games
