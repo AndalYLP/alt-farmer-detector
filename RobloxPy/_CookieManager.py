@@ -9,6 +9,7 @@ recommended to use RobloxPy.cookies instead of this module!
 from loguru import logger
 
 from ._exceptions import CookieWarning
+import requests
 
 
 class CookieManager:
@@ -40,12 +41,12 @@ class CookieManager:
             else:
                 raise Exception
 
-        except Exception:
+        except requests.exceptions.HTTPError as e:
             logger.warning(
                 CookieWarning(
                     "Error verifying cookie, restart recommended",
-                    response.status_code,
-                    response.text,
+                    e.response.status_code,
+                    e.response.text,
                 )
             )
 
