@@ -40,7 +40,7 @@ def format_user_embed(
 
     if groupOrLastOnline:
         if isinstance(groupOrLastOnline, datetime):
-            embed.set_footer(text=f"Last online: **{naturaltime(groupOrLastOnline)}**")
+            embed.set_footer(text=f"Last online: {naturaltime(groupOrLastOnline)}")
         else:
             embed.set_footer(text=f"Group: {groupOrLastOnline}")
 
