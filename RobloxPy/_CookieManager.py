@@ -20,7 +20,7 @@ class CookieManager:
         self._cookie = None
 
     def set_cookie(self, cookie: str) -> None:
-        from ._utils.requests import UsersAPI
+        from ._utils.requests import _UsersAPI
 
         self._cookie = cookie.replace(".ROBLOSECURITY=", "")
         index = self._cookie.rfind("|_")
@@ -30,7 +30,7 @@ class CookieManager:
         response = None
 
         try:
-            response = UsersAPI.V1.Users.users_authenticated(self.get_cookie())
+            response = _UsersAPI.V1.Users.users_authenticated(self.get_cookie())
             responseJson: dict = response.json()
 
             if responseJson.get("id"):
