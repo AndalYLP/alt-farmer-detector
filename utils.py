@@ -1,5 +1,4 @@
 from datetime import datetime
-import traceback
 
 import discord
 from humanize import naturaltime
@@ -87,7 +86,7 @@ def error_embed(exception: Exception):
     embed = discord.Embed(
         color=errorColorCode,
         title=f"{type(exception).__name__}",
-        description=traceback.format_exc(),
+        description=str(exception),
     )
 
     return embed
