@@ -91,7 +91,7 @@ class SnipeCommands(commands.Cog):
                     )
         except Exception as e:
             logger.exception(e)
-            await interaction.followup.send(embed=error_embed(e))
+            await interaction.response.send_message(embed=error_embed(e))
 
     # -------------------------- Joins off snipe command ------------------------- #
     @joinsOffGroup.command(name="player", description=SnipeDesc.snipePlayerJoinsOff)
