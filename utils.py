@@ -32,7 +32,7 @@ def format_user_embed(
             presenceType if presenceType != 2 or lobby == "True" else "match"
         ][0],
         title=f"{username} {presenceTypeCode[presenceType][1]}",
-        description=f"""{f"Game: {game}" if game else ""}
+        description=f"""{f"Game: **{game}**" if game else ""}
 {f"Lobby: **{lobby}**" if lobby else ""}
 {f"JobId: **{jobId}**" if jobId else ""}
 {f"Last jobId: **{lastJobId}**" if lastJobId else ""}
@@ -99,4 +99,4 @@ def error_embed(exception: Exception):
 
 class UserNotFound(Exception):
     def __init__(self, username):
-        super().__init__(f"didn't find the requested username: {username}")
+        super().__init__(f"didn't find the requested username: **{username}**")
