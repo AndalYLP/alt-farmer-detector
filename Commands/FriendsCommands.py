@@ -188,7 +188,7 @@ class FriendsCommands(commands.Cog):
                 )
                 await interaction.response.send_message(embed=embed)
             else:
-                await interaction.followup.send(
+                await interaction.response.send_message(
                     "The given usernames are not added with the target."
                 )
 
