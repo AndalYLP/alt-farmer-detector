@@ -44,7 +44,7 @@ class SnipeCommands(commands.Cog):
         )
 
         try:
-            if usernames.find(","):
+            if "," in usernames:
                 usernames = usernames.split(",")
             else:
                 logger.debug("true")

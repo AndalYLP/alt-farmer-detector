@@ -40,7 +40,7 @@ class FriendsCommands(commands.Cog):
         )
 
         try:
-            if usernames.find(","):
+            if "," in usernames:
                 usernames = usernames.split(",")
             else:
                 usernames = usernames.split()
@@ -157,7 +157,7 @@ class FriendsCommands(commands.Cog):
         )
 
         try:
-            if usernames.find(","):
+            if "," in usernames:
                 usernames = usernames.split(",")
             else:
                 usernames = usernames.split()
