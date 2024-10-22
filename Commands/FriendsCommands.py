@@ -173,7 +173,7 @@ class FriendsCommands(commands.Cog):
                     raise UserNotFound(username)
 
             friends = await RobloxPy.Friends.get_friend_users(
-                users.get_by_requested_username(target)
+                users.get_by_requested_username(target).userId
             )
             friends = friends[users.get_by_requested_username(target)]
 
