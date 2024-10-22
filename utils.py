@@ -62,7 +62,7 @@ def format_mutuals_embed(
         description=f"{", ".join(users.usernames)}\n\n"
         + "".join(
             f"**{i + 1}.** ``{mutualsUsers.get_by_userid(userId)}`` **|** {userId}{f" **({count})**" if not strict else ""}"
-            for i, (userId, count) in enumerate(mutuals.values())
+            for i, (userId, count) in enumerate(mutuals.items())
         ),
     )
 
