@@ -178,7 +178,7 @@ class FriendsCommands(commands.Cog):
             friends = friends[users.get_by_requested_username(target).userId]
 
             counter = Counter(friends + users.userIds)
-            addedWith = [item for item, count in counter if count == 2]
+            addedWith = [item for item, count in counter.items() if count == 2]
 
             format_addedwith_embed(
                 target=users.get_by_requested_username(target).username,
