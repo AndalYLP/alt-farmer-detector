@@ -157,7 +157,7 @@ class _FriendsAPI:
                     for response in responses:
                         if isinstance(response, Exception):
                             logger.exception(response)
-                            raise
+                            raise response
                         elif response:
                             userId, friends = response
                             results[userId] = friends
@@ -256,7 +256,7 @@ class _PresenceAPI:
                     for response in responses:
                         if isinstance(response, Exception):
                             logger.exception(response)
-                            raise
+                            raise response
                         elif response:
                             results.extend(response["userPresences"])
 
@@ -348,7 +348,7 @@ class _ThumbnailsAPI:
                     for response in responses:
                         if isinstance(response, Exception):
                             logger.exception(response)
-                            raise
+                            raise response
                         elif response:
                             results.extend(response["data"])
 
