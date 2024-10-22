@@ -91,6 +91,7 @@ class FriendsCommands(commands.Cog):
             "COMMAND",
             f"{interaction.user.name} used {interaction.command.name} command",
         )
+
         try:
             targetPresence, user = await RobloxPy.Presence.get_presence_from_username(
                 username

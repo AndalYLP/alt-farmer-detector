@@ -3,7 +3,6 @@ import asyncio
 import time
 import os
 
-
 from discord import app_commands
 from discord.ext import commands
 from loguru import logger
@@ -47,7 +46,6 @@ class SnipeCommands(commands.Cog):
             if "," in usernames:
                 usernames = usernames.split(",")
             else:
-                logger.debug("true")
                 usernames = usernames.split()
 
             if not isinstance(usernames, list):

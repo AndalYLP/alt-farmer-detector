@@ -18,3 +18,11 @@ class SnipeDesc:
     snipePlayerJoinsOff = "Send player status, only works with bedwars."
     usernameJoinsOff = "Player username to snipe."
     forceupdate = "If true you will get the latest data and update the current data, if false you will search through the current data"
+
+
+class TrackDesc:
+    trackStatus = "Creates a channel and tracks the status from a user."
+    username = "Player username to track."
+    trackTimes = "Creates a channel and tracks the queue times from a user."
+    stopTracking = "stop notifications/tracking for a user."
+    usernameStop = "Player username to stop tracking."
