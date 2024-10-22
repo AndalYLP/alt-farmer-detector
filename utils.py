@@ -60,8 +60,8 @@ def format_mutuals_embed(
         color=generalColorCode,
         title="Mutuals between:",
         description=f"{", ".join(users.usernames)}\n\n"
-        + "".join(
-            f"**{i + 1}.** ``{mutualsUsers.get_by_userid(userId)}`` **|** {userId}{f" **({count})**" if not strict else ""}"
+        + "\n".join(
+            f"**{i + 1}.** ``{mutualsUsers.get_by_userid(userId).username}`` **|** {userId}{f" **({count})**" if not strict else ""}"
             for i, (userId, count) in enumerate(mutuals.items())
         ),
     )
