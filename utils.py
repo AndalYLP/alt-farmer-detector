@@ -9,8 +9,8 @@ generalColorCode = 8585471
 errorColorCode = 16765440
 presenceTypeCode = {
     0: [8421761, "is offline"],
-    1: [2535920, "is online"],
-    2: [308308, "is in a game"],
+    1: [46847, "is online"],
+    2: [2686720, "is in a game"],
     3: [15960836, "is in studio"],
     "match": [1881856, "is in a game"],
 }
@@ -31,10 +31,10 @@ def format_user_embed(
         color=presenceTypeCode[presenceType][0],
         title=f"{username} {presenceTypeCode[presenceType][1]}",
         description=f"""{f"Game: {game}" if game else ""}
-{f"Lobby: {lobby}" if lobby else ""}
-{f"JobId: {jobId}" if jobId else ""}
-{f"Last jobId: {lastJobId}" if lastJobId else ""}
-{f"Time in jobId: {timeIn}" if timeIn else ""}""",
+{f"Lobby: **{lobby}**" if lobby else ""}
+{f"JobId: **{jobId}**" if jobId else ""}
+{f"Last jobId: **{lastJobId}**" if lastJobId else ""}
+{f"Time in jobId: **{timeIn}**" if timeIn else ""}""",
     )
 
     if groupOrLastOnline:
