@@ -76,7 +76,7 @@ def format_addedwith_embed(
         color=generalColorCode,
         title=f"{target} is added with:",
         description="".join(
-            f"**{i + 1}.** ``{users.get_by_userid(userId)}`` **|** {userId}"
+            f"**{i + 1}.** ``{users.get_by_userid(userId).username}`` **|** {userId}"
             for i, userId in enumerate(addedwith)
         ),
     )
