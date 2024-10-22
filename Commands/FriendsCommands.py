@@ -180,12 +180,17 @@ class FriendsCommands(commands.Cog):
             counter = Counter(friends + users.userIds)
             addedWith = [item for item, count in counter.items() if count == 2]
 
-            embed = format_addedwith_embed(
-                target=users.get_by_requested_username(target).username,
-                addedwith=addedWith,
-                users=users,
-            )
-            await interaction.response.send_message(embed=embed)
+            if addedWith:
+                embed = format_addedwith_embed(
+                    target=users.get_by_requested_username(target).username,
+                    addedwith=addedWith,
+                    users=users,
+                )
+                await interaction.response.send_message(embed=embed)
+            else:
+                await interaction.followup.send(
+                    "The given usernames are not added with the target."
+                )
 
         except Exception as e:
             logger.exception(e)
