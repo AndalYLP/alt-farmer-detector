@@ -58,7 +58,7 @@ def format_mutuals_embed(
 
     embed = discord.Embed(
         color=generalColorCode,
-        title="Mutuals between:",
+        title="Mutuals for:",
         description=f"{", ".join(users.usernames)}\n\n"
         + "\n".join(
             f"**{i + 1}.** ``{mutualsUsers.get_by_userid(userId).username}`` **|** {userId}{f" **({count})**" if not strict else ""}"
