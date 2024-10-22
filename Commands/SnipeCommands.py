@@ -47,6 +47,7 @@ class SnipeCommands(commands.Cog):
             if usernames.find(","):
                 usernames = usernames.split(",")
             else:
+                logger.debug("true")
                 usernames = usernames.split()
 
             if not isinstance(usernames, list):
