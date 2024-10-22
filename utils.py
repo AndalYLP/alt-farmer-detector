@@ -28,7 +28,9 @@ def format_user_embed(
     thumbnail=None,
 ):
     embed = discord.Embed(
-        color=presenceTypeCode[presenceType][0],
+        color=presenceTypeCode[
+            presenceType if presenceType != 2 or lobby == "True" else "match"
+        ][0],
         title=f"{username} {presenceTypeCode[presenceType][1]}",
         description=f"""{f"Game: {game}" if game else ""}
 {f"Lobby: **{lobby}**" if lobby else ""}
