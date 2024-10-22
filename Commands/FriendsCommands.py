@@ -175,7 +175,7 @@ class FriendsCommands(commands.Cog):
             friends = await RobloxPy.Friends.get_friend_users(
                 users.get_by_requested_username(target).userId
             )
-            friends = friends[users.get_by_requested_username(target)]
+            friends = friends[users.get_by_requested_username(target).userId]
 
             counter = Counter(friends + users.userIds)
             addedWith = [item for item, count in counter if count == 2]
