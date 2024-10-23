@@ -10,6 +10,7 @@ from typing import Optional
 
 from .._common.thumbnails import Thumbnails, get_users_avatar, batch
 from .._common.friends import get_friend_users
+from .._common.presence import get_last_online
 
 
 def unique_by_key(data, key):
@@ -63,17 +64,17 @@ class Users:
 
         def __add__(self, other):
             if isinstance(other, Users.UserGroup):
-                return Users.UserGroup(list(dict.fromkeys([*self.data, *other.data])))
+                return Users.UserGroup(unique_by_key(self.data + other.data, "id"))
             elif isinstance(other, Users.User):
-                return Users.UserGroup(list(dict.fromkeys([*self.data, other.data])))
+                return Users.UserGroup(unique_by_key(self.data + other.data, "id"))
 
             return NotImplemented
 
         def __iadd__(self, other):
             if isinstance(other, Users.UserGroup):
-                return Users.UserGroup(list(dict.fromkeys([*self.data, *other.data])))
+                return Users.UserGroup(unique_by_key(self.data + other.data, "id"))
             elif isinstance(other, Users.User):
-                return Users.UserGroup(list(dict.fromkeys([*self.data, other.data])))
+                return Users.UserGroup(unique_by_key(self.data + other.data, "id"))
 
             return NotImplemented
 
@@ -99,6 +100,10 @@ class Users:
         ) -> Optional["Users.User"]:
             return self._requestedUsernameDict.get(requestedUsername)
 
+        def get_last_onlines(self) -> dict[int, datetime]:
+            result = get_last_online(*self.userIds)
+            return result
+
     class User:
         def __init__(self, data: dict):
             self.data = data
@@ -119,17 +124,17 @@ class Users:
 
         def __add__(self, other) -> "Users.UserGroup":
             if isinstance(other, Users.User):
-                return Users.UserGroup([self.data, other.data])
+                return Users.UserGroup(unique_by_key(self.data + other.data, "id"))
             elif isinstance(other, Users.UserGroup):
-                return Users.UserGroup(list(dict.fromkeys([self.data, *other.data])))
+                return Users.UserGroup(unique_by_key(self.data + other.data, "id"))
 
             return NotImplemented
 
         def __iadd__(self, other) -> "Users.UserGroup":
             if isinstance(other, Users.User):
-                return Users.UserGroup([self.data, other.data])
+                return Users.UserGroup(unique_by_key(self.data + other.data, "id"))
             elif isinstance(other, Users.UserGroup):
-                return Users.UserGroup(list(dict.fromkeys([self.data, *other.data])))
+                return Users.UserGroup(unique_by_key(self.data + other.data, "id"))
 
             return NotImplemented
 
@@ -141,6 +146,10 @@ class Users:
         async def get_friends(self) -> list:
             response = await get_friend_users(self.userId)
             return response[self.userId]
+
+        def get_last_online(self) -> datetime:
+            result = get_last_online(self.userId)[self.userId]
+            return result
 
 
 class Servers:
@@ -363,11 +372,11 @@ class Presences:
         def __add__(self, other):
             if isinstance(other, Presences.UserPresenceGroup):
                 return Presences.UserPresenceGroup(
-                    list(dict.fromkeys([*self.data, *other.data]))
+                    unique_by_key(self.data + other.data, "userId")
                 )
             elif isinstance(other, Presences.UserPresence):
                 return Presences.UserPresenceGroup(
-                    list(dict.fromkeys([*self.data, other.data]))
+                    unique_by_key(self.data + other.data, "userId")
                 )
 
             return NotImplemented
@@ -375,11 +384,11 @@ class Presences:
         def __iadd__(self, other):
             if isinstance(other, Presences.UserPresenceGroup):
                 return Presences.UserPresenceGroup(
-                    list(dict.fromkeys([*self.data, *other.data]))
+                    unique_by_key(self.data + other.data, "userId")
                 )
             elif isinstance(other, Presences.UserPresence):
                 return Presences.UserPresenceGroup(
-                    list(dict.fromkeys([*self.data, other.data]))
+                    unique_by_key(self.data + other.data, "userId")
                 )
 
             return NotImplemented
@@ -441,7 +450,9 @@ class Presences:
 
         def __add__(self, other) -> "Presences.UserPresenceGroup":
             if isinstance(other, Presences.UserPresence):
-                return Presences.UserPresenceGroup([self.data, other.data])
+                return Presences.UserPresenceGroup(
+                    unique_by_key(self.data + other.data, "userId")
+                )
             elif isinstance(other, Presences.UserPresenceGroup):
                 return Presences.UserPresenceGroup(
                     list(dict.fromkeys([self.data, *other.data]))
@@ -451,10 +462,12 @@ class Presences:
 
         def __iadd__(self, other) -> "Presences.UserPresenceGroup":
             if isinstance(other, Presences.UserPresence):
-                return Presences.UserPresenceGroup([self.data, other.data])
+                return Presences.UserPresenceGroup(
+                    unique_by_key(self.data + other.data, "userId")
+                )
             elif isinstance(other, Presences.UserPresenceGroup):
                 return Presences.UserPresenceGroup(
-                    list(dict.fromkeys([self.data, *other.data]))
+                    unique_by_key(self.data + other.data, "userId")
                 )
 
             return NotImplemented
