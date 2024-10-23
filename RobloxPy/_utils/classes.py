@@ -12,6 +12,17 @@ from .._common.thumbnails import Thumbnails, get_users_avatar, batch
 from .._common.friends import get_friend_users
 
 
+def unique_by_key(data, key):
+    seen = set()
+    uniqueData = []
+    for item in data:
+        value = item[key]
+        if value not in seen:
+            seen.add(value)
+            uniqueData.append(item)
+    return uniqueData
+
+
 class Users:
     class UserGroup:
         def __init__(self, data: list[dict]):
@@ -165,7 +176,7 @@ class Servers:
                     {
                         "previousPageCursor": other.previousPageCursor,
                         "nextPageCursor": other.nextPageCursor,
-                        "data": list(dict.fromkeys([*self.data, *other.data])),
+                        "data": unique_by_key(self.data + other.data, "id"),
                     }
                 )
             elif isinstance(other, Servers.Server):
@@ -173,7 +184,7 @@ class Servers:
                     {
                         "previousPageCursor": self.previousPageCursor,
                         "nextPageCursor": self.nextPageCursor,
-                        "data": list(dict.fromkeys([*self.data, other.data])),
+                        "data": unique_by_key(self.data + other.data, "id"),
                     }
                 )
 
