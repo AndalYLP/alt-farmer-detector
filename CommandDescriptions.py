@@ -26,3 +26,8 @@ class TrackDesc:
     trackTimes = "Creates a channel and tracks the queue times from a user."
     stopTracking = "stop notifications/tracking for a user."
     usernameStop = "Player username to stop tracking."
+
+
+class UtilsDesc:
+    purge = "Purge messages."
+    amount = "Amount of messages to delete 1-100."
