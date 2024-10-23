@@ -196,7 +196,7 @@ class Servers:
                     {
                         "previousPageCursor": other.previousPageCursor,
                         "nextPageCursor": other.nextPageCursor,
-                        "data": list(dict.fromkeys([*self.data, *other.data])),
+                        "data": unique_by_key(self.data + other.data, "id"),
                     }
                 )
             elif isinstance(other, Servers.Server):
@@ -204,7 +204,7 @@ class Servers:
                     {
                         "previousPageCursor": self.previousPageCursor,
                         "nextPageCursor": self.nextPageCursor,
-                        "data": list(dict.fromkeys([*self.data, other.data])),
+                        "data": unique_by_key(self.data + other.data, "id"),
                     }
                 )
 
