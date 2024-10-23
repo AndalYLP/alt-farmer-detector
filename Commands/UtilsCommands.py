@@ -9,7 +9,7 @@ from CommandDescriptions import UtilsDesc
 # ------------------------------------ Cog ----------------------------------- #
 
 
-class SnipeCommands(commands.Cog):
+class UtilsCommands(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
@@ -45,4 +45,4 @@ class SnipeCommands(commands.Cog):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(SnipeCommands(bot))
+    await bot.add_cog(UtilsCommands(bot))
