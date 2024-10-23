@@ -125,19 +125,24 @@ class FriendsCommands(commands.Cog):
                         )
                     )
 
-            embedGroups = [
-                [embed for embed in embeds[i : i + 10]]
-                for i in range(0, len(embeds), 10)
-            ]
-            for i, embedGroup in enumerate(embedGroups):
-                if i != 0:
-                    await interaction.followup.send(
-                        content=f"<t:{int(time.time())}:R>", embeds=embedGroup
-                    )
-                else:
-                    await interaction.response.send_message(
-                        content=f"<t:{int(time.time())}:R>", embeds=embedGroup
-                    )
+            if embeds:
+                embedGroups = [
+                    [embed for embed in embeds[i : i + 10]]
+                    for i in range(0, len(embeds), 10)
+                ]
+                for i, embedGroup in enumerate(embedGroups):
+                    if i != 0:
+                        await interaction.followup.send(
+                            content=f"<t:{int(time.time())}:R>", embeds=embedGroup
+                        )
+                    else:
+                        await interaction.response.send_message(
+                            content=f"<t:{int(time.time())}:R>", embeds=embedGroup
+                        )
+            else:
+                await interaction.followup.send(
+                    "No friends in-game found.", ephemeral=True
+                )
 
         except Exception as e:
             logger.exception(e)
