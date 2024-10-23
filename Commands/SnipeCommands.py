@@ -111,11 +111,13 @@ class SnipeCommands(commands.Cog):
             await interaction.response.send_message(
                 "Im busy rn!.", delete_after=3, ephemeral=True
             )
+            return
 
         if Debounce and forceupdate:
             await interaction.response.send_message(
                 "On cooldown, pls wait.", delete_after=3, ephemeral=True
             )
+            return
 
         await interaction.response.defer(thinking=True)
 
@@ -145,7 +147,7 @@ class SnipeCommands(commands.Cog):
 
             if thumbnail in imageUrls:
                 await interaction.followup.send(
-                    content=f"<t:{int(time.time())}:R>{f"Data from:<t:{int(TokensTime)}:R>" if forceupdate else ""}",
+                    content=f"<t:{int(time.time())}:R>{f"Data from:<t:{int(TokensTime)}:R>" if not forceupdate else ""}",
                     embed=discord.Embed(
                         color=presenceTypeCode[2][0],
                         title=f"Found {users.get_by_requested_username(username).username}'s server!",
