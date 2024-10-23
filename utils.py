@@ -100,3 +100,8 @@ def error_embed(exception: Exception):
 class UserNotFound(Exception):
     def __init__(self, username):
         super().__init__(f"didn't find the requested username: **{username}**")
+
+
+class ProtectedCategory(Exception):
+    def __init__(self, category, command):
+        super().__init__(f"**{category}** is protected from **{command}** command.")
