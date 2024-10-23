@@ -32,7 +32,7 @@ class UtilsCommands(commands.Cog):
             ]:
                 deleted = await interaction.channel.purge(limit=amount)
 
-                interaction.response.send_message(
+                await interaction.response.send_message(
                     content=f"purged {len(deleted)} message{"s" if len(deleted) > 1 else ""}."
                 )
             else:
