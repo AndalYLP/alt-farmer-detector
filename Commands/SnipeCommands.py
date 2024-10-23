@@ -149,7 +149,7 @@ class SnipeCommands(commands.Cog):
                     embed=discord.Embed(
                         color=presenceTypeCode[2][0],
                         title=f"Found {users.get_by_requested_username(username).username}'s server!",
-                        description=f"Game: **Bedwars** (yes.)\nLobby: **True** (yes.)\nGameId: **{imageUrls[thumbnail.imageUrl]}**",
+                        description=f"Game: **Bedwars** (yes.)\nLobby: **True** (yes.)\nGameId: **{imageUrls.get_by_imageurl(thumbnail.imageUrl).requestId}**",
                     ),
                 )
             else:
