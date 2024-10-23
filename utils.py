@@ -75,7 +75,7 @@ def format_addedwith_embed(
     embed = discord.Embed(
         color=generalColorCode,
         title=f"{target} is added with:",
-        description="".join(
+        description="\n".join(
             f"**{i + 1}.** ``{users.get_by_userid(userId).username}`` **|** {userId}"
             for i, userId in enumerate(addedwith)
         ),
