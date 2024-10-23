@@ -128,7 +128,7 @@ class SnipeCommands(commands.Cog):
                 raise UserNotFound(username)
 
             thumbnail = thumbnailObject.get_by_targetid(
-                users.get_by_requested_username(username)
+                users.get_by_requested_username(username).userId
             )
 
             if forceupdate:
