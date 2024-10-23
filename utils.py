@@ -34,7 +34,7 @@ def format_user_embed(
         title=f"{username} {presenceTypeCode[presenceType][1]}",
         description=f"""{f"Game: **{game}**" if game else ""}
 {f"Lobby: **{lobby}**" if lobby else ""}
-{f"JobId: **{jobId}**" if jobId else ""}
+{f"JobId: **```{jobId}```**" if jobId else ""}
 {f"Last jobId: **{lastJobId}**" if lastJobId else ""}
 {f"Time in jobId: **{timeIn}**" if timeIn else ""}""",
     )
