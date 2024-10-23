@@ -38,7 +38,7 @@ def get_all_servers(
         if currentPage.nextPageCursor:
             currentPage = get_server_page(
                 gameId,
-                serverType,
+                serverType=serverType,
                 excludeFullGames=excludeFullGames,
                 cursor=currentPage.nextPageCursor,
                 useCookie=useCookie,
