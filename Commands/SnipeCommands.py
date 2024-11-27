@@ -57,8 +57,6 @@ class SnipeCommands(commands.Cog):
                 if not users.get_by_requested_username(username):
                     raise UserNotFound(username)
 
-            lastOnlines = users.get_last_onlines()
-
             embeds = []
             for presence in presenceGroup.presences:
                 user = users.get_by_userid(presence.userId)
@@ -70,7 +68,7 @@ class SnipeCommands(commands.Cog):
                         game=presence.lastlocation,
                         lobby="True" if presence.placeId == 6872265039 else "False",
                         jobId=presence.jobId,
-                        groupOrLastOnline=lastOnlines[user.userId],
+                        groupOrLastOnline=presence.lastOnline,
                         thumbnail=user.get_thumbnail().imageUrl,
                     )
                 )
