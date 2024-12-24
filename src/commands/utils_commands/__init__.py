@@ -3,8 +3,8 @@ from discord import app_commands
 from discord.ext import commands
 from loguru import logger
 
+from config.command_description import UtilsDesc
 from config.embeds import error_embed
-from old.CommandDescriptions import UtilsDesc
 from utils.exceptions import ProtectedCategory
 
 # ------------------------------------ Cog ----------------------------------- #
