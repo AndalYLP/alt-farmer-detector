@@ -53,6 +53,8 @@ class Bot(commands.Bot):
 
 bot = Bot(command_prefix="!", intents=discord.Intents.all())
 bot.tracking = {}
+bot.MuteAll = False
+bot.OnlineMuted = bot.OfflineMuted = bot.OtherGame = True
 
 
 @bot.event
