@@ -6,7 +6,7 @@ from discord.ext import commands
 from loguru import logger
 
 import RobloxPy
-from CommandDescriptions import FriendsDesc
+from config.command_description import FriendsDesc
 from config.embeds import error_embed, format_added_with_embed
 from utils.categories import friends_group
 from utils.exceptions import InvalidAmountOfUsernames, UserNotFound
