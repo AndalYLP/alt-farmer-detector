@@ -1,6 +1,7 @@
 from discord.ext import commands
-from stop_track import StopTrackCommand
-from track import TrackCommand
+
+from .stop_track import StopTrackCommand
+from .track import TrackCommand
 
 
 async def setup(bot: commands.Bot):

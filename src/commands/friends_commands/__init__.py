@@ -1,7 +1,8 @@
-from added_with import AddedWithCommand
 from discord.ext import commands
-from ingame import InGameCommand
-from mutuals import MutualsCommand
+
+from .added_with import AddedWithCommand
+from .ingame import InGameCommand
+from .mutuals import MutualsCommand
 
 
 async def setup(bot: commands.Bot):

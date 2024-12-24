@@ -1,6 +1,7 @@
 from discord.ext import commands
-from joinsoff_snipe import JoinsOffSnipeCommand
-from snipe_player import SnipePlayerCommand
+
+from .joinsoff_snipe import JoinsOffSnipeCommand
+from .snipe_player import SnipePlayerCommand
 
 
 async def setup(bot: commands.Bot):
