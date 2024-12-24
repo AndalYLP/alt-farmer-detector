@@ -52,6 +52,7 @@ class Bot(commands.Bot):
 
 
 bot = Bot(command_prefix="!", intents=discord.Intents.all())
+bot.tracking = {}
 
 
 @bot.event
