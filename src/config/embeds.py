@@ -1,10 +1,11 @@
 from datetime import datetime
 
 import discord
-from colors import *
 from humanize import naturaltime
 
 import RobloxPy
+
+from .colors import *
 
 
 def format_user_embed(
