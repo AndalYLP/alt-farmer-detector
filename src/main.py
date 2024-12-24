@@ -1,5 +1,6 @@
 import asyncio
 import os
+from copyreg import constructor
 from threading import Thread
 
 import discord
@@ -32,8 +33,14 @@ class Bot(commands.Bot):
         await self.loadExtensions()
 
     async def loadExtensions(self):
+        commands_path = os.path.join(os.path.dirname(__file__), "commands")
         extensions = []
-        for filename in os.listdir("./commands"):
+
+        if not os.path.isdir(commands_path):
+            logger.error(f"The commands directory does not exist: {commands_path}")
+            return
+
+        for filename in os.listdir(commands_path):
             extensions.append("commands." + filename)
 
         for extension in extensions:
