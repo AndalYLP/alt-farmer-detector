@@ -3,7 +3,6 @@ from time import time
 
 import discord
 from loguru import logger
-from sympy import false
 
 import RobloxPy
 from config.colors import presenceTypeCode
