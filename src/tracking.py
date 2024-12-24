@@ -55,7 +55,7 @@ async def manage_data_create_embed(
                 )
 
                 await bot.tracking[presence.userId][0].send(
-                    content=f"<t:{round(time.time())}:R>{"".join(bot.tracking[presence.userId][1])}",
+                    content=f"<t:{round(time())}:R>{"".join(bot.tracking[presence.userId][1])}",
                     embed=embed,
                 )
 
@@ -121,7 +121,7 @@ async def manage_data_create_embed(
     ):
         try:
             await bot.tracking[presence.userId][0].send(
-                content=f"<t:{round(time.time())}:R>{"".join(bot.tracking[presence.userId][1])}",
+                content=f"<t:{round(time())}:R>{"".join(bot.tracking[presence.userId][1])}",
                 embed=embed,
             )
         except Exception as e:
@@ -201,7 +201,7 @@ async def user_status(
             SubGroups = [Embeds[i : i + 10] for i in range(0, len(Embeds), 10)]
             for group in SubGroups:
                 await STATUS_CHANNEL.send(
-                    content=f"<t:{round(time.time())}:R>"
+                    content=f"<t:{round(time())}:R>"
                     + ("<@&1288980643061170188>" if group[0] else ""),
                     embeds=group[1:],
                 )
@@ -210,7 +210,7 @@ async def user_status(
         for i, embed in enumerate(embeds["None"]):
             if not (i % 2) == 0:
                 await STATUS_CHANNEL.send(
-                    content=f"<t:{round(time.time())}:R>"
+                    content=f"<t:{round(time())}:R>"
                     + ("<@&1288980643061170188>" if embeds["None"][i - 1] else ""),
                     embed=embed,
                 )

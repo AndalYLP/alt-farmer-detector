@@ -82,7 +82,7 @@ class JoinsOffSnipeCommand(commands.Cog):
             for thumbnail in thumbnailObject.thumbnails:
                 if thumbnail in self.current_images:
                     await interaction.followup.send(
-                        content=f"<t:{int(time.time())}:R>{f"Data from:<t:{int(self.tokens_time)}:R>" if not forceupdate else ""}",
+                        content=f"<t:{int(time())}:R>{f"Data from:<t:{int(self.tokens_time)}:R>" if not forceupdate else ""}",
                         embed=discord.Embed(
                             color=presenceTypeCode[2][0],
                             title=f"Found {users.get_by_requested_username(username).username}'s server!",
