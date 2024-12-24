@@ -95,7 +95,7 @@ async def manage_data_create_embed(
         description=(
             description
             if presence.userPresenceType == 2 and presence.gameId != None
-            else None
+            else f"Time in game: **{user_game_info[5][1]}**"
         ),
     )
 
