@@ -12,7 +12,7 @@ from utils.categories import friends_group
 from utils.exceptions import InvalidAmountOfUsernames, UserNotFound
 
 
-class MutualsCommand(commands.cog):
+class MutualsCommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
