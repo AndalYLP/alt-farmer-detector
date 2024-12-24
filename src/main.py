@@ -33,8 +33,8 @@ class Bot(commands.Bot):
 
     async def loadExtensions(self):
         extensions = []
-        for filename in os.listdir("./Commands"):
-            extensions.append("Commands." + filename)
+        for filename in os.listdir("./commands"):
+            extensions.append("commands." + filename)
 
         for extension in extensions:
             try:
