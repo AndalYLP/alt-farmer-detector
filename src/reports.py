@@ -6,10 +6,20 @@ import RobloxPy
 from config.constants import *
 from same_gameid import same_gameid
 from tracking import user_status
-from utils.channels import ALT_STATUS_CHANNEL, STATUS_CHANNEL
+from utils.channels import (
+    ALT_STATUS_CHANNEL_ID,
+    GAMEID_CHANNEL_ID,
+    GAMEID_WITH_ALTS_CHANNEL_ID,
+    STATUS_CHANNEL_ID,
+)
 
 
 async def get_status(bot):
+    ALT_STATUS_CHANNEL = bot.get_channel(ALT_STATUS_CHANNEL_ID)
+    STATUS_CHANNEL = bot.get_channel(STATUS_CHANNEL_ID)
+    GAMEID_CHANNEL = bot.get_channel(GAMEID_CHANNEL_ID)
+    GAMEID_WITH_ALTS_CHANNEL = bot.get_channel(GAMEID_WITH_ALTS_CHANNEL_ID)
+
     while True:
         try:
             if STATUS_CHANNEL:
@@ -45,8 +55,12 @@ async def get_status(bot):
                         ALT_STATUS_CHANNEL.purge(limit=100),
                     )
                     await asyncio.gather(
-                        user_status(user_presences, bot),
-                        same_gameid(user_presences),
+                        user_status(
+                            user_presences, bot, STATUS_CHANNEL, ALT_STATUS_CHANNEL
+                        ),
+                        same_gameid(
+                            user_presences, GAMEID_CHANNEL, GAMEID_WITH_ALTS_CHANNEL
+                        ),
                     )
 
         except Exception as e:

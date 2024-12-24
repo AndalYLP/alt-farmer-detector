@@ -6,13 +6,12 @@ from loguru import logger
 
 import RobloxPy
 from config.colors import presenceTypeCode
-from utils.channels import ALT_STATUS_CHANNEL, STATUS_CHANNEL
 
 gameid_list = {}
 
 
 async def manage_data_create_embed(
-    presence: RobloxPy.Presence.Presences.UserPresence, bot, embeds
+    presence: RobloxPy.Presence.Presences.UserPresence, bot, embeds, ALT_STATUS_CHANNEL
 ):
     if presence.userId not in gameid_list:
         gameid_list[presence.userId] = [
@@ -182,13 +181,17 @@ async def manage_data_create_embed(
 async def user_status(
     userPresences: RobloxPy.Presence.Presences.UserPresenceGroup,
     bot,
+    STATUS_CHANNEL,
+    ALT_STATUS_CHANNEL,
 ):
     embeds = {}
 
     tasks = []
     for presence in userPresences.presences:
         tasks.append(
-            asyncio.create_task(manage_data_create_embed(presence, bot, embeds))
+            asyncio.create_task(
+                manage_data_create_embed(presence, bot, embeds, ALT_STATUS_CHANNEL)
+            )
         )
 
     await asyncio.gather(*tasks)

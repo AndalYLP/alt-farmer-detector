@@ -4,10 +4,13 @@ from time import time
 import discord
 
 import RobloxPy
-from utils.channels import GAMEID_CHANNEL, GAMEID_WITH_ALTS_CHANNEL
 
 
-async def same_gameid(user_presences: RobloxPy.Presence.Presences.UserPresenceGroup):
+async def same_gameid(
+    user_presences: RobloxPy.Presence.Presences.UserPresenceGroup,
+    GAMEID_CHANNEL,
+    GAMEID_WITH_ALTS_CHANNEL,
+):
     gameids = {}
 
     user_presences.filter_by_presence_types(2)
