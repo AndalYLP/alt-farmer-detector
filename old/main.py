@@ -1,17 +1,15 @@
-from threading import Thread
-import traceback
 import asyncio
-import time
 import os
+import time
+import traceback
+from threading import Thread
 
-
+import discord
 from discord.ext import commands
+from flask import Flask
+from loguru import logger
 from pymongo import MongoClient
 from waitress import serve
-from loguru import logger
-from flask import Flask
-import discord
-
 
 import RobloxPy
 
@@ -273,20 +271,19 @@ async def user_status(
 
         userGameInfo[4] = presence.userPresenceType
 
-        if (
+        should_send = (
             (
                 presence.userPresenceType == 2
-                and (
-                    (presence.gameId == 6872265039 or presence.gameId == None)
-                    or not bot.OtherGame
-                )
+                and (presence.gameId in [6872265039, None] or not bot.OtherGame)
                 and not bot.MuteAll
             )
             or (presence.userPresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll))
             or (
                 presence.userPresenceType == 0 and not (bot.OfflineMuted or bot.MuteAll)
             )
-        ):
+        )
+
+        if should_send:
             if not presence.groupName in embeds:
                 embeds[presence.groupName] = [
                     presence.userPresenceType == 2

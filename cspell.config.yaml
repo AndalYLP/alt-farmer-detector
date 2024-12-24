@@ -1,0 +1,21 @@
+version: "0.2"
+ignorePaths: []
+dictionaryDefinitions: []
+dictionaries:
+  - python
+words:
+  - addedwith
+  - chasemaser
+  - cooldown
+  - forceupdate
+  - GAMEID
+  - gameids
+  - imageurl
+  - ingame
+  - joinsoff
+  - lastlocation
+  - sameserver
+  - targetid
+  - Yeets
+ignoreWords: []
+import: []
