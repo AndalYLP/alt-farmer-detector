@@ -63,5 +63,5 @@ async def same_gameid(
 
         for embed_group in [embeds[i : i + 10] for i in range(0, len(embeds), 10)]:
             await GAMEID_CHANNEL.send(
-                content=f"<t:{round(time.time())}:R>", embeds=embed_group
+                content=f"<t:{round(time())}:R>", embeds=embed_group
             )
