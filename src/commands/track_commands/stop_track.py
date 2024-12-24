@@ -14,7 +14,7 @@ class StopTrackCommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
-    @stop_sub_group.command(name="track", description=TrackDesc.stop)
+    @stop_sub_group.command(name="track", description=TrackDesc.stopTracking)
     @app_commands.describe(username=TrackDesc.username)
     async def stop(self, interaction: discord.Interaction, username: str):
         logger.log(

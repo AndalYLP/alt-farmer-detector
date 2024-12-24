@@ -18,7 +18,7 @@ class InGameCommand(commands.Cog):
 
     @friends_group.command(name="ingame", description=FriendsDesc.ingame)
     @app_commands.describe(
-        sameserver=FriendsDesc.sameserver, username=FriendsDesc.username
+        sameserver=FriendsDesc.sameServer, username=FriendsDesc.username
     )
     async def ingame(
         self, interaction: discord.Interaction, username: str, sameserver: bool

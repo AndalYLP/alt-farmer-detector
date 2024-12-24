@@ -27,7 +27,7 @@ class JoinsOffSnipeCommand(commands.Cog):
 
     @joinsoff_group.command(name="player", description=SnipeDesc.snipePlayerJoinsOff)
     @app_commands.describe(
-        usernames=SnipeDesc.usernameJoinsOff, forceupdate=SnipeDesc.forceupdate
+        usernames=SnipeDesc.usernameJoinsOff, forceupdate=SnipeDesc.forceUpdate
     )
     async def snipe_joinsoff(
         self, interaction: discord.Interaction, usernames: str, forceupdate: bool
