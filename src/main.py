@@ -1,6 +1,5 @@
 import asyncio
 import os
-from copyreg import constructor
 from threading import Thread
 
 import discord
