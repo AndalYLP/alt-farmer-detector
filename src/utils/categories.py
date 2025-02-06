@@ -12,4 +12,4 @@ stop_sub_group = app_commands.Group(
 
 
 def get_utils_group():
-    app_commands.Group(name="utils", description="Utils commands")
+    return app_commands.Group(name="utils", description="Utils commands")
