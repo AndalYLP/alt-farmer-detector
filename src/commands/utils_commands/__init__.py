@@ -1,7 +1,7 @@
 from discord import app_commands
 from discord.ext import commands
 
-from commands.utils_commands import purge
+from commands.utils_commands.purge import purge_command
 
 
 class create_utils_group(app_commands.Group):
@@ -11,7 +11,7 @@ class create_utils_group(app_commands.Group):
 
 utils_group = create_utils_group()
 
-utils_group.add_command(purge)
+utils_group.add_command(purge_command)
 
 
 class utils_cog(commands.Cog):
