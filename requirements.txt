@@ -1,6 +1,5 @@
 requests
 waitress
-humanize
 pymongo
 discord
 aiohttp
