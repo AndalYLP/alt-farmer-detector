@@ -2,7 +2,6 @@ from discord import app_commands
 from discord.ext import commands
 
 from commands.utils_commands import purge
-from commands.utils_commands.purge import PurgeCommand
 
 
 class create_utils_group(app_commands.Group):
