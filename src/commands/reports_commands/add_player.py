@@ -11,14 +11,14 @@ from utils.exceptions import UserNotFound
 @app_commands.command(name="player", description="Add a player to the loop.")
 @app_commands.describe(
     username="the username to add.",
-    groupname="Group name, None = no group.",
+    group_name="Group name, None = no group.",
     alt_account="True if its an alt account.",
 )
 async def add_player(
     interaction: discord.Interaction,
     username: str,
     alt_account: bool,
-    groupname: str,
+    group_name: str,
 ):
     logger.log(
         "COMMAND",
@@ -38,7 +38,7 @@ async def add_player(
                     "UserID": user.userId,
                     "Username": user.username,
                     "isAlt": alt_account,
-                    "GroupName": groupname,
+                    "GroupName": group_name,
                 }
             )
             if result.inserted_id:
@@ -52,7 +52,7 @@ async def add_player(
                     "$set": {
                         "Username": user.username,
                         "isAlt": alt_account,
-                        "GroupName": groupname,
+                        "GroupName": group_name,
                     }
                 },
             )
