@@ -1,34 +1,12 @@
 from discord import app_commands
 
-cache = {}
-
-
-def get_friends_group():
-    if "f" not in cache:
-        cache["f"] = app_commands.Group(name="friends", description="friends commands")
-
-    return cache["f"]
-
-
-def get_snipe_group():
-    return app_commands.Group(name="snipe", description="Snipe commands")
-
-
-def get_joinsoff_group(snipe_group):
-    return app_commands.Group(
-        name="joinsoff", description="joinsoff commands", parent=snipe_group
-    )
-
-
-def get_track_group():
-    return app_commands.Group(name="track", description="Track commands")
-
-
-def get_stop_sub_group(track_group):
-    return app_commands.Group(
-        name="stop", description="stop commands", parent=track_group
-    )
-
-
-def get_utils_group():
-    return app_commands.Group(name="utils", description="Utils commands")
+friends_group = app_commands.Group(name="friends", description="Friends commands")
+snipe_group = app_commands.Group(name="snipe", description="Snipe commands")
+track_group = app_commands.Group(name="track", description="Track commands")
+utils_group = app_commands.Group(name="utils", description="Utils commands")
+joinsoff_group = app_commands.Group(
+    name="joinsoff", description="joinsoff commands", parent=snipe_group
+)
+stop_sub_group = app_commands.Group(
+    name="stop", description="stop commands", parent=track_group
+)

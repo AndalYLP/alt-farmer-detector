@@ -1,13 +1,21 @@
-import asyncio
-
-import discord
 from discord.ext import commands
 
-from .joinsoff_snipe import JoinsOffSnipeCommand
-from .snipe_player import SnipePlayerCommand
+from commands.snipe_commands.joinsoff_snipe import snipe_joinsoff
+from commands.snipe_commands.snipe_player import snipe_player
+from utils.categories import joinsoff_group, snipe_group
+
+joinsoff_group.add_command(snipe_joinsoff)
+snipe_group.add_command(snipe_player)
+
+
+class snipe_cog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    async def cog_load(self):
+        self.bot.tree.add_command(joinsoff_group)
+        self.bot.tree.add_command(snipe_group)
 
 
 async def setup(bot: commands.Bot):
-    await asyncio.gather(
-        bot.add_cog(SnipePlayerCommand(bot)), bot.add_cog(JoinsOffSnipeCommand(bot))
-    )
+    await bot.add_cog(snipe_cog(bot))

@@ -1,13 +1,20 @@
-import asyncio
-
-import discord
 from discord.ext import commands
 
-from .stop_track import StopTrackCommand
-from .track import TrackCommand
+from commands.track_commands.stop_track import stop
+from commands.track_commands.track import status
+from utils.categories import track_group
+
+track_group.add_command(stop)
+track_group.add_command(status)
+
+
+class track_cog(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
+
+    async def cog_load(self):
+        self.bot.tree.add_command(track_group)
 
 
 async def setup(bot: commands.Bot):
-    await asyncio.gather(
-        bot.add_cog(TrackCommand(bot)), bot.add_cog(StopTrackCommand(bot))
-    )
+    await bot.add_cog(track_cog(bot))
