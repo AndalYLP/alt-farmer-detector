@@ -4,7 +4,7 @@ cache = {}
 
 
 def get_friends_group():
-    if not cache["f"]:
+    if "f" not in cache:
         cache["f"] = app_commands.Group(name="friends", description="friends commands")
 
     return cache["f"]
