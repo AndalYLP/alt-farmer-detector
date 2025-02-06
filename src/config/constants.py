@@ -1,6 +1,9 @@
 import os
 
+from dotenv import load_dotenv
 from pymongo import MongoClient
+
+load_dotenv()
 
 MONGO_URI = os.environ.get("MONGO_URI") or os.getenv("MONGO_URI")
 COOKIE = os.environ.get("COOKIE") or os.getenv("COOKIE")
