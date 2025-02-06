@@ -54,6 +54,10 @@ RP faster and with no effort, this is not allowed in Roblox BedWars
     - player `[username]`
     - stop `[username]`
 
+> [!NOTE]
+> `snipe joinsoff` command only works with the default GAME_ID from 
+> the [constants file](src/config/constants.py)
+
 ## Channels
 
 This bot follows the next channels structure:
