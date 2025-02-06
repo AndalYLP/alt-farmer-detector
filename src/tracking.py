@@ -6,6 +6,7 @@ from loguru import logger
 
 import RobloxPy
 from config.colors import presenceTypeCode
+from config.constants import GAME_ID
 
 gameid_list = {}
 
@@ -86,7 +87,7 @@ async def manage_data_create_embed(
     title = f"{presence.username} {type}"
     description = f"Game: **{presence.lastlocation}**" + (
         f"\nLobby: **{presence.lobbyStatus}**\nGameId: **{presence.jobId}**\nLastGameId: **{last_gameid}**\nTime in gameId: **{time_in_gameid}**"
-        if presence.userPresenceType == 2 and presence.gameId == 6872265039
+        if presence.userPresenceType == 2 and presence.gameId == GAME_ID
         else f"Time in game: **{user_game_info[5][1]}**"
     )
     embed = discord.Embed(
@@ -105,7 +106,7 @@ async def manage_data_create_embed(
     if presence.isAlt and (
         presence.userPresenceType == 2
         and not bot.MuteAll
-        and (presence.gameId == None or presence.gameId == 6872265039)
+        and (presence.gameId == None or presence.gameId == GAME_ID)
     ):
         asyncio.create_task(
             ALT_STATUS_CHANNEL.send(
@@ -132,7 +133,7 @@ async def manage_data_create_embed(
     should_send = (
         (
             presence.userPresenceType == 2
-            and (presence.gameId in [6872265039, None] or not bot.OtherGame)
+            and (presence.gameId in [GAME_ID, None] or not bot.OtherGame)
             and not bot.MuteAll
         )
         or (presence.userPresenceType == 1 and not (bot.OnlineMuted or bot.MuteAll))
@@ -145,10 +146,7 @@ async def manage_data_create_embed(
                 presence.userPresenceType == 2
                 and (
                     presence.gameId == None
-                    or (
-                        presence.gameId == 6872265039
-                        and not presence.placeId == 6872265039
-                    )
+                    or (presence.gameId == GAME_ID and not presence.placeId == GAME_ID)
                 ),
             ]
             embeds[presence.groupName].append(embed)
@@ -158,10 +156,7 @@ async def manage_data_create_embed(
             if embeds[presence.groupName][1] == False:
                 embeds[presence.groupName][1] = presence.userPresenceType == 2 and (
                     presence.gameId == None
-                    or (
-                        presence.gameId == 6872265039
-                        and not presence.placeId == 6872265039
-                    )
+                    or (presence.gameId == GAME_ID and not presence.placeId == GAME_ID)
                 )
             return
 
@@ -169,9 +164,7 @@ async def manage_data_create_embed(
             presence.userPresenceType == 2
             and (
                 presence.gameId == None
-                or (
-                    presence.gameId == 6872265039 and not presence.placeId == 6872265039
-                )
+                or (presence.gameId == GAME_ID and not presence.placeId == GAME_ID)
             )
         )
 

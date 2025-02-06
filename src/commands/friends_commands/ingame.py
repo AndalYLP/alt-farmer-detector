@@ -6,6 +6,7 @@ from loguru import logger
 
 import RobloxPy
 from config.command_description import FriendsDesc
+from config.constants import GAME_ID
 from config.embeds import error_embed, format_user_embed
 from utils.exceptions import UserNotFound
 
@@ -38,7 +39,7 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver: bo
         friends = await user.get_friends()
         presences = await RobloxPy.Presence.get_presence(*friends)
         presences.filter_by_presence_types(2)
-        presences.filter_by_gameids(6872265039, None)
+        presences.filter_by_gameids(GAME_ID, None)
 
         if len(presence) < 1:
             await interaction.followup.send("No friends in-game found.", ephemeral=True)
@@ -54,7 +55,7 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver: bo
                         presenceType=presence.userPresenceType,
                         username=friends_users.get_by_userid(presence.userId).username,
                         game=presence.lastlocation,
-                        lobby="True" if presence.placeId == 6872265039 else "False",
+                        lobby="True" if presence.placeId == GAME_ID else "False",
                         jobId=presence.jobId,
                         groupOrLastOnline=presence.lastOnline,
                     )

@@ -6,6 +6,7 @@ from loguru import logger
 
 import RobloxPy
 from config.command_description import SnipeDesc
+from config.constants import GAME_ID
 from config.embeds import error_embed, format_user_embed
 from utils.exceptions import InvalidAmountOfUsernames, UserNotFound
 
@@ -43,7 +44,7 @@ async def snipe_player(interaction: discord.Interaction, usernames: str):
                     presenceType=presence.userPresenceType,
                     username=user.username,
                     game=presence.lastlocation,
-                    lobby="True" if presence.placeId == 6872265039 else "False",
+                    lobby="True" if presence.placeId == GAME_ID else "False",
                     jobId=presence.jobId,
                     groupOrLastOnline=presence.lastOnline,
                     thumbnail=user.get_thumbnail().imageUrl,

@@ -8,6 +8,7 @@ from loguru import logger
 import RobloxPy
 from config.colors import presenceTypeCode
 from config.command_description import SnipeDesc
+from config.constants import GAME_ID
 from config.embeds import error_embed
 from utils.exceptions import InvalidAmountOfUsernames, UserNotFound
 
@@ -64,7 +65,7 @@ async def snipe_joinsoff(
             debounce = True
             busy = True
 
-            servers_group = RobloxPy.Games.get_all_servers(6872265039)
+            servers_group = RobloxPy.Games.get_all_servers(GAME_ID)
             current_data = servers_group
             tokens_time = time()
         else:

@@ -4,6 +4,7 @@ from time import time
 import discord
 
 import RobloxPy
+from config.constants import GAME_ID
 
 
 async def same_gameid(
@@ -14,7 +15,7 @@ async def same_gameid(
     gameids = {}
 
     user_presences.filter_by_presence_types(2)
-    user_presences.filter_by_gameids(6872265039)
+    user_presences.filter_by_gameids(GAME_ID)
 
     for presence in user_presences.presences:
         if not presence.jobId:

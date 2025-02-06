@@ -74,7 +74,8 @@ This bot follows the next channels structure:
 > [!NOTE]
 > The bot will only send a notification if the player is playing
 > [Roblox BedWars](https://www.roblox.com/games/6872265039/Enchants-BedWars).
-> If you want it to send for every game you can use
+> You can change the default game in the [constants file](src/config/constants.py) or
+> if you want it to send for every game you can use
 > `/reports mute other_game:False` 
 
 
@@ -92,7 +93,7 @@ For your database you need to use this structure:
 
 ### Channel Ids
 
-For now the only way to change the report channels is going to the [constants file](src/config/constants.py).
+You can change the channel Ids in the [constants file](src/config/constants.py).
 
 ### Host
 
