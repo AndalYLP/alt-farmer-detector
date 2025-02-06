@@ -7,13 +7,15 @@ import RobloxPy
 from config.command_description import TrackDesc
 from config.constants import TRACKING_CATEGORY
 from config.embeds import error_embed
-from utils.categories import track_group
+from utils.categories import get_track_group
 from utils.exceptions import UserNotFound
 
 
 class TrackCommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    track_group = get_track_group()
 
     @track_group.command(name="status", description=TrackDesc.trackStatus)
     @app_commands.describe(username=TrackDesc.username)

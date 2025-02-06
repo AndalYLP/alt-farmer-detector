@@ -8,13 +8,15 @@ from loguru import logger
 import RobloxPy
 from config.command_description import FriendsDesc
 from config.embeds import error_embed, format_user_embed
-from utils.categories import friends_group
+from utils.categories import get_friends_group
 from utils.exceptions import UserNotFound
 
 
 class InGameCommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    friends_group = get_friends_group()
 
     @friends_group.command(name="ingame", description=FriendsDesc.ingame)
     @app_commands.describe(

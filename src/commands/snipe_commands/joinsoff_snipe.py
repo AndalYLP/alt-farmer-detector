@@ -4,14 +4,13 @@ from time import time
 import discord
 from discord import app_commands
 from discord.ext import commands
-from flask.cli import F
 from loguru import logger
 
 import RobloxPy
 from config.colors import presenceTypeCode
 from config.command_description import SnipeDesc
 from config.embeds import error_embed
-from utils.categories import joinsoff_group
+from utils.categories import get_joinsoff_group, get_snipe_group
 from utils.exceptions import InvalidAmountOfUsernames, UserNotFound
 
 
@@ -24,6 +23,8 @@ class JoinsOffSnipeCommand(commands.Cog):
         self.current_images = None
         self.tokens_time = None
         self.busy = False
+
+    joinsoff_group = get_joinsoff_group(get_snipe_group())
 
     @joinsoff_group.command(name="player", description=SnipeDesc.snipePlayerJoinsOff)
     @app_commands.describe(

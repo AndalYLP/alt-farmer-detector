@@ -8,13 +8,15 @@ from loguru import logger
 import RobloxPy
 from config.command_description import FriendsDesc
 from config.embeds import error_embed, format_added_with_embed
-from utils.categories import friends_group
+from utils.categories import get_friends_group
 from utils.exceptions import InvalidAmountOfUsernames, UserNotFound
 
 
 class AddedWithCommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    friends_group = get_friends_group()
 
     @friends_group.command(name="added", description=FriendsDesc.added)
     @app_commands.describe(

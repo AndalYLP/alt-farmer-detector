@@ -6,13 +6,15 @@ from loguru import logger
 import RobloxPy
 from config.command_description import TrackDesc
 from config.embeds import error_embed
-from utils.categories import stop_sub_group
+from utils.categories import get_stop_sub_group, get_track_group
 from utils.exceptions import UserNotFound
 
 
 class StopTrackCommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    stop_sub_group = get_stop_sub_group(get_track_group())
 
     @stop_sub_group.command(name="track", description=TrackDesc.stopTracking)
     @app_commands.describe(username=TrackDesc.username)

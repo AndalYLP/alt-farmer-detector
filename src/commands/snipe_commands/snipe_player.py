@@ -8,13 +8,15 @@ from loguru import logger
 import RobloxPy
 from config.command_description import SnipeDesc
 from config.embeds import error_embed, format_user_embed
-from utils.categories import snipe_group
+from utils.categories import get_snipe_group
 from utils.exceptions import InvalidAmountOfUsernames, UserNotFound
 
 
 class SnipePlayerCommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+
+    snipe_group = get_snipe_group()
 
     @snipe_group.command(name="player", description=SnipeDesc.snipePlayer)
     @app_commands.describe(usernames=SnipeDesc.usernamesSnipe)
