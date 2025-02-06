@@ -6,12 +6,6 @@ import RobloxPy
 from config.constants import *
 from same_gameid import same_gameid
 from tracking import user_status
-from utils.channels import (
-    ALT_STATUS_CHANNEL_ID,
-    GAMEID_CHANNEL_ID,
-    GAMEID_WITH_ALTS_CHANNEL_ID,
-    STATUS_CHANNEL_ID,
-)
 
 
 async def get_status(bot):
