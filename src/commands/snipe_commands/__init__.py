@@ -13,7 +13,6 @@ class snipe_cog(commands.Cog):
         self.bot = bot
 
     async def cog_load(self):
-        self.bot.tree.add_command(joinsoff_sub_group)
         self.bot.tree.add_command(snipe_group)
 
 
