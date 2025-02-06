@@ -20,10 +20,10 @@ busy = False
 
 @app_commands.command(name="player", description=SnipeDesc.snipePlayerJoinsOff)
 @app_commands.describe(
-    usernames=SnipeDesc.usernameJoinsOff, forceupdate=SnipeDesc.forceUpdate
+    usernames=SnipeDesc.usernameJoinsOff, force_update=SnipeDesc.forceUpdate
 )
 async def snipe_joinsoff(
-    interaction: discord.Interaction, usernames: str, forceupdate: bool
+    interaction: discord.Interaction, usernames: str, force_update: bool
 ):
     logger.log(
         "COMMAND",
@@ -36,7 +36,7 @@ async def snipe_joinsoff(
         )
         return
 
-    if debounce and forceupdate:
+    if debounce and force_update:
         await interaction.response.send_message(
             "The command is currently on cooldown, please try again later."
         )
@@ -60,7 +60,7 @@ async def snipe_joinsoff(
             if not users.get_by_requested_username(username):
                 raise UserNotFound(username)
 
-        if forceupdate:
+        if force_update:
             debounce = True
             busy = True
 
@@ -75,7 +75,7 @@ async def snipe_joinsoff(
         for thumbnail in thumbnailObject.thumbnails:
             if thumbnail in current_images:
                 await interaction.followup.send(
-                    content=f"<t:{int(time())}:R>{f"Data from:<t:{int(tokens_time)}:R>" if not forceupdate else ""}",
+                    content=f"<t:{int(time())}:R>{f"Data from:<t:{int(tokens_time)}:R>" if not force_update else ""}",
                     embed=discord.Embed(
                         color=presenceTypeCode[2][0],
                         title=f"Found {users.get_by_requested_username(username).username}'s server!",
