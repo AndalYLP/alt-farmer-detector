@@ -8,14 +8,14 @@ from config.embeds import format_list_page_embed
 
 
 @app_commands.command(name="group", description="Get a list of players in a group.")
-@app_commands.describe(groupname="Name of the group to get")
-async def by_group(interaction: discord.Interaction, groupname: str):
+@app_commands.describe(group_name="Name of the group to get")
+async def by_group(interaction: discord.Interaction, group_name: str):
     logger.log(
         "COMMAND",
         f"{interaction.user.name} used {interaction.command.name} command",
     )
 
-    docs = list(USERS_COLLECTION.find({"GroupName": groupname}))
+    docs = list(USERS_COLLECTION.find({"GroupName": group_name}))
     page = 0
     pages = [docs[i : i + 15] for i in range(0, len(docs), 15)]
 
@@ -36,7 +36,7 @@ async def by_group(interaction: discord.Interaction, groupname: str):
             previousPage.disabled = False if not page == 0 else True
             nextPage.disabled = False if page < len(pages) - 1 else True
 
-            embed = format_list_page_embed(f"{groupname} Group", pages)
+            embed = format_list_page_embed(f"{group_name} Group", pages)
             await interaction.response.edit_message(embed=embed, view=view)
         else:
             nextPage.disabled = True
@@ -49,7 +49,7 @@ async def by_group(interaction: discord.Interaction, groupname: str):
             previousPage.disabled = False if not page == 0 else True
             nextPage.disabled = False if page < len(pages) - 1 else True
 
-            embed = format_list_page_embed(f"{groupname} Group", pages, page)
+            embed = format_list_page_embed(f"{group_name} Group", pages, page)
             await interaction.response.edit_message(embed=embed, view=view)
         else:
             previousPage.disabled = True
@@ -57,5 +57,5 @@ async def by_group(interaction: discord.Interaction, groupname: str):
     nextPage.callback = nextPageCB
     previousPage.callback = previousPageCB
 
-    embed = format_list_page_embed(f"{groupname} Group", pages)
+    embed = format_list_page_embed(f"{group_name} Group", pages)
     await interaction.response.send_message(embed=embed, view=view)
