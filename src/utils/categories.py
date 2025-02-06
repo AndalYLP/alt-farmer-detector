@@ -1,8 +1,13 @@
 from discord import app_commands
 
+cache = {}
+
 
 def get_friends_group():
-    return app_commands.Group(name="friends", description="friends commands")
+    if not cache["f"]:
+        cache["f"] = app_commands.Group(name="friends", description="friends commands")
+
+    return cache["f"]
 
 
 def get_snipe_group():
