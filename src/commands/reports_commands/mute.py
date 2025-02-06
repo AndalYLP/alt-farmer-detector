@@ -2,12 +2,14 @@ import discord
 from discord import app_commands
 from loguru import logger
 
+from config.command_description import ReportsDesc
 
-@app_commands.command(name="mute", description="Mute a notification type.")
+
+@app_commands.command(name="mute", description=ReportsDesc.mute)
 @app_commands.describe(
-    mute_online="Dont show online notifications.",
-    mute_offline="Dont show offline notifications.",
-    other_game="Dont show other game notifications.",
+    mute_online=ReportsDesc.mute_type("online"),
+    mute_offline=ReportsDesc.mute_type("offline"),
+    other_game=ReportsDesc.mute_type("other game"),
 )
 async def mute(
     interaction: discord.Interaction,

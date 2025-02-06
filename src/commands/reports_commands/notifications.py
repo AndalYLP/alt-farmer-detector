@@ -2,8 +2,10 @@ import discord
 from discord import app_commands
 from loguru import logger
 
+from config.command_description import ReportsDesc
 
-@app_commands.command(name="notifications", description="Enable/disable notifications.")
+
+@app_commands.command(name="notifications", description=ReportsDesc.notifications)
 async def notifications(interaction: discord.Interaction):
     logger.log(
         "COMMAND",

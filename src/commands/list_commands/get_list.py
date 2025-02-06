@@ -3,11 +3,12 @@ from discord import app_commands
 from discord.ui import Button, View
 from loguru import logger
 
+from config.command_description import ListDesc
 from config.constants import USERS_COLLECTION
 from config.embeds import format_list_page_embed
 
 
-@app_commands.command(name="get", description="List of users being tracked.")
+@app_commands.command(name="get", description=ListDesc.get_list)
 async def get_list(interaction: discord.Interaction):
     logger.log(
         "COMMAND",

@@ -2,8 +2,10 @@ import discord
 from discord import app_commands
 from loguru import logger
 
+from config.command_description import ReportsDesc
 
-@app_commands.command(name="stop", description="Stop all notifications.")
+
+@app_commands.command(name="stop", description=ReportsDesc.stop)
 async def stop_loop(interaction: discord.Interaction):
     bot = interaction.client
 

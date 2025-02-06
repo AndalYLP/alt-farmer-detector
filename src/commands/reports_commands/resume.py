@@ -2,8 +2,10 @@ import discord
 from discord import app_commands
 from loguru import logger
 
+from config.command_description import ReportsDesc
 
-@app_commands.command(name="resume", description="Resume the reports.")
+
+@app_commands.command(name="resume", description=ReportsDesc.resume)
 async def resume_loop(interaction: discord.Interaction):
     bot = interaction.client
 

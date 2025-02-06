@@ -3,16 +3,17 @@ from discord import app_commands
 from loguru import logger
 
 import RobloxPy
+from config.command_description import ReportsDesc
 from config.constants import USERS_COLLECTION
 from config.embeds import error_embed
 from utils.exceptions import UserNotFound
 
 
-@app_commands.command(name="player", description="Add a player to the loop.")
+@app_commands.command(name="player", description=ReportsDesc.add_player)
 @app_commands.describe(
-    username="the username to add.",
-    group_name="Group name, None = no group.",
-    alt_account="True if its an alt account.",
+    username=ReportsDesc.username,
+    group_name=ReportsDesc.group_name,
+    alt_account=ReportsDesc.alt_account,
 )
 async def add_player(
     interaction: discord.Interaction,

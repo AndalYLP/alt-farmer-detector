@@ -3,12 +3,13 @@ from discord import app_commands
 from discord.ui import Button, View
 from loguru import logger
 
+from config.command_description import ListDesc
 from config.constants import USERS_COLLECTION
 from config.embeds import format_list_page_embed
 
 
-@app_commands.command(name="group", description="Get a list of players in a group.")
-@app_commands.describe(group_name="Name of the group to get")
+@app_commands.command(name="group", description=ListDesc.by_group)
+@app_commands.describe(group_name=ListDesc.group_name)
 async def by_group(interaction: discord.Interaction, group_name: str):
     logger.log(
         "COMMAND",
