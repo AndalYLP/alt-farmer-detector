@@ -9,4 +9,7 @@ track_group = app_commands.Group(name="track", description="Track commands")
 stop_sub_group = app_commands.Group(
     name="stop", description="stop commands", parent=track_group
 )
-utils_group = app_commands.Group(name="utils", description="Utils commands")
+
+
+def get_utils_group():
+    app_commands.Group(name="utils", description="Utils commands")

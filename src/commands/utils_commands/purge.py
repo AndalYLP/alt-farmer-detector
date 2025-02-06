@@ -5,6 +5,7 @@ from loguru import logger
 
 from config.command_description import UtilsDesc
 from config.embeds import error_embed
+from utils.categories import get_utils_group
 from utils.exceptions import ProtectedCategory
 
 
@@ -13,7 +14,7 @@ class PurgeCommand(commands.Cog):
         self.bot = bot
         logger.debug("im being called correctly")
 
-    utils_group = app_commands.Group(name="utils", description="Utils commands")
+    utils_group = get_utils_group()
 
     @utils_group.command(name="purge", description=UtilsDesc.purge)
     @app_commands.describe(amount=UtilsDesc.amount)
