@@ -12,6 +12,7 @@ from utils.exceptions import ProtectedCategory
 class PurgeCommand(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        logger.debug("im being called correctly")
 
     @utils_group.command(name="purge", description=UtilsDesc.purge)
     @app_commands.describe(amount=UtilsDesc.amount)
