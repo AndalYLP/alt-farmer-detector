@@ -13,6 +13,3 @@ add_sub_group = app_commands.Group(
 joinsoff_sub_group = app_commands.Group(
     name="joinsoff", description="joinsoff commands", parent=snipe_group
 )
-stop_sub_group = app_commands.Group(
-    name="stop", description="stop commands", parent=track_group
-)

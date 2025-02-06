@@ -19,9 +19,8 @@ class SnipeDesc:
 
 
 class TrackDesc:
-    trackStatus = "Creates a channel and tracks the status from a user."
+    trackPlayer = "Creates a channel and tracks the status from a user."
     username = "Player username to track."
-    trackTimes = "Creates a channel and tracks the queue times from a user."
     stopTracking = "stop notifications/tracking for a user."
     usernameStop = "Player username to stop tracking."
 

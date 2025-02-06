@@ -1,11 +1,11 @@
 from discord.ext import commands
 
 from commands.track_commands.stop_track import stop
-from commands.track_commands.track import status
+from commands.track_commands.track import player
 from utils.categories import track_group
 
 track_group.add_command(stop)
-track_group.add_command(status)
+track_group.add_command(player)
 
 
 class track_cog(commands.Cog):

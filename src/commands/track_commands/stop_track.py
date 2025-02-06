@@ -8,7 +8,7 @@ from config.embeds import error_embed
 from utils.exceptions import UserNotFound
 
 
-@app_commands.command(name="track", description=TrackDesc.stopTracking)
+@app_commands.command(name="stop", description=TrackDesc.stopTracking)
 @app_commands.describe(username=TrackDesc.username)
 async def stop(interaction: discord.Interaction, username: str):
     bot = interaction.client

@@ -9,9 +9,9 @@ from config.embeds import error_embed
 from utils.exceptions import UserNotFound
 
 
-@app_commands.command(name="status", description=TrackDesc.trackStatus)
+@app_commands.command(name="player", description=TrackDesc.trackPlayer)
 @app_commands.describe(username=TrackDesc.username)
-async def status(interaction: discord.Interaction, username: str):
+async def player(interaction: discord.Interaction, username: str):
     bot = interaction.client
 
     logger.log(
