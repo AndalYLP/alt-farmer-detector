@@ -76,6 +76,19 @@ def format_added_with_embed(
     return embed
 
 
+def format_list_page_embed(group_name: str, pages: list[list], page_number: int):
+    embed = discord.Embed(
+        color=8585471,
+        title=f"{group_name} list",
+        description="".join(
+            f"**{i + 1 + (page_number * 15)}.** ``{str(player_data["Username"])}`` **|** {str(player_data["UserID"])} **|** **{str(player_data.get("GroupName", "None"))}**\n"
+            for i, player_data in enumerate(pages[page_number])
+        ),
+    )
+
+    return embed
+
+
 def error_embed(exception: Exception):
     embed = discord.Embed(
         color=errorColorCode,
