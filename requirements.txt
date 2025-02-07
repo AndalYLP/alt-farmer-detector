@@ -1,8 +1,8 @@
 requests==2.31.0
-waitress==3.0.0
+waitress==3.0.2
 pymongo==4.8.0
 discord.py==2.3.2
 aiohttp==3.9.5
-loguru==0.7.2
+loguru==0.7.3
 Flask==3.0.3
 python-dotenv==1.0.1
