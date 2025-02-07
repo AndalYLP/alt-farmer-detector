@@ -5,3 +5,4 @@ discord.py==2.3.2
 aiohttp==3.9.5
 loguru==0.7.2
 Flask==3.0.3
+python-dotenv==1.0.1
