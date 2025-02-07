@@ -1,6 +1,6 @@
 requests==2.31.0
 waitress==3.0.2
-pymongo==4.8.0
+pymongo==4.11
 discord.py==2.3.2
 aiohttp==3.9.5
 loguru==0.7.3
