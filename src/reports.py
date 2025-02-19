@@ -60,4 +60,4 @@ async def get_status(bot):
         except Exception as e:
             logger.exception(e)
 
-        asyncio.sleep(10)
+        await asyncio.sleep(10)
