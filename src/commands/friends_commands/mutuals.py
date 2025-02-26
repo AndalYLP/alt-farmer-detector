@@ -47,7 +47,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict: bool
 
         if mutuals:
             await interaction.response.send_message(
-                embed=format_mutuals_embed(mutuals, users)
+                embed=format_mutuals_embed(mutuals, users, strict)
             )
         else:
             await interaction.response.send_message(
