@@ -43,7 +43,7 @@ async def mutuals(interaction: discord.Interaction, usernames: str, strict: bool
         if strict:
             mutuals = {k: v for k, v in counter.items() if v == len(usernames)}
         else:
-            mutuals = {k: v for k, v in counter.items() if v >= 1}
+            mutuals = {k: v for k, v in counter.items() if v > 1}
 
         if mutuals:
             await interaction.response.send_message(
