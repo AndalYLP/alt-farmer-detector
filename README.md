@@ -55,8 +55,8 @@ RP faster and with no effort, this is not allowed in Roblox BedWars
     - stop `[username]`
 
 > [!NOTE]
-> `snipe joinsoff` command only works with the default GAME_ID from 
-> the [constants file](src/config/constants.py)
+> `snipe joinsoff` command only works with the GAME_ID from 
+> your [.env file](.env.example)
 
 ## Channels
 
@@ -76,9 +76,7 @@ This bot follows the next channels structure:
     > In this category you will find all the tracking channels you made using `/track player`
 
 > [!NOTE]
-> The bot will only send a notification if the player is playing
-> [Roblox BedWars](https://www.roblox.com/games/6872265039/Enchants-BedWars).
-> You can change the default game in the [constants file](src/config/constants.py) or
+> The bot will only send a notification if the player is playing the specified game in your [.env file](.env.example) or
 > if you want it to send for every game you can use
 > `/reports mute other_game:False` 
 
@@ -88,6 +86,7 @@ you will need the next env variables:
 - **MONGO_URI**
 - **COOKIE** (roblox cookie)
 - **TOKEN** (discord token)
+> All variables [here](.env.example).
 
 ### MongoDB
 
@@ -97,7 +96,7 @@ For your database you need to use this structure:
 
 ### Channel Ids
 
-You can change the channel Ids in the [constants file](src/config/constants.py).
+You can change the channel Ids in your [.env file](.env.example).
 
 ### Host
 
