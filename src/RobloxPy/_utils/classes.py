@@ -8,9 +8,9 @@ This module provides classes to other modules that need it.
 from datetime import datetime
 from typing import Optional
 
-from .._common.thumbnails import Thumbnails, get_users_avatar, batch
 from .._common.friends import get_friend_users
 from .._common.presence import get_last_online
+from .._common.thumbnails import Thumbnails, batch, get_users_avatar
 
 
 def unique_by_key(data, key):
@@ -435,9 +435,6 @@ class Presences:
             self.jobId = data["gameId"]
             self.universeId = data["universeId"]
             self.userId = data["userId"]
-            self.lastOnline = datetime.fromisoformat(
-                data["lastOnline"].replace("Z", "+00:00")
-            )
 
         def __bool__(self):
             return bool(self.userId)

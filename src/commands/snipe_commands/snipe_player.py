@@ -46,7 +46,6 @@ async def snipe_player(interaction: discord.Interaction, usernames: str):
                     game=presence.lastlocation,
                     lobby="True" if presence.placeId == GAME_ID else "False",
                     jobId=presence.jobId,
-                    groupOrLastOnline=presence.lastOnline,
                     thumbnail=user.get_thumbnail().imageUrl,
                 )
             )

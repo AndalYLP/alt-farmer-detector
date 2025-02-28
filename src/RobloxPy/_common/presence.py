@@ -7,8 +7,9 @@ from .._utils.requests import _PresenceAPI
 
 def get_last_online(*userIds: int) -> dict[int, datetime]:
     """
-    ### DEPRECATED: Api endpoit got deprecated
+    ### REMOVED: Api endpoint got removed
     """
+    return
     response = _PresenceAPI.V1.Presence.presence_last___online(*userIds)
 
     responseJson: dict = response.json()

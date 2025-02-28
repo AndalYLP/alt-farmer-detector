@@ -57,7 +57,6 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver: bo
                         game=presence.lastlocation,
                         lobby="True" if presence.placeId == GAME_ID else "False",
                         jobId=presence.jobId,
-                        groupOrLastOnline=presence.lastOnline,
                     )
                 )
 
