@@ -15,7 +15,7 @@ def re_track(bot):
     users = Users.get_users_by_username(*channelData.keys())
 
     for data, (channel, mentions) in channelData.items():
-        bot.tracking[users.get_by_username(data)] = [
+        bot.tracking[users.get_by_username(data).userId] = [
             channel,
             re.findall(r"<@\d+>", mentions),
         ]
