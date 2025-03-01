@@ -1,11 +1,10 @@
 import re
 
 from config.constants import TRACKING_CATEGORY
-from main import Bot
 from RobloxPy import Users
 
 
-def re_track(bot: Bot):
+def re_track(bot):
     channels = bot.get_channel(TRACKING_CATEGORY).channels
 
     channelData = {}
