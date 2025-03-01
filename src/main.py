@@ -10,6 +10,7 @@ from waitress import serve
 
 import RobloxPy
 from config.constants import COOKIE, TOKEN
+from re_track import re_track
 from reports import get_status
 
 app = Flask(__name__)
@@ -61,6 +62,8 @@ async def on_ready():
     logger.info(f"Logged in as {bot.user.name} ({bot.user.id})")
 
     await bot.change_presence(activity=discord.Game(name="Ranked BedWars"))
+
+    re_track(bot)
 
     bot.loop.create_task(get_status(bot))
     try:

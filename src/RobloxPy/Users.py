@@ -3,8 +3,8 @@ RobloxPy.Users
 ~~~~~~~~~~~~~~
 """
 
-from ._utils.requests import _UsersAPI
 from ._utils.classes import Users
+from ._utils.requests import _UsersAPI
 
 
 def get_users_by_userid(*userIds: int, excludeBanned: bool = False) -> Users.UserGroup:
@@ -16,7 +16,7 @@ def get_users_by_userid(*userIds: int, excludeBanned: bool = False) -> Users.Use
 
 
 def get_users_by_username(
-    *usernames: int, excludeBanned: bool = False
+    *usernames: str, excludeBanned: bool = False
 ) -> Users.UserGroup:
     response = _UsersAPI.V1.Users.usernames_users(
         *usernames, excludeBanned=excludeBanned

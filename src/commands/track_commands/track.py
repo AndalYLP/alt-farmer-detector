@@ -40,12 +40,18 @@ async def player(interaction: discord.Interaction, username: str):
 
             bot.tracking[userId] = [channel, [interaction.user.mention]]
 
+            await channel.edit(topic=interaction.user.mention)
+
             await interaction.response.send_message(f"Tracking in {channel.mention}")
         elif (
             bot.tracking.get(userId)
             and interaction.user.mention not in bot.tracking[userId][1]
         ):
             bot.tracking[userId][1].append(interaction.user.mention)
+
+            channel = discord.utils.get(category.channels, name=username.lower())
+
+            await channel.edit(topic=f"{channel.topic}{interaction.user.mention}")
 
             await interaction.response.send_message(
                 f"added to notification list for: {bot.tracking[userId][0].mention}"
