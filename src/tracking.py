@@ -78,7 +78,7 @@ async def manage_data_create_embed(
     time_in_gameid = user_game_info[1][1]
 
     presence_type_code = presenceTypeCode[
-        presence.userPresenceType if presence.lobbyStatus != "True" else "match"
+        presence.userPresenceType if presence.lobbyStatus == "True" else "match"
     ]
 
     color = presence_type_code[0]
