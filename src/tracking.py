@@ -87,8 +87,6 @@ async def manage_data_create_embed(
     title = f"{presence.username} {type}"
     description = f"Game: **{presence.lastlocation}**" + (
         f"\nLobby: **{presence.lobbyStatus}**\nGameId: **{presence.jobId}**\nLastGameId: **{last_gameid}**\nTime in gameId: **{time_in_gameid}**"
-        if presence.userPresenceType == 2 and presence.gameId == GAME_ID
-        else f"Time in game: **{user_game_info[5][1]}**"
     )
     embed = discord.Embed(
         color=color,
