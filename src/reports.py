@@ -39,7 +39,7 @@ async def get_status(bot):
 
                         presence.username = data["Username"]
                         presence.lobbyStatus = (
-                            "True" if presence.placeId == GAME_ID else "False"
+                            "True" if presence.placeId == presence.gameId else "False"
                         )
                         presence.groupName = data.get("GroupName", "None")
                         presence.isAlt = data["isAlt"]
