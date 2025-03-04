@@ -41,7 +41,7 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver: bo
         presences.filter_by_presence_types(2)
         presences.filter_by_gameids(GAME_ID, None)
 
-        if len(presence) < 1:
+        if len(presences) < 1:
             await interaction.followup.send("No friends in-game found.", ephemeral=True)
             return
 
