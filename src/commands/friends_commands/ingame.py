@@ -56,9 +56,9 @@ async def ingame(interaction: discord.Interaction, username: str, sameserver: bo
                         username=friends_users.get_by_userid(presence.userId).username,
                         game=presence.lastlocation,
                         lobby=(
-                            "True"
-                            if presence.placeId == presence.gameId
-                            else "False" if presence.gameId else None
+                            ("True" if presence.placeId == presence.gameId else "False")
+                            if presence.gameId
+                            else None
                         ),
                         jobId=presence.jobId,
                     )
